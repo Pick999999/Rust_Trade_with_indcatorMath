@@ -1,0 +1,3865 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deriv Chart Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ── CSS Variables / Themes ───────────────────────────── */
+        :root {
+            --font: 'Sarabun', sans-serif;
+            --radius: 8px;
+            --radius-lg: 12px;
+        }
+
+        [data-theme="lightblue"] {
+            --bg: #f0f4f8;
+            --bg2: #ffffff;
+            --bg3: #e2eaf3;
+            --surface: #ffffff;
+            --surface2: #f0f4f8;
+            --border: #c8d8eb;
+            --border2: #a8bedb;
+            --text: #1a2535;
+            --text2: #4a5f78;
+            --text3: #7a93b0;
+            --accent: #1a6fc4;
+            --accent2: #0d4f96;
+            --accent-bg: #ddeeff;
+            --green: #06D6A0;
+            --orange: #F5A623;
+            --red: #E8304A;
+            --header-bg: #1a3a6b;
+            --header-text: #ffffff;
+            --chip-bg: #e6eef8;
+            --chip-text: #2a4a7a;
+            --tab-active: #1a6fc4;
+            --tab-active-text: #fff;
+            --btn-bg: #1a6fc4;
+            --btn-text: #fff;
+            --status-bg: #e8f0fa;
+            --status-border: #b8d0f0;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f1923;
+            --bg2: #172130;
+            --bg3: #1e2d3e;
+            --surface: #1e2d3e;
+            --surface2: #253445;
+            --border: #2e4055;
+            --border2: #3e5570;
+            --text: #e0eaf8;
+            --text2: #8aaac8;
+            --text3: #5a7a9a;
+            --accent: #4a9eff;
+            --accent2: #2a7edf;
+            --accent-bg: #1a3050;
+            --green: #06D6A0;
+            --orange: #F5A623;
+            --red: #E8304A;
+            --header-bg: #0a1525;
+            --header-text: #e0eaf8;
+            --chip-bg: #1e3048;
+            --chip-text: #8aaac8;
+            --tab-active: #4a9eff;
+            --tab-active-text: #fff;
+            --btn-bg: #2a6ecf;
+            --btn-text: #fff;
+            --status-bg: #1a2a3a;
+            --status-border: #2e4055;
+        }
+
+        [data-theme="midnight"] {
+            --bg: #07090f;
+            --bg2: #0e1218;
+            --bg3: #131820;
+            --surface: #0e1218;
+            --surface2: #131820;
+            --border: #1e2530;
+            --border2: #2a3545;
+            --text: #c8d8f0;
+            --text2: #6878a0;
+            --text3: #3a4868;
+            --accent: #7c6dfa;
+            --accent2: #5a50d8;
+            --accent-bg: #1a1530;
+            --green: #06D6A0;
+            --orange: #F5A623;
+            --red: #E8304A;
+            --header-bg: #05060b;
+            --header-text: #c8d8f0;
+            --chip-bg: #131820;
+            --chip-text: #6878a0;
+            --tab-active: #7c6dfa;
+            --tab-active-text: #fff;
+            --btn-bg: #5a50d8;
+            --btn-text: #fff;
+            --status-bg: #0e1218;
+            --status-border: #1e2530;
+        }
+
+        /* ── Reset & Base ─────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            min-height: 100vh;
+            transition: background .3s, color .3s;
+        }
+
+        /* ── Digital Clock ────────────────────────────────────── */
+        .digital-clock {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: #0a0a09;
+            border: 1px solid #06D6A0;
+            color: #06D6A0;
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(6, 214, 160, 0.4), inset 0 0 8px rgba(6, 214, 160, 0.4);
+            text-shadow: 0 0 5px rgba(6, 214, 160, 0.8), 0 0 10px rgba(6, 214, 160, 0.4);
+            z-index: 9999;
+            pointer-events: none;
+            letter-spacing: 1px;
+        }
+
+        /* ── Header ───────────────────────────────────────────── */
+        .header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 0 20px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--header-text);
+        }
+
+        .header-title span {
+            color: var(--accent);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 4px;
+        }
+
+        .theme-btn {
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, .2);
+            background: transparent;
+            color: rgba(255, 255, 255, .7);
+            font-size: 12px;
+            cursor: pointer;
+            font-family: var(--font);
+            transition: all .2s;
+        }
+
+        .theme-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .theme-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, .1);
+        }
+
+        .settings-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, .25);
+            background: rgba(255, 255, 255, .08);
+            color: var(--header-text);
+            font-size: 13px;
+            cursor: pointer;
+            font-family: var(--font);
+            transition: all .2s;
+        }
+
+        .settings-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, .15);
+        }
+
+        /* ── Container ────────────────────────────────────────── */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* ── Status Bar ───────────────────────────────────────── */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            background: var(--status-bg);
+            border: 1px solid var(--status-border);
+            border-radius: var(--radius);
+            padding: 8px 14px;
+            margin-bottom: 14px;
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #06D6A0;
+            flex-shrink: 0;
+        }
+
+        .conn-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .03em;
+            transition: all .3s ease;
+        }
+
+        .conn-badge.connected {
+            background: rgba(6, 214, 160, .15);
+            color: #06D6A0;
+            border: 1px solid rgba(6, 214, 160, .3);
+        }
+
+        .conn-badge.disconnected {
+            background: rgba(232, 48, 74, .15);
+            color: #E8304A;
+            border: 1px solid rgba(232, 48, 74, .3);
+        }
+
+        .conn-badge .conn-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .conn-badge.connected .conn-dot {
+            background: #06D6A0;
+            animation: pulse-green 2s infinite;
+        }
+
+        .conn-badge.disconnected .conn-dot {
+            background: #E8304A;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(6, 214, 160, .5); }
+            50% { box-shadow: 0 0 0 4px rgba(6, 214, 160, 0); }
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(232, 48, 74, .5); }
+            50% { box-shadow: 0 0 0 4px rgba(232, 48, 74, 0); }
+        }
+
+        .sep {
+            width: 1px;
+            height: 14px;
+            background: var(--border);
+        }
+
+        .chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: var(--chip-bg);
+            color: var(--chip-text);
+            font-size: 11px;
+        }
+
+        .chip-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ── Section Card ─────────────────────────────────────── */
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+
+        .section-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 12px;
+        }
+
+        /* ── Date Range Section ───────────────────────────────── */
+        .date-range-section {
+            display: flex;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 160px;
+        }
+
+        .date-range-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        input[type="datetime-local"],
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 13px;
+            padding: 6px 10px;
+            outline: none;
+            transition: border-color .2s;
+            width: 100%;
+        }
+
+        input[type="datetime-local"]:focus,
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        input[type="datetime-local"].error,
+        input[type="text"].error {
+            border-color: var(--red) !important;
+        }
+
+        /* ── Inline radio items ──────────────────────────────── */
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 3px 0;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .radio-item input[type="radio"] {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .radio-item input[type="text"] {
+            width: 140px;
+            display: inline-block;
+        }
+
+        /* ── Buttons ──────────────────────────────────────────── */
+        .fetch-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            border-radius: var(--radius);
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            align-self: flex-end;
+            white-space: nowrap;
+        }
+
+        .fetch-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .fetch-btn.stop {
+            background: var(--red);
+        }
+
+        .fetch-btn svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        /* ── Tabs ─────────────────────────────────────────────── */
+        .tabs-row {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 14px;
+            padding-bottom: 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text2);
+            font-family: var(--font);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all .2s;
+            margin-bottom: -1px;
+        }
+
+        .tab-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            color: var(--tab-active);
+            border-bottom-color: var(--tab-active);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ── Chart Area ───────────────────────────────────────── */
+        .chart-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .chart-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+            flex-wrap: wrap;
+        }
+
+        .chart-toolbar-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text3);
+            margin-right: 4px;
+        }
+
+        .gran-btn {
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text2);
+            font-family: var(--font);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .gran-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .gran-btn:hover:not(.active) {
+            background: var(--bg3);
+        }
+
+        #chart {
+            height: 420px;
+            background: var(--bg2);
+        }
+
+        /* ── Table ────────────────────────────────────────────── */
+        .table-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .table-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        /* ── Track Orders ─────────────────────────────────────── */
+        .sell-btn {
+            padding: 4px 10px;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sell-btn:hover {
+            filter: brightness(1.2);
+        }
+        .sell-btn:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+        }
+        .target-profit-input {
+            width: 60px;
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: var(--bg3);
+            color: var(--text);
+            font-size: 12px;
+            text-align: center;
+        }
+        .set-btn {
+            padding: 4px 8px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table th {
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+        }
+
+        .data-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover td {
+            background: var(--bg3);
+        }
+
+        .empty-row td {
+            text-align: center;
+            color: var(--text3);
+            padding: 32px;
+        }
+
+        /* ── JSON Setting Tab ─────────────────────────────────── */
+        .json-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .json-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+        }
+
+        .json-toolbar-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .json-toolbar-sub {
+            font-size: 11px;
+            color: var(--text3);
+            margin-top: 2px;
+        }
+
+        .copy-btn {
+            padding: 5px 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        #jsonSettingTextarea {
+            width: 100%;
+            height: 460px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background: var(--bg2);
+            color: var(--text);
+            border: none;
+            border-radius: 0;
+            padding: 14px;
+            resize: vertical;
+            outline: none;
+            line-height: 1.6;
+        }
+
+        /* ── Modal ────────────────────────────────────────────── */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(0, 0, 0, .55);
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 740px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .modal-title-icon {
+            font-size: 16px;
+        }
+
+        .modal-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s;
+        }
+
+        .modal-close:hover {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 18px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 12px 18px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 7px 16px;
+            border-radius: var(--radius);
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all .2s;
+        }
+
+        .btn-primary {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+        }
+
+        .btn-secondary {
+            background: var(--bg3);
+            color: var(--text2);
+            border: 1px solid var(--border);
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        /* ── Settings Sections ────────────────────────────────── */
+        .settings-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .settings-section {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .settings-section-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-icon {
+            font-size: 14px;
+        }
+
+        .settings-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .settings-section-body {
+            padding: 12px 14px;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 6px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .gran-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .gran-setting-btn {
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text2);
+            font-family: var(--font);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .gran-setting-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .gran-setting-btn:hover:not(.active) {
+            background: var(--border);
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text3);
+        }
+
+        .form-group input[type="number"] {
+            width: 100%;
+        }
+
+        .color-picker {
+            height: 32px;
+            padding: 2px 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .ema-item {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ema-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .ema-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .ema-name {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .ema-badge {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            border-radius: 22px;
+            background: var(--border2);
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            left: 3px;
+            top: 3px;
+            transition: .3s;
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background: var(--accent);
+        }
+
+        .toggle-switch input:checked+.toggle-slider::before {
+            transform: translateX(18px);
+        }
+
+        /* ── Validation error ─────────────────────────────────── */
+        .validation-msg {
+            font-size: 12px;
+            color: var(--red);
+            margin-top: 4px;
+            display: none;
+        }
+
+        .validation-msg.show {
+            display: block;
+        }
+
+        /* ── Bot Log Area ───────────────────────────────────── */
+        .bot-log-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .bot-log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+        }
+
+        .bot-log-header span {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .bot-log-body {
+            height: 460px;
+            overflow-y: auto;
+            padding: 10px 14px;
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            background: var(--bg2);
+        }
+
+        .bot-log-body .log-line {
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            word-break: break-all;
+            border-left: 3px solid transparent;
+        }
+
+        .bot-log-body .log-line.log-spike {
+            color: var(--green);
+            border-left-color: var(--green);
+            background: rgba(6, 214, 160, 0.05);
+        }
+
+        .bot-log-body .log-line.log-wait {
+            color: var(--text3);
+            border-left-color: var(--border);
+        }
+
+        .bot-log-body .log-line.log-trade {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background: rgba(74, 158, 255, 0.05);
+            font-weight: bold;
+        }
+
+        .bot-log-body .log-line.log-win {
+            color: var(--green);
+            border-left-color: var(--green);
+            background: rgba(6, 214, 160, 0.1);
+            font-weight: bold;
+        }
+
+        .bot-log-body .log-line.log-loss {
+            color: var(--red);
+            border-left-color: var(--red);
+            background: rgba(232, 48, 74, 0.1);
+            font-weight: bold;
+        }
+
+        .bot-log-body .log-line.log-system {
+            color: var(--orange);
+            border-left-color: var(--orange);
+            background: rgba(245, 166, 35, 0.08);
+            font-weight: bold;
+        }
+
+        .clear-log-btn {
+            padding: 4px 10px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text2);
+            font-family: var(--font);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .clear-log-btn:hover {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+    </style>
+    <script src="https://unpkg.com/lightweight-charts@4.2.1/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+
+<body data-theme="lightblue">
+
+    <!-- ─── HEADER ─────────────────────────────────────────── -->
+    <header class="header">
+        <div class="header-left" style="gap: 12px; display: flex; align-items: center;">
+            <img src="images/mylogo.png" alt="PK Logo" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+            <h1 class="header-title">PK Deriv Trade</h1>
+        </div>
+        <div class="header-controls">
+            <div class="theme-selector">
+                <button class="theme-btn active" data-theme="lightblue">☀ Light</button>
+                <button class="theme-btn" data-theme="dark">🌙 Dark</button>
+                <button class="theme-btn" data-theme="midnight">✦ Midnight</button>
+            </div>
+            <button class="settings-btn" id="openSettingsBtn">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                        clip-rule="evenodd" />
+                </svg>
+                ตั้งค่า
+            </button>
+        </div>
+    </header>
+
+    <!-- ─── MAIN ────────────────────────────────────────────── -->
+    <main class="container">
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="conn-badge disconnected" id="connBadge">
+                <span class="conn-dot"></span>
+                <span id="connText">กำลังเชื่อมต่อ...</span>
+            </div>
+            <div class="sep"></div>
+            <span id="status-balance" style="font-weight:bold; color:var(--accent); cursor:pointer;" title="คลิกเพื่อ Sync Balance">Balance: $0.00 🔄</span>
+            <div class="sep"></div>
+            <span id="schedule-status" style="font-size:12px; display:inline-flex; align-items:center; gap:4px;">⏳ กำลังตรวจสอบ...</span>
+            <div class="sep"></div>
+            <span id="status-asset">Asset: —</span>
+            <div class="sep"></div>
+            <span id="status-gran">Granularity: 1M</span>
+            <div class="sep"></div>
+            <span id="status-count">Candles: 0</span>
+            <div class="sep"></div>
+            <span id="status-spike">Spikes: <span id="spike-green-count" style="color:#06D6A0; font-weight:bold;">0</span> 🟢 | <span id="spike-red-count" style="color:#E8304A; font-weight:bold;">0</span> 🔴</span>
+            <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
+                <div class="chip"><span class="chip-dot" style="background:#06D6A0;"></span>EMA Short</div>
+                <div class="chip"><span class="chip-dot" style="background:#F5A623;"></span>EMA Medium</div>
+                <div class="chip"><span class="chip-dot" style="background:#E8304A;"></span>EMA Long</div>
+            </div>
+        </div>
+
+        <!-- ── Balance Summary Section ─────────────────────────── -->
+        <div class="section-card" id="balance-summary-card">
+            <div class="section-card-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 10px;">
+                <span>💰 สรุปยอด Balance</span>
+                <div id="trading-duration-container" style="display: none; align-items: center; gap: 12px; font-size: 13px; font-weight: normal; background: var(--bg2); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <span id="trading-time-elapsed" style="color: var(--text2); white-space: nowrap; font-family: 'Share Tech Mono', monospace;">ระยะเวลา: 0 นาที</span>
+                    <div style="width: 120px; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; border: 1px solid var(--border); position: relative;">
+                        <div id="trading-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--green), #00d2ff); transition: width 0.5s ease;"></div>
+                    </div>
+                    <span id="trading-progress-percent" style="color: var(--green); font-weight: bold; min-width: 35px; text-align: right;">0%</span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <div style="background: var(--bg3); padding: 12px; border-radius: var(--radius); flex: 1; min-width: 180px; border: 1px solid var(--border);">
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">Balance ณ ปัจจุบัน</div>
+                    <div id="summary-initial-balance" style="font-size: 18px; font-weight: 700; color: var(--text);">--</div>
+                </div>
+                <div style="background: var(--bg3); padding: 12px; border-radius: var(--radius); flex: 1; min-width: 180px; border: 1px solid var(--accent); border-left: 3px solid var(--accent);">
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">กำไรรอบนี้ ($) <span id="summary-schedule-label" style="color:var(--accent);font-weight:700;"></span></div>
+                    <div id="summary-current-balance" style="font-size: 18px; font-weight: 700; color: var(--accent);">--</div>
+                </div>
+                <div style="background: var(--bg3); padding: 12px; border-radius: var(--radius); flex: 1; min-width: 180px; border: 1px solid var(--accent); border-left: 3px solid var(--accent);">
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">กำไรรอบนี้ (฿) <span id="summary-schedule-label-thb" style="color:var(--accent);font-weight:700;"></span></div>
+                    <div id="summary-schedule-thb" style="font-size: 18px; font-weight: 700; color: var(--text);">--</div>
+                </div>
+                <div style="background: var(--bg3); padding: 12px; border-radius: var(--radius); flex: 1; min-width: 180px; border: 1px solid var(--border);">
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">กำไรวันนี้ ($)</div>
+                    <div id="summary-profit-usd" style="font-size: 18px; font-weight: 700; color: var(--text);">--</div>
+                </div>
+                <div style="background: var(--bg3); padding: 12px; border-radius: var(--radius); flex: 1; min-width: 180px; border: 1px solid var(--border);">
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">กำไรวันนี้ (฿)</div>
+                    <div id="summary-profit-thb" style="font-size: 18px; font-weight: 700; color: var(--text);">--</div>
+                    <div style="font-size: 10px; color: var(--text3); margin-top: 4px;">(เรท <input type="number" id="thb-rate" value="35" style="width: 50px; padding: 2px; font-size: 10px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; text-align: center;"> ฿/$)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Section 1: Date Range ─────────────────────────── -->
+        <div class="section-card">
+            <div class="section-card-title">📅 ช่วงวันที่</div>
+            <div class="date-range-section">
+                <div class="date-input-group">
+                    <div class="date-range-label">ใช้ตารางเวลา (Schedule)</div>
+                    <label class="toggle-switch" style="margin-top: 4px;">
+                        <input type="checkbox" id="useSchedule" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="date-input-group" style="width: 70px; min-width: 70px;">
+                    <div class="date-range-label">รอบที่</div>
+                    <input type="number" id="scheduleTradeNo" value="1" min="1">
+                </div>
+                <div class="date-input-group">
+                    <div class="date-range-label">เริ่มต้น</div>
+                    <input type="datetime-local" id="startDate" value="2026-04-20T04:00">
+                    <div class="validation-msg" id="startDateMsg"></div>
+                </div>
+                <div class="date-input-group" style="width: 100px; min-width: 100px;">
+                    <div class="date-range-label">บวกเพิ่ม (นาที)</div>
+                    <input type="number" id="addMinutes" value="60" min="1">
+                </div>
+                <div class="date-input-group">
+                    <div class="date-range-label">สิ้นสุด</div>
+                    <input type="datetime-local" id="stopDate" value="2026-04-20T05:00">
+                    <div class="validation-msg" id="stopDateMsg"></div>
+                </div>
+                <div id="inlineClock" style="font-family:'Share Tech Mono', monospace; font-size:18px; color:var(--orange); font-weight:bold; padding:4px 10px; border:1px solid var(--orange); border-radius:var(--radius); background:rgba(245, 166, 35, 0.1); display:flex; align-items:center; justify-content:center; min-width:100px; height:34px; align-self:flex-end; margin-right: 4px; box-shadow: inset 0 0 5px rgba(245, 166, 35, 0.2);">00:00:00</div>
+                <button type="button" class="fetch-btn" id="setDerivTimeBtn" style="background:var(--orange); color:#fff; border:none; padding:8px 12px; margin-right: 10px;">⏱ ดึงเวลาจาก Deriv</button>
+                <button class="fetch-btn" id="fetchBtn">
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    โหลดข้อมูล
+                </button>
+            </div>
+        </div>
+
+        <!-- ── Section 2: Trade Settings ─────────────────────── -->
+        <div class="section-card">
+            <div class="section-card-title">💰 ตั้งค่าการเทรด</div>
+            <div class="date-range-section">
+
+                <!-- Martingale -->
+                <div class="date-input-group" style="min-width:200px;">
+                    <div class="date-range-label">การเดินเงิน</div>
+                    <label class="radio-item">
+                        <input type="radio" name="useMartingale" value="fixed" checked> Fixed Money
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="useMartingale" value="martingale"> Martingale Money
+                    </label>
+                    <input type="text" id="martingaleList" value="1,2,4,8,17,32" placeholder="เช่น 1,2,4,8,17,32"
+                        style="margin-top:4px;" disabled>
+                </div>
+
+                <!-- Condition Stop -->
+                <div class="date-input-group" style="min-width:220px;">
+                    <div class="date-range-label">เงื่อนไขสิ้นสุดการเทรด</div>
+                    <select id="conditionStopTrade">
+                        <option value="targetMoney">เมื่อได้ตามเป้า (TargetMoney)</option>
+                        <option value="targetLot">เมื่อได้ตามเป้าของ Lot Trade (TargetLot)</option>
+                        <option value="stopDate">เมื่อถึง StopDate</option>
+                    </select>
+                </div>
+
+                <!-- Target Values -->
+                <div class="date-input-group" style="min-width:140px;">
+                    <div class="date-range-label">Target Money</div>
+                    <input type="text" id="targetMoney" value="1">
+                </div>
+                <div class="date-input-group" style="min-width:140px;">
+                    <div class="date-range-label">Target Lot</div>
+                    <input type="text" id="targetLot" value="1">
+                </div>
+
+                <div class="date-input-group" style="min-width:140px;">
+                     <div class="date-range-label">แจ้งเตือน Telegram (เฉพาะชนะ)</div>
+                     <label class="toggle-switch" style="margin-top: 4px;">
+                         <input type="checkbox" id="telegramToggle" checked>
+                         <span class="toggle-slider"></span>
+                     </label>
+                </div>
+                <div class="date-input-group" style="min-width:140px;">
+                     <div class="date-range-label">เปิดเสียงตอนเข้าเทรด</div>
+                     <label class="toggle-switch" style="margin-top: 4px;">
+                         <input type="checkbox" id="playSoundToggle" checked>
+                         <span class="toggle-slider"></span>
+                     </label>
+                </div>
+
+                <!-- Auto Sale When Timeout -->
+                <div class="date-input-group" style="min-width:260px; background:var(--bg3); padding:10px; border-radius:var(--radius); border:1px solid var(--border);">
+                    <div class="date-range-label" style="display:flex; align-items:center; gap:6px;">
+                        ⏰ Auto Sale When Timeout
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoSellTimeoutToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="font-size:12px; color:var(--text2);">เปิดใช้งาน</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-top:8px;">
+                        <span style="font-size:12px; color:var(--text2); white-space:nowrap;">ขายเมื่อเกิน</span>
+                        <input type="number" id="autoSellTimeoutSeconds" value="90" min="10" max="600" step="5" style="width:70px; text-align:center; font-weight:bold;">
+                        <span style="font-size:12px; color:var(--text2);">วินาที</span>
+                    </div>
+                    <div style="font-size:10px; color:var(--text3); margin-top:4px;">💡 เมื่อ is_trading=true นานเกินกำหนด จะขายอัตโนมัติโดยไม่ต้อง confirm</div>
+                </div>
+
+                <!-- Buy Method Selector -->
+                <div class="date-input-group" style="min-width:260px; background:var(--bg3); padding:10px; border-radius:var(--radius); border:1px solid var(--border);">
+                    <div class="date-range-label" style="display:flex; align-items:center; gap:6px;">
+                        🛒 Buy Method
+                    </div>
+                    <select id="buyMethodSelect" style="margin-top:6px; width:100%; padding:6px 10px; border-radius:8px; border:1px solid var(--border); background:var(--bg2); color:var(--text); font-family:var(--font); font-size:12px; cursor:pointer;">
+                        <option value="direct">Method 1: Direct Buy (วิธีเดิม)</option>
+                        <option value="proposal" selected>Method 2: Proposal → Buy (แนะนำ)</option>
+                    </select>
+                    <div style="font-size:10px; color:var(--text3); margin-top:6px;">💡 Method 2: ส่ง proposal ก่อนเพื่อขอ proposal_id แล้วจึง buy — ลดปัญหา Delay การตอบกลับ</div>
+                </div>
+
+                <div style="display:flex;gap:8px;align-self:flex-end;flex-wrap:wrap;">
+                    <button class="fetch-btn" id="goTradeBtn">💰 Go Trade</button>
+                    <button class="fetch-btn stop" id="stopTradeBtn">⛔ Stop Trade</button>
+                    <button class="fetch-btn" id="terminateBtn" style="background:var(--orange);border-color:var(--orange);color:#1a2535;font-weight:700;border:1px solid #c98516;box-shadow:0 2px 4px rgba(0,0,0,0.1);">⚠️ Stop Server & Exit</button>
+                </div>
+                <div class="conn-badge disconnected" id="connBadgeBig" style="width:100%; height:40px; margin-top:12px; justify-content:center; border-radius:20px;">
+                    <span class="conn-dot"></span>
+                    <span id="connTextBig" style="font-size:14px; font-weight:600;">กำลังเชื่อมต่อ...</span>
+                </div>
+                <div id="active-assets-container" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; width:100%;">
+                    <!-- Asset trading state buttons will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Tabs ───────────────────────────────────────────── -->
+        <div class="tabs-row" id="tabsRow">
+            <button class="tab-btn active" data-tab="chart">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                        d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                </svg>
+                กราฟ
+            </button>
+            <button class="tab-btn" data-tab="table">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z"
+                        clip-rule="evenodd" />
+                </svg>
+                ข้อมูลดิบ
+            </button>
+            <button class="tab-btn" data-tab="jsonsetting">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z"
+                        clip-rule="evenodd" />
+                </svg>
+                JSON Setting
+            </button>
+            <button class="tab-btn" data-tab="history">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM9 5a1 1 0 012 0v4h2a1 1 0 110 2h-3a1 1 0 01-1-1V5z" clip-rule="evenodd"/>
+                </svg>
+                Trade History
+            </button>
+            <button class="tab-btn" data-tab="schedulesummary">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                </svg>
+                สรุปตามรอบ
+            </button>
+            <button class="tab-btn" data-tab="trackorders">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                </svg>
+                Track Orders
+            </button>
+            <button class="tab-btn" data-tab="botlog">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                </svg>
+                Bot Log <span id="botLogCount" style="font-size:10px;color:var(--text3);margin-left:4px;">(0)</span>
+            </button>
+        </div>
+
+        <div class="tab-content active" id="chart-tab">
+            <div class="chart-wrapper">
+                <div class="chart-toolbar">
+                    <span class="chart-toolbar-label">Asset</span>
+                    <div id="chartAssetSelect" style="display:flex; gap:6px; flex-wrap:wrap; margin-left:4px;">
+                        <span style="color:var(--text3); font-size:12px; padding-top:4px;">— รอข้อมูล —</span>
+                    </div>
+                    <div class="sep" style="height:16px;"></div>
+                    <span class="chart-toolbar-label">Granularity</span>
+                    <button class="gran-btn" data-value="55">55s</button>
+                    <button class="gran-btn active" data-value="60">1M</button>
+                    <button class="gran-btn" data-value="180">3M</button>
+                    <button class="gran-btn" data-value="300">5M</button>
+                    <button class="gran-btn" data-value="900">15M</button>
+                    <button class="gran-btn" data-value="1800">30M</button>
+                    <div class="sep" style="height:16px;"></div>
+                    <label class="toggle-switch" style="margin-left: 8px;">
+                        <input type="checkbox" id="showTradeMarkersToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="chart-toolbar-label" style="margin-left: 6px;">Show Maker Trade</span>
+                </div>
+                <div id="chart" style="height:420px;"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Table -->
+        <div class="tab-content" id="table-tab">
+            <div class="table-wrapper">
+                <div class="table-header-bar">
+                    <span>Raw Candle Data</span>
+                    <span id="table-count" style="font-size:12px;color:var(--text3);">0 records</span>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>เวลา</th>
+                                <th>Open</th>
+                                <th>High</th>
+                                <th>Low</th>
+                                <th>Close</th>
+                                <th>สีเทียน</th>
+                                <th>ATR Spike?</th>
+                                <th>EMA Short</th>
+                                <th>EMA Med</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row">
+                                <td colspan="6">ยังไม่มีข้อมูล — กรุณาเลือก Asset และกด "โหลดข้อมูล"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: JSON Setting -->
+        <div class="tab-content" id="jsonsetting-tab">
+            <div class="json-wrapper">
+                <div class="json-toolbar">
+                    <div>
+                        <div class="json-toolbar-title">⚙ JSON Setting</div>
+                        <div class="json-toolbar-sub">ค่าทั้งหมดจะถูกส่งไปยัง Backend —
+                            อัปเดตอัตโนมัติทุกครั้งที่เปลี่ยนค่า</div>
+                    </div>
+                    <button class="copy-btn" id="copyJsonBtn">📋 คัดลอก JSON</button>
+                </div>
+                <textarea id="jsonSettingTextarea" readonly spellcheck="false"></textarea>
+            </div>
+        </div>
+
+        <!-- Tab: History -->
+        <div class="tab-content" id="history-tab">
+            <div class="table-wrapper">
+                <div class="table-header-bar">
+                    <span>Recent Trade History</span>
+                    <button class="fetch-btn" id="loadHistoryBtn" style="padding:4px 8px; font-size:11px;">โหลดประวัติวันนี้</button>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table" id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>เวลาเทรด</th>
+                                <th>เวลาขาย</th>
+                                <th>รอบที่</th>
+                                <th>Subtrade</th>
+                                <th>Asset</th>
+                                <th>Action</th>
+                                <th>Money Trade</th>
+                                <th>Profit</th>
+                                <th>Balance</th>
+                                <th>Schedule Balance</th>
+                                <th>Balance(THB)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="11">คลิกปุ่มเพื่อโหลดประวัติการเทรด</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Track Orders -->
+        <div class="tab-content" id="trackorders-tab">
+            <div class="table-wrapper">
+                <div class="table-header-bar">
+                    <span>Active Orders Tracking</span>
+                    <span id="track-orders-count" style="font-size:12px;color:var(--text3);">0 active orders</span>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table" id="trackOrdersTable">
+                        <thead>
+                            <tr>
+                                <th>ลำดับ</th>
+                                <th>Contract ID</th>
+                                <th>Symbol</th>
+                                <th>ประเภท</th>
+                                <th>ราคาซื้อ</th>
+                                <th>Payout</th>
+                                <th>กำไร/ขาดทุน</th>
+                                <th>เวลาซื้อ</th>
+                                <th>เวลาหมดอายุ</th>
+                                <th>เวลาที่เหลือ</th>
+                                <th>Min Profit</th>
+                                <th>Max Profit</th>
+                                <th>Target Profit</th>
+                                <th>การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="14">ไม่มีออเดอร์ที่กำลังทำงานอยู่</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Schedule Summary -->
+        <div class="tab-content" id="schedulesummary-tab">
+            <div class="table-wrapper">
+                <div class="table-header-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span>📊 สรุปผลกำไร/ขาดทุน แยกตามรอบ Schedule</span>
+                        <span id="schedule-summary-count" style="font-size:12px;color:var(--text3);">0 รอบ</span>
+                    </div>
+                    <div style="font-size:14px; font-weight:bold; display:flex; gap:12px; align-items:center;">
+                        <span style="color:var(--text3); font-size:12px;">รวมกำไร/ขาดทุน ทุกรอบ (Grand Total):</span>
+                        <span id="schedule-grand-usd" style="color:var(--text);">--</span>
+                        <span id="schedule-grand-thb" style="color:var(--text);">--</span>
+                    </div>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table" id="scheduleSummaryTable">
+                        <thead>
+                            <tr>
+                                <th>รอบที่ (Schedule No)</th>
+                                <th>เวลาเริ่ม - สิ้นสุด</th>
+                                <th>จำนวนไม้ทั้งหมด</th>
+                                <th>Win (ไม้)</th>
+                                <th>Loss (ไม้)</th>
+                                <th>กำไรสุทธิ ($)</th>
+                                <th>กำไรสุทธิ (฿)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="7">ไม่มีข้อมูลรอบการเทรด</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Bot Log -->
+        <div class="tab-content" id="botlog-tab">
+            <div class="bot-log-wrapper">
+                <div class="bot-log-header">
+                    <span>🤖 Bot Activity Log — แสดงสถานะการทำงานของบอทแบบ Real-time</span>
+                    <button class="clear-log-btn" id="clearLogBtn">🗑 ล้าง Log</button>
+                </div>
+                <div class="bot-log-body" id="botLogBody">
+                    <div class="log-line log-system">⏳ รอข้อมูลจากบอท... กด Go Trade หรือรอ Schedule เพื่อเริ่ม</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ─── SETTINGS MODAL ──────────────────────────────────── -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="modal-title-icon">⚙</div>ตั้งค่าการแสดงผล
+                </div>
+                <button class="modal-close" id="closeModalBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-grid">
+
+                    <!-- Assets -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">📈</div><span class="settings-section-title">Continuous Indices
+                                (Deriv.com)</span>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="checkbox-grid">
+                                <div class="checkbox-item"><input type="checkbox" id="vol10" name="asset"
+                                        value="vol10"><label for="vol10">Vol 10</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol10_1s" name="asset"
+                                        value="vol10_1s"><label for="vol10_1s">Vol 10 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol15_1s" name="asset"
+                                        value="vol15_1s"><label for="vol15_1s">Vol 15 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol25" name="asset"
+                                        value="vol25"><label for="vol25">Vol 25</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol25_1s" name="asset"
+                                        value="vol25_1s"><label for="vol25_1s">Vol 25 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol30_1s" name="asset"
+                                        value="vol30_1s"><label for="vol30_1s">Vol 30 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol50" name="asset"
+                                        value="vol50"><label for="vol50">Vol 50</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol50_1s" name="asset"
+                                        value="vol50_1s"><label for="vol50_1s">Vol 50 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol75" name="asset"
+                                        value="vol75"><label for="vol75">Vol 75</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol75_1s" name="asset"
+                                        value="vol75_1s"><label for="vol75_1s">Vol 75 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol90_1s" name="asset"
+                                        value="vol90_1s"><label for="vol90_1s">Vol 90 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol100" name="asset"
+                                        value="vol100"><label for="vol100">Vol 100</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol100_1s" name="asset"
+                                        value="vol100_1s"><label for="vol100_1s">Vol 100 (1s)</label></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Granularity -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">⏱</div><span class="settings-section-title">Granularity</span>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="gran-group">
+                                <button class="gran-setting-btn" data-value="2">Tick (2s)</button>
+                                <button class="gran-setting-btn" data-value="55">55 วินาที</button>
+                                <button class="gran-setting-btn active" data-value="60">1 นาที</button>
+                                <button class="gran-setting-btn" data-value="180">3 นาที</button>
+                                <button class="gran-setting-btn" data-value="300">5 นาที</button>
+                                <button class="gran-setting-btn" data-value="900">15 นาที</button>
+                                <button class="gran-setting-btn" data-value="1800">30 นาที</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Indicators -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">📊</div><span class="settings-section-title">Technical
+                                Indicators</span>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="form-grid-2">
+                                <div class="form-group"><label>ATR Period</label><input type="number" id="atrPeriod"
+                                        value="14" min="1"></div>
+                                <div class="form-group"><label>ATR Multiplier</label><input type="number" id="atrMulti"
+                                        value="2" step="0.1" min="0"></div>
+                                <div class="form-group"><label>CI Period</label><input type="number" id="ciPeriod"
+                                        value="20" min="1"></div>
+                                <div class="form-group"><label>ADX Period</label><input type="number" id="adxPeriod"
+                                        value="14" min="1"></div>
+                                <div class="form-group"><label>Bollinger Bands</label><input type="number" id="bbPeriod"
+                                        value="20" min="1"></div>
+                                <div class="form-group"><label>SMC Period</label><input type="number" id="smcPeriod"
+                                        value="50" min="1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spike Settings -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">💥</div><span class="settings-section-title">Spike Configuration</span>
+                            <label class="toggle-switch" style="margin-left: auto;"><input type="checkbox" id="spikeShowToggle" checked><span class="toggle-slider"></span></label>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="form-grid-2">
+                                <div class="form-group"><label>Green Spike Color</label><input type="color" id="spikeGreenColor" value="#00FF00" class="color-picker"></div>
+                                <div class="form-group"><label>Red Spike Color</label><input type="color" id="spikeRedColor" value="#FF00FF" class="color-picker"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EMA -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">📉</div><span class="settings-section-title">EMA / MA
+                                Configuration</span>
+                        </div>
+                        <div class="settings-section-body">
+
+                            <div class="ema-item">
+                                <div class="ema-header">
+                                    <div class="ema-name"><span class="ema-badge" style="background:#06D6A0;"></span>EMA
+                                        Short</div>
+                                    <label class="toggle-switch"><input type="checkbox" id="emaShortToggle"
+                                            checked><span class="toggle-slider"></span></label>
+                                </div>
+                                <div class="form-grid-3">
+                                    <div class="form-group"><label>Period</label><input type="number"
+                                            id="emaShortPeriod" value="9" min="1"></div>
+                                    <div class="form-group"><label>Type</label>
+                                        <select id="emaShortType">
+                                            <option value="ema" selected>EMA</option>
+                                            <option value="hma">HMA</option>
+                                            <option value="wma">WMA</option>
+                                            <option value="ehma">EHMA</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label>Color</label><input type="color" id="emaShortColor"
+                                            value="#06D6A0" class="color-picker"></div>
+                                </div>
+                            </div>
+
+                            <div class="ema-item">
+                                <div class="ema-header">
+                                    <div class="ema-name"><span class="ema-badge" style="background:#F5A623;"></span>EMA
+                                        Medium</div>
+                                    <label class="toggle-switch"><input type="checkbox" id="emaMediumToggle"
+                                            checked><span class="toggle-slider"></span></label>
+                                </div>
+                                <div class="form-grid-3">
+                                    <div class="form-group"><label>Period</label><input type="number"
+                                            id="emaMediumPeriod" value="21" min="1"></div>
+                                    <div class="form-group"><label>Type</label>
+                                        <select id="emaMediumType">
+                                            <option value="ema" selected>EMA</option>
+                                            <option value="hma">HMA</option>
+                                            <option value="wma">WMA</option>
+                                            <option value="ehma">EHMA</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label>Color</label><input type="color" id="emaMediumColor"
+                                            value="#F5A623" class="color-picker"></div>
+                                </div>
+                            </div>
+
+                            <div class="ema-item">
+                                <div class="ema-header">
+                                    <div class="ema-name"><span class="ema-badge" style="background:#E8304A;"></span>EMA
+                                        Long</div>
+                                    <label class="toggle-switch"><input type="checkbox" id="emaLongToggle" checked><span
+                                            class="toggle-slider"></span></label>
+                                </div>
+                                <div class="form-grid-3">
+                                    <div class="form-group"><label>Period</label><input type="number" id="emaLongPeriod"
+                                            value="50" min="1"></div>
+                                    <div class="form-group"><label>Type</label>
+                                        <select id="emaLongType">
+                                            <option value="ema" selected>EMA</option>
+                                            <option value="hma">HMA</option>
+                                            <option value="wma">WMA</option>
+                                            <option value="ehma">EHMA</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label>Color</label><input type="color" id="emaLongColor"
+                                            value="#E8304A" class="color-picker"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBtn">ยกเลิก</button>
+                <button class="btn btn-primary" id="saveBtn">บันทึกการตั้งค่า</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── DIGITAL CLOCK ───────────────────────────────────── -->
+    <div class="digital-clock" id="digitalClock">00:00:00</div>
+
+    <!-- ─── JAVASCRIPT ──────────────────────────────────────── -->
+    <script>
+        function updateDigitalClock() {
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            const ss = String(now.getSeconds()).padStart(2, '0');
+            const timeStr = `${hh}:${mm}:${ss}`;
+            
+            const clockEl = document.getElementById('digitalClock');
+            if (clockEl) clockEl.textContent = timeStr;
+            
+            const inlineClockEl = document.getElementById('inlineClock');
+            if (inlineClockEl) inlineClockEl.textContent = timeStr;
+        }
+        setInterval(updateDigitalClock, 1000);
+        updateDigitalClock();
+
+        // ══════════════════════════════════════════
+        //  COLLECT ALL SETTINGS → JSON
+        // ══════════════════════════════════════════
+        function collectSettings() {
+            const assets = [...document.querySelectorAll('input[name="asset"]:checked')].map(cb => cb.value);
+            const martType = document.querySelector('input[name="useMartingale"]:checked')?.value || 'fixed';
+            const martList = document.getElementById('martingaleList').value;
+            const condIdx = document.getElementById('conditionStopTrade').selectedIndex;
+            const condVals = ['targetMoney', 'targetLot', 'stopDate'];
+
+            const activeGranBtn = document.querySelector('.gran-btn.active');
+            const activeGranSet = document.querySelector('.gran-setting-btn.active');
+
+            return {
+                meta: {
+                    generatedAt: new Date().toISOString(),
+                    theme: document.body.getAttribute('data-theme') || 'lightblue'
+                },
+                dateRange: {
+                    useSchedule: document.getElementById('useSchedule') ? document.getElementById('useSchedule').checked : true,
+                    scheduleTradeNo: parseInt(document.getElementById('scheduleTradeNo').value) || 1,
+                    startDate: document.getElementById('startDate').value,
+                    stopDate: document.getElementById('stopDate').value
+                },
+                granularity: activeGranBtn ? parseInt(activeGranBtn.dataset.value) : 60,
+                granularitySettings: activeGranSet ? parseInt(activeGranSet.dataset.value) : 60,
+                assets,
+                indicators: {
+                    atrPeriod: parseInt(document.getElementById('atrPeriod').value) || 14,
+                    atrMulti: parseFloat(document.getElementById('atrMulti').value) || 2,
+                    ciPeriod: parseInt(document.getElementById('ciPeriod').value) || 20,
+                    adxPeriod: parseInt(document.getElementById('adxPeriod').value) || 14,
+                    bbPeriod: parseInt(document.getElementById('bbPeriod').value) || 20,
+                    smcPeriod: parseInt(document.getElementById('smcPeriod').value) || 50
+                },
+                ema: {
+                    short: { enabled: document.getElementById('emaShortToggle').checked, period: parseInt(document.getElementById('emaShortPeriod').value) || 9, type: document.getElementById('emaShortType').value, color: document.getElementById('emaShortColor').value },
+                    medium: { enabled: document.getElementById('emaMediumToggle').checked, period: parseInt(document.getElementById('emaMediumPeriod').value) || 21, type: document.getElementById('emaMediumType').value, color: document.getElementById('emaMediumColor').value },
+                    long: { enabled: document.getElementById('emaLongToggle').checked, period: parseInt(document.getElementById('emaLongPeriod').value) || 50, type: document.getElementById('emaLongType').value, color: document.getElementById('emaLongColor').value }
+                },
+                trade: {
+                    conditionStopTrade: condVals[condIdx],
+                    targetMoney: parseFloat(document.getElementById('targetMoney').value) || 0,
+                    targetLot: parseInt(document.getElementById('targetLot').value) || 0,
+                    notifyTelegram: document.getElementById('telegramToggle') ? document.getElementById('telegramToggle').checked : false,
+                    playSound: document.getElementById('playSoundToggle') ? document.getElementById('playSoundToggle').checked : true,
+                    autoSellTimeout: document.getElementById('autoSellTimeoutToggle') ? document.getElementById('autoSellTimeoutToggle').checked : false,
+                    autoSellTimeoutSeconds: parseInt(document.getElementById('autoSellTimeoutSeconds').value) || 90,
+                    buyMethod: document.getElementById('buyMethodSelect') ? document.getElementById('buyMethodSelect').value : 'proposal',
+                    martingale: {
+                        type: martType,
+                        list: martType === 'martingale'
+                            ? martList.split(',').map(v => parseFloat(v.trim())).filter(v => !isNaN(v))
+                            : []
+                    }
+                }
+            };
+        }
+
+        let isInitLoading = false;
+        function updateJSON() {
+            if (isInitLoading) return;
+            const currentSettings = collectSettings();
+            document.getElementById('jsonSettingTextarea').value =
+                JSON.stringify(currentSettings, null, 2);
+                
+            // Send settings to backend so that rust can parse setup.json next time
+            fetch('/api/setup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(currentSettings)
+            }).catch(e => console.error("Could not save setup:", e));
+        }
+
+        async function loadSetup() {
+            try {
+                isInitLoading = true;
+                const res = await fetch('/api/setup');
+                const data = await res.json();
+                if (data && Object.keys(data).length > 0) {
+                    if (data.dateRange) {
+                        if(document.getElementById('useSchedule')) document.getElementById('useSchedule').checked = data.dateRange.useSchedule ?? true;
+                        if(document.getElementById('scheduleTradeNo') && data.dateRange.scheduleTradeNo) document.getElementById('scheduleTradeNo').value = data.dateRange.scheduleTradeNo;
+                        document.getElementById('startDate').value = data.dateRange.startDate || '';
+                        document.getElementById('stopDate').value = data.dateRange.stopDate || '';
+                    }
+                    if (data.indicators) {
+                        if(document.getElementById('atrPeriod')) document.getElementById('atrPeriod').value = data.indicators.atrPeriod;
+                        if(document.getElementById('atrMulti')) document.getElementById('atrMulti').value = data.indicators.atrMulti;
+                        if(document.getElementById('ciPeriod')) document.getElementById('ciPeriod').value = data.indicators.ciPeriod;
+                        if(document.getElementById('adxPeriod')) document.getElementById('adxPeriod').value = data.indicators.adxPeriod;
+                        if(document.getElementById('bbPeriod')) document.getElementById('bbPeriod').value = data.indicators.bbPeriod;
+                        if(document.getElementById('smcPeriod')) document.getElementById('smcPeriod').value = data.indicators.smcPeriod;
+                    }
+                    if (data.trade) {
+                        const condVals = ['targetMoney', 'targetLot', 'stopDate'];
+                        if(document.getElementById('conditionStopTrade')) document.getElementById('conditionStopTrade').selectedIndex = condVals.indexOf(data.trade.conditionStopTrade);
+                        if(document.getElementById('targetMoney')) document.getElementById('targetMoney').value = data.trade.targetMoney;
+                        if(document.getElementById('targetLot')) document.getElementById('targetLot').value = data.trade.targetLot;
+                        if(document.getElementById('telegramToggle')) document.getElementById('telegramToggle').checked = data.trade.notifyTelegram;
+                        if(document.getElementById('playSoundToggle')) document.getElementById('playSoundToggle').checked = data.trade.playSound !== false;
+                        if(document.getElementById('autoSellTimeoutToggle')) document.getElementById('autoSellTimeoutToggle').checked = data.trade.autoSellTimeout || false;
+                        if(document.getElementById('autoSellTimeoutSeconds') && data.trade.autoSellTimeoutSeconds) document.getElementById('autoSellTimeoutSeconds').value = data.trade.autoSellTimeoutSeconds;
+                        if(document.getElementById('buyMethodSelect') && data.trade.buyMethod) document.getElementById('buyMethodSelect').value = data.trade.buyMethod;
+                        
+                        if(data.trade.martingale) {
+                            const rb = document.querySelector(`input[name="useMartingale"][value="${data.trade.martingale.type}"]`);
+                            if(rb) rb.checked = true;
+                            if(document.getElementById('martingaleList') && data.trade.martingale.list) {
+                                document.getElementById('martingaleList').value = data.trade.martingale.list.join(', ');
+                            }
+                        }
+                    }
+                    if (data.ema) {
+                        ['Short', 'Medium', 'Long'].forEach(k => {
+                            const lk = k.toLowerCase();
+                            if(data.ema[lk]) {
+                                if(document.getElementById(`ema${k}Toggle`)) document.getElementById(`ema${k}Toggle`).checked = data.ema[lk].enabled;
+                                if(document.getElementById(`ema${k}Period`)) document.getElementById(`ema${k}Period`).value = data.ema[lk].period;
+                                if(document.getElementById(`ema${k}Type`)) document.getElementById(`ema${k}Type`).value = data.ema[lk].type;
+                                if(document.getElementById(`ema${k}Color`)) document.getElementById(`ema${k}Color`).value = data.ema[lk].color;
+                            }
+                        });
+                    }
+                    if (data.assets) {
+                        document.querySelectorAll('input[name="asset"]').forEach(cb => {
+                            cb.checked = data.assets.includes(cb.value);
+                        });
+                    }
+                    if (data.granularity) {
+                        document.querySelectorAll('.gran-btn').forEach(b => {
+                            b.classList.toggle('active', parseInt(b.dataset.value) === data.granularity);
+                        });
+                    }
+                    if (data.granularitySettings) {
+                        document.querySelectorAll('.gran-setting-btn').forEach(b => {
+                            b.classList.toggle('active', parseInt(b.dataset.value) === data.granularitySettings);
+                        });
+                    }
+                    // Load and apply theme
+                    if (data.meta && data.meta.theme) {
+                        const theme = data.meta.theme;
+                        document.body.setAttribute('data-theme', theme);
+                        document.querySelectorAll('.theme-btn').forEach(btn => {
+                            btn.classList.toggle('active', btn.dataset.theme === theme);
+                        });
+                        // Update chart if it exists
+                        setTimeout(() => { if (typeof updateChartTheme === 'function') updateChartTheme(); }, 100);
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load setup", e);
+            } finally {
+                isInitLoading = false;
+            }
+            updateJSON(); 
+            if (typeof updateActiveAssetButtons === 'function') updateActiveAssetButtons();
+        }
+
+        // ══════════════════════════════════════════
+        //  1. DATE VALIDATION
+        // ══════════════════════════════════════════
+        function validateDates() {
+            const startEl = document.getElementById('startDate');
+            const stopEl = document.getElementById('stopDate');
+            const startMsg = document.getElementById('startDateMsg');
+            const stopMsg = document.getElementById('stopDateMsg');
+            const start = new Date(startEl.value);
+            const stop = new Date(stopEl.value);
+
+            // reset
+            startEl.classList.remove('error'); stopEl.classList.remove('error');
+            startMsg.className = 'validation-msg'; stopMsg.className = 'validation-msg';
+            startMsg.textContent = ''; stopMsg.textContent = '';
+
+            if (!startEl.value || !stopEl.value) return true;
+
+            const sameDay =
+                start.getFullYear() === stop.getFullYear() &&
+                start.getMonth() === stop.getMonth() &&
+                start.getDate() === stop.getDate();
+
+            if (!sameDay) {
+                stopEl.classList.add('error'); stopMsg.classList.add('show');
+                stopMsg.textContent = '⚠ วันสิ้นสุดต้องเป็นวันเดียวกับวันเริ่มต้น';
+                return false;
+            }
+            if (start >= stop) {
+                startEl.classList.add('error'); startMsg.classList.add('show');
+                startMsg.textContent = '⚠ เวลาเริ่มต้นต้องน้อยกว่าเวลาสิ้นสุด';
+                return false;
+            }
+            return true;
+        }
+
+        document.getElementById('scheduleTradeNo').addEventListener('change', () => { updateJSON(); });
+        document.getElementById('startDate').addEventListener('change', () => { validateDates(); updateJSON(); });
+        document.getElementById('stopDate').addEventListener('change', () => { validateDates(); updateJSON(); });
+        document.getElementById('buyMethodSelect').addEventListener('change', () => { updateJSON(); });
+
+        document.getElementById('useSchedule').addEventListener('change', function() {
+            if (this.checked) {
+                const now = new Date();
+                const startVal = document.getElementById('startDate').value;
+                const stopVal = document.getElementById('stopDate').value;
+                if (startVal && stopVal) {
+                    const start = new Date(startVal);
+                    const stop = new Date(stopVal);
+                    if (start < now || stop < now) {
+                        alert('⚠️ คำเตือน: เวลาที่ตั้งไว้ใน Start Date หรือ Stop Date เป็นเวลาในอดีต! กรุณาตรวจสอบเวลาอีกครั้ง');
+                        this.checked = false;
+                        updateJSON();
+                    }
+                }
+            }
+        });
+
+        document.getElementById('fetchBtn').addEventListener('click', () => {
+            if (!validateDates()) return;
+            console.log('Fetching data...', collectSettings());
+        });
+
+        let isTradeRunning = false;
+        let tradeStartTime = null;
+        let tradeDurationInterval = null;
+
+        function updateTradingDuration() {
+            const container = document.getElementById('trading-duration-container');
+            if (!isTradeRunning || !tradeStartTime) {
+                if (container) container.style.display = 'none';
+                return;
+            }
+
+            if (container) container.style.display = 'flex';
+
+            const now = Date.now();
+            const elapsedMs = now - tradeStartTime;
+            const elapsedMins = Math.floor(elapsedMs / 60000);
+            const elapsedSecs = Math.floor((elapsedMs % 60000) / 1000);
+            
+            const timeEl = document.getElementById('trading-time-elapsed');
+            if (timeEl) timeEl.textContent = `ระยะเวลา: ${elapsedMins} นาที ${elapsedSecs} วินาที`;
+
+            // Calculate percent if stopDate is set
+            const stopVal = document.getElementById('stopDate').value;
+            const startVal = document.getElementById('startDate').value;
+            
+            const bar = document.getElementById('trading-progress-bar');
+            const percentEl = document.getElementById('trading-progress-percent');
+            
+            if (stopVal && startVal && bar && percentEl) {
+                const start = new Date(startVal).getTime();
+                const stop = new Date(stopVal).getTime();
+                const totalDuration = stop - start;
+                
+                if (totalDuration > 0) {
+                    let percent = ((now - start) / totalDuration) * 100;
+                    percent = Math.min(100, Math.max(0, percent));
+                    
+                    bar.style.width = `${percent}%`;
+                    percentEl.textContent = `${Math.round(percent)}%`;
+                    
+                    if (percent > 90) {
+                        bar.style.background = 'var(--red)';
+                        percentEl.style.color = 'var(--red)';
+                    } else if (percent > 70) {
+                        bar.style.background = 'var(--orange)';
+                        percentEl.style.color = 'var(--orange)';
+                    } else {
+                        bar.style.background = 'linear-gradient(90deg, var(--green), #00d2ff)';
+                        percentEl.style.color = 'var(--green)';
+                    }
+                } else {
+                    bar.style.width = '0%';
+                    percentEl.textContent = '0%';
+                }
+            } else if (bar && percentEl) {
+                 bar.style.width = '100%';
+                 bar.style.background = 'var(--accent)';
+                 percentEl.textContent = 'Active';
+                 percentEl.style.color = 'var(--accent)';
+            }
+        }
+        document.getElementById('goTradeBtn').addEventListener('click', async () => {
+            if (!validateDates() || isTradeRunning) return;
+            isTradeRunning = true;
+            tradeStartTime = Date.now();
+            if (tradeDurationInterval) clearInterval(tradeDurationInterval);
+            tradeDurationInterval = setInterval(updateTradingDuration, 1000);
+            updateTradingDuration();
+            const settings = collectSettings();
+            console.log('Sending Trade Config to Server...', settings);
+
+            // Auto-increment Schedule Trade No for the NEXT run
+            const currentNo = parseInt(document.getElementById('scheduleTradeNo').value) || 1;
+            document.getElementById('scheduleTradeNo').value = currentNo + 1;
+            updateJSON();
+
+            // ═══ Reconnect WS ก่อนเทรด (ถ้ายังไม่ได้เชื่อมต่อ) ═══
+            shouldStayConnected = true;
+            if (!localWs || localWs.readyState !== WebSocket.OPEN) {
+                console.log('🔌 Reconnecting WS before Go Trade...');
+                connectRustWebSocket('trade');
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+
+            try {
+                const response = await fetch('/api/trade', {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify(settings)
+                });
+                
+                const data = await response.json();
+                console.log("Server Response:", data);
+                alert(data.message);
+            } catch (e) {
+                console.error("Error communicating with server:", e);
+                isTradeRunning = false;
+                if (tradeDurationInterval) clearInterval(tradeDurationInterval);
+                tradeDurationInterval = null;
+                updateTradingDuration();
+                shouldStayConnected = false;
+                alert("Could not connect to the Backend Server.");
+            }
+        });
+
+        document.getElementById('stopTradeBtn').addEventListener('click', async () => {
+            console.log("Stopping Trade...");
+            try {
+                const response = await fetch('/api/stop', { method: 'POST' });
+                const data = await response.json();
+                console.log("Server Response:", data);
+                if (data.status === 'success') {
+                    setConnectionStatus(false);
+                    document.getElementById('connText').textContent = 'Trade Stopped';
+                }
+                isTradeRunning = false;
+                if (tradeDurationInterval) clearInterval(tradeDurationInterval);
+                tradeDurationInterval = null;
+                updateTradingDuration();
+                // ═══ ปิด WS เพื่อประหยัด traffic หลังหยุดเทรด ═══
+                shouldStayConnected = false;
+                if (localWs) {
+                    localWs.onclose = null;
+                    localWs.close();
+                    localWs = null;
+                }
+                const ct = document.getElementById('connText');
+                if (ct) ct.textContent = 'หยุดเทรดแล้ว (ประหยัด Traffic)';
+                const ctb = document.getElementById('connTextBig');
+                if (ctb) ctb.textContent = 'หยุดเทรดแล้ว — กด Go Trade เพื่อเริ่มใหม่';
+                alert(data.message);
+            } catch (e) {
+                console.error("Error stopping trade:", e);
+                alert("Could not connect to the Backend Server to Stop.");
+            }
+        });
+
+        document.getElementById('terminateBtn').addEventListener('click', async () => {
+            if (!confirm("⚠️ คำเตือน: คุณต้องการปิดโปรแกรม Backend ทั้งหมดและกลับสู่หน้าต่าง Prompt หรือไม่?")) return;
+            isTradeRunning = false;
+            if (tradeDurationInterval) clearInterval(tradeDurationInterval);
+            tradeDurationInterval = null;
+            updateTradingDuration();
+            console.log("Terminating Server...");
+            try {
+                const response = await fetch('/api/terminate', { method: 'POST' });
+                const data = await response.json();
+                console.log("Server Response:", data);
+                
+                // อัปเดต UI ให้รู้ว่าปิดแล้ว
+                setConnectionStatus(false);
+                document.getElementById('connText').textContent = 'Server Terminated';
+                const connTextBig = document.getElementById('connTextBig');
+                if (connTextBig) connTextBig.textContent = 'Server Terminated';
+                
+                // แจ้งเตือนผู้ใช้
+                alert(data.message);
+                
+                // ปิด WebSocket Local 
+                if (localWs) {
+                    localWs.onclose = null; // กันไม่ให้มันเด้งพยายามต่อใหม่
+                    localWs.close();
+                }
+            } catch (e) {
+                console.error("Error terminating server:", e);
+                setConnectionStatus(false);
+                document.getElementById('connText').textContent = 'Server Offline';
+                const connTextBig = document.getElementById('connTextBig');
+                if (connTextBig) connTextBig.textContent = 'Server Offline';
+            }
+        });
+
+        // ══════════════════════════════════════════
+        //  3. RUST WEBSOCKET CLIENT & DATA RENDER
+        // ══════════════════════════════════════════
+        let localWs;
+        let shouldStayConnected = false; // true เมื่อกำลังเทรดหรือต้องการ connect ถาวร
+        let lwChart = null;
+        let candleSeries = null;
+        let emaShortSeries = null;
+        let emaMediumSeries = null;
+        let emaLongSeries = null;
+        let allAnalysisData = []; // ข้อมูลของ asset ที่กำลังแสดงอยู่
+        let allDataByAsset = {}; // เก็บข้อมูลแยกตาม asset { 'vol10': [...], 'vol25_1s': [...] }
+        let currentChartAsset = ''; // asset ที่กำลังแสดงบนกราฟ
+        window.currentTradeHistory = []; // เก็บข้อมูล trade history ที่โหลดมา
+        window.assetTradingStates = {}; // เก็บสถานะการเทรดของแต่ละ asset
+        window.activeOrders = {}; // เก็บข้อมูลออเดอร์ที่กำลังรันอยู่ { contract_id: data }
+        window.targetProfits = {}; // เก็บ target profit ของแต่ละ contract_id
+        
+        let initialBalance = null;
+        let currentBalance = 0;
+
+        function updateBalanceSummary(balance) {
+            currentBalance = balance;
+            
+            // 1. Balance ณ ปัจจุบัน
+            document.getElementById('summary-initial-balance').textContent = `$${currentBalance.toFixed(2)}`;
+            
+            // คำนวณกำไรจาก Trade History
+            const history = window.currentTradeHistory || [];
+            const currentScheduleNo = parseInt(document.getElementById('scheduleTradeNo').value) || 1;
+            const thbRate = parseFloat(document.getElementById('thb-rate').value) || 35;
+            
+            // 2. กำไรรอบนี้ (scheduleTradeNo)
+            let scheduleProfitUsd = 0;
+            history.forEach(t => {
+                if ((t.scheduleTradeNo || 0) === currentScheduleNo) {
+                    scheduleProfitUsd += (t.ThisProfit || 0);
+                }
+            });
+            
+            const schedLabelEl = document.getElementById('summary-schedule-label');
+            const schedLabelThbEl = document.getElementById('summary-schedule-label-thb');
+            if (schedLabelEl) schedLabelEl.textContent = `#${currentScheduleNo}`;
+            if (schedLabelThbEl) schedLabelThbEl.textContent = `#${currentScheduleNo}`;
+            
+            const schedEl = document.getElementById('summary-current-balance');
+            schedEl.textContent = `${scheduleProfitUsd >= 0 ? '+' : ''}$${scheduleProfitUsd.toFixed(2)}`;
+            schedEl.style.color = scheduleProfitUsd >= 0 ? 'var(--green)' : 'var(--red)';
+            
+            const scheduleProfitThb = scheduleProfitUsd * thbRate;
+            const schedThbEl = document.getElementById('summary-schedule-thb');
+            schedThbEl.textContent = `${scheduleProfitThb >= 0 ? '+' : ''}฿${scheduleProfitThb.toFixed(2)}`;
+            schedThbEl.style.color = scheduleProfitThb >= 0 ? 'var(--green)' : 'var(--red)';
+            
+            // 3. กำไรวันนี้ (รวมทุกรอบ)
+            let todayProfitUsd = 0;
+            history.forEach(t => {
+                todayProfitUsd += (t.ThisProfit || 0);
+            });
+            
+            const profitEl = document.getElementById('summary-profit-usd');
+            profitEl.textContent = `${todayProfitUsd >= 0 ? '+' : ''}$${todayProfitUsd.toFixed(2)}`;
+            profitEl.style.color = todayProfitUsd >= 0 ? 'var(--green)' : 'var(--red)';
+            
+            const todayProfitThb = todayProfitUsd * thbRate;
+            const thbEl = document.getElementById('summary-profit-thb');
+            thbEl.textContent = `${todayProfitThb >= 0 ? '+' : ''}฿${todayProfitThb.toFixed(2)}`;
+            thbEl.style.color = todayProfitThb >= 0 ? 'var(--green)' : 'var(--red)';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const thbInput = document.getElementById('thb-rate');
+            if (thbInput) {
+                thbInput.addEventListener('input', () => {
+                    if (currentBalance !== 0) updateBalanceSummary(currentBalance);
+                });
+            }
+            
+            // Listen to checkbox changes to update the active asset buttons
+            document.querySelectorAll('input[name="asset"]').forEach(el => {
+                el.addEventListener('change', updateActiveAssetButtons);
+            });
+
+            // Fetch initial USD to THB rate
+            fetchExchangeRate();
+        });
+
+        async function fetchExchangeRate() {
+            try {
+                const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const data = await res.json();
+                if (data && data.rates && data.rates.THB) {
+                    const rate = data.rates.THB;
+                    const thbRateEl = document.getElementById('thb-rate');
+                    if (thbRateEl) {
+                        thbRateEl.value = rate.toFixed(2);
+                        console.log(`💱 Updated THB Rate: ${rate.toFixed(2)} ฿/$`);
+                        if (currentBalance !== 0) updateBalanceSummary(currentBalance);
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to fetch exchange rate", e);
+            }
+        }
+
+        function updateActiveAssetButtons() {
+            const container = document.getElementById('active-assets-container');
+            if (!container) return;
+            
+            const checked = Array.from(document.querySelectorAll('input[name="asset"]:checked')).map(el => el.value);
+            
+            if (checked.length === 0) {
+                container.innerHTML = '<div style="font-size:12px; color:var(--text3);">ไม่มี Asset ที่ถูกเลือก</div>';
+                return;
+            }
+
+            let html = '';
+            checked.forEach(asset => {
+                if (!window.assetTradingStates[asset]) {
+                    window.assetTradingStates[asset] = { isTrading: false, lossCon: 0 };
+                }
+                
+                let state = window.assetTradingStates[asset];
+                let bg = state.isTrading ? 'var(--green)' : 'var(--bg3)';
+                let color = state.isTrading ? '#fff' : 'var(--text)';
+                let text = state.isTrading ? `${asset.toUpperCase()} [LC:${state.lossCon}]` : asset.toUpperCase();
+                let border = state.isTrading ? '1px solid var(--green)' : '1px solid var(--border)';
+                
+                html += `<div id="btn-asset-${asset}" style="padding:6px 12px; border-radius:20px; font-size:12px; font-weight:bold; background:${bg}; color:${color}; border:${border}; transition:all 0.3s; display:flex; align-items:center; justify-content:center; min-width:80px;">
+                    ${text}
+                </div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function getChartThemeColors() {
+            const cs = getComputedStyle(document.body);
+            const theme = document.body.getAttribute('data-theme') || 'lightblue';
+            const isDark = (theme === 'dark' || theme === 'midnight');
+            return {
+                background: cs.getPropertyValue('--bg2').trim() || (isDark ? '#172130' : '#ffffff'),
+                textColor: cs.getPropertyValue('--text').trim() || (isDark ? '#e0eaf8' : '#1a2535'),
+                gridColor: cs.getPropertyValue('--border').trim() || (isDark ? '#2e4055' : '#c8d8eb'),
+                isDark
+            };
+        }
+
+        let chartResizeObserver = null;
+
+        function initChart() {
+            const container = document.getElementById('chart');
+
+            // ตรวจว่า chart ยังอยู่ใน DOM จริงๆ (มี canvas ข้างใน)
+            const chartStillInDom = lwChart && candleSeries && container.querySelector('canvas');
+            if (chartStillInDom) {
+                console.log('📊 initChart: chart exists, skip recreate');
+                return;
+            }
+
+            // ถ้า chart เก่ามีอยู่แต่ DOM หายไป → ทำลายก่อน
+            if (lwChart) {
+                try { lwChart.remove(); } catch(e) {}
+                lwChart = null;
+                candleSeries = null;
+                emaShortSeries = null;
+                emaMediumSeries = null;
+                emaLongSeries = null;
+            }
+
+            container.innerHTML = '';
+            console.log('📊 initChart: creating new chart, container width =', container.clientWidth);
+
+            const colors = getChartThemeColors();
+            const TH_OFFSET = 7 * 60 * 60;
+            const chartWidth = container.clientWidth > 0 ? container.clientWidth : 800;
+
+            try {
+                lwChart = LightweightCharts.createChart(container, {
+                    width: chartWidth,
+                    height: 420,
+                    layout: {
+                        background: { type: 'solid', color: colors.background },
+                        textColor: colors.textColor,
+                        fontFamily: "'Sarabun', sans-serif",
+                        fontSize: 12,
+                    },
+                    grid: {
+                        vertLines: { color: colors.gridColor, style: 1 },
+                        horzLines: { color: colors.gridColor, style: 1 },
+                    },
+                    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+                    rightPriceScale: { borderColor: colors.gridColor },
+                    timeScale: {
+                        borderColor: colors.gridColor,
+                        timeVisible: true,
+                        secondsVisible: false,
+                    },
+                    handleScroll: { vertTouchDrag: false },
+                    localization: {
+                        timeFormatter: (timestamp) => {
+                            const d = new Date((timestamp + TH_OFFSET) * 1000);
+                            const hh = String(d.getUTCHours()).padStart(2, '0');
+                            const mm = String(d.getUTCMinutes()).padStart(2, '0');
+                            return `${hh}:${mm}`;
+                        },
+                    },
+                });
+
+                candleSeries = lwChart.addCandlestickSeries({
+                    upColor: '#06D6A0',
+                    downColor: '#E8304A',
+                    borderDownColor: '#E8304A',
+                    borderUpColor: '#06D6A0',
+                    wickDownColor: '#E8304A',
+                    wickUpColor: '#06D6A0',
+                });
+
+                emaShortSeries = lwChart.addLineSeries({
+                    color: document.getElementById('emaShortColor') ? document.getElementById('emaShortColor').value : '#06D6A0',
+                    lineWidth: 2,
+                    crosshairMarkerVisible: false,
+                    lastValueVisible: false,
+                    priceLineVisible: false,
+                });
+
+                emaMediumSeries = lwChart.addLineSeries({
+                    color: document.getElementById('emaMediumColor') ? document.getElementById('emaMediumColor').value : '#F5A623',
+                    lineWidth: 2,
+                    crosshairMarkerVisible: false,
+                    lastValueVisible: false,
+                    priceLineVisible: false,
+                });
+
+                emaLongSeries = lwChart.addLineSeries({
+                    color: document.getElementById('emaLongColor') ? document.getElementById('emaLongColor').value : '#E8304A',
+                    lineWidth: 2,
+                    crosshairMarkerVisible: false,
+                    lastValueVisible: false,
+                    priceLineVisible: false,
+                });
+
+                // Responsive resize — สร้าง ResizeObserver แค่ครั้งเดียว
+                if (chartResizeObserver) chartResizeObserver.disconnect();
+                chartResizeObserver = new ResizeObserver(() => {
+                    if (lwChart && container.clientWidth > 0) {
+                        lwChart.applyOptions({ width: container.clientWidth });
+                    }
+                });
+                chartResizeObserver.observe(container);
+
+                console.log('📊 initChart: chart created successfully');
+            } catch (err) {
+                console.error('❌ initChart error:', err);
+                lwChart = null;
+                candleSeries = null;
+            }
+        }
+
+        // แปลง epoch UTC → epoch ที่ shift +7 ชม. สำหรับ Lightweight Charts
+        const TH_OFFSET_SEC = 7 * 60 * 60;
+        function toThaiTime(epoch) {
+            return epoch + TH_OFFSET_SEC;
+        }
+
+        function renderChart(analysisList) {
+            if (!lwChart || !candleSeries) initChart();
+
+            const showSpike = document.getElementById('spikeShowToggle').checked;
+            const greenSpikeColor = document.getElementById('spikeGreenColor').value;
+            const redSpikeColor = document.getElementById('spikeRedColor').value;
+
+            let greenCount = 0;
+            let redCount = 0;
+
+            // แปลงข้อมูล AnalysisObject → Candlestick data (shift +7h)
+            const chartData = analysisList.map(d => {
+                let colorProps = {};
+                if (showSpike && d.is_atr) {
+                    if (d.this_color === 'green') {
+                        colorProps = { color: greenSpikeColor, wickColor: greenSpikeColor, borderColor: greenSpikeColor };
+                        greenCount++;
+                    } else if (d.this_color === 'red') {
+                        colorProps = { color: redSpikeColor, wickColor: redSpikeColor, borderColor: redSpikeColor };
+                        redCount++;
+                    }
+                }
+
+                return {
+                    time: toThaiTime(d.epoch),
+                    open: d.open,
+                    high: d.high,
+                    low: d.low,
+                    close: d.close,
+                    ...colorProps
+                };
+            });
+
+            document.getElementById('spike-green-count').textContent = greenCount;
+            document.getElementById('spike-red-count').textContent = redCount;
+
+            candleSeries.setData(chartData);
+
+            // เตรียมข้อมูล EMA
+            const emaShortData = [];
+            const emaMediumData = [];
+            const emaLongData = [];
+            
+            analysisList.forEach(d => {
+                const time = toThaiTime(d.epoch);
+                if (d.ema_short_val) emaShortData.push({ time, value: d.ema_short_val });
+                if (d.ema_medium_val) emaMediumData.push({ time, value: d.ema_medium_val });
+                if (d.ema_long_val) emaLongData.push({ time, value: d.ema_long_val });
+            });
+
+            if (emaShortSeries) {
+                if (document.getElementById('emaShortToggle') && document.getElementById('emaShortToggle').checked) {
+                    emaShortSeries.setData(emaShortData);
+                } else {
+                    emaShortSeries.setData([]);
+                }
+            }
+            if (emaMediumSeries) {
+                if (document.getElementById('emaMediumToggle') && document.getElementById('emaMediumToggle').checked) {
+                    emaMediumSeries.setData(emaMediumData);
+                } else {
+                    emaMediumSeries.setData([]);
+                }
+            }
+            if (emaLongSeries) {
+                if (document.getElementById('emaLongToggle') && document.getElementById('emaLongToggle').checked) {
+                    emaLongSeries.setData(emaLongData);
+                } else {
+                    emaLongSeries.setData([]);
+                }
+            }
+
+            // คำนวณและวาด Trade Markers
+            const showTradeMarkers = document.getElementById('showTradeMarkersToggle') ? document.getElementById('showTradeMarkersToggle').checked : false;
+            let markers = [];
+            if (showTradeMarkers && window.currentTradeHistory && window.currentTradeHistory.length > 0) {
+                // กรองเฉพาะ trade ที่ตรงกับ asset ที่แสดง (หรือถ้าไม่ได้กรองก็รวมหมด)
+                // แปลงชื่อ Asset ให้ตรงกันระหว่าง Deriv symbol กับ UI dropdown
+                const getCleanAsset = (a) => {
+                    if (!a) return "";
+                    let s = a.toLowerCase();
+                    if (s.startsWith('r_')) return s.replace('r_', 'vol');
+                    if (s.startsWith('1hz') && s.endsWith('v')) return s.replace('1hz', 'vol').replace('v', '_1s');
+                    return s;
+                };
+                const cAsset = getCleanAsset(currentChartAsset);
+                
+                const relevantTrades = window.currentTradeHistory.filter(t => 
+                    getCleanAsset(t.Asset) === cAsset
+                );
+                
+                relevantTrades.forEach(trade => {
+                    const timeEpoch = trade.timeCandle ? toThaiTime(trade.timeCandle) : 0;
+                    if (timeEpoch > 0) {
+                        const isWin = (trade.ThisProfit || 0) > 0;
+                        const isLoss = (trade.ThisProfit || 0) < 0;
+                        const lossCon = trade.lossCon !== undefined ? trade.lossCon : 0;
+                        
+                        let mColor = isWin ? '#06D6A0' : (isLoss ? '#E8304A' : '#F5A623');
+                        let mShape = isWin ? 'arrowUp' : 'arrowDown';
+                        let mPos = isWin ? 'belowBar' : 'aboveBar';
+                        
+                        let mText;
+                        if (isWin) {
+                            mText = 'W';
+                        } else {
+                            mText = lossCon > 3 ? `⚠️ L(${lossCon})` : `L(${lossCon})`;
+                        }
+                        
+                        markers.push({
+                            time: timeEpoch,
+                            position: mPos,
+                            color: mColor,
+                            shape: mShape,
+                            text: mText
+                        });
+                    }
+                });
+                
+                // เรียง marker ตามเวลา (Lightweight Charts ต้องการข้อมูล marker เรียงจากอดีตไปปัจจุบัน)
+                markers.sort((a, b) => a.time - b.time);
+            }
+            candleSeries.setMarkers(markers);
+            
+            // Only fit content on the very first load to avoid zooming out unexpectedly
+            if (!lwChart.hasInitiallyFitContent) {
+                lwChart.timeScale().fitContent();
+                lwChart.hasInitiallyFitContent = true;
+            }
+        }
+
+        function updateChartTheme() {
+            if (!lwChart) return;
+            const colors = getChartThemeColors();
+            lwChart.applyOptions({
+                layout: {
+                    background: { type: 'solid', color: colors.background },
+                    textColor: colors.textColor,
+                },
+                grid: {
+                    vertLines: { color: colors.gridColor },
+                    horzLines: { color: colors.gridColor },
+                },
+                rightPriceScale: { borderColor: colors.gridColor },
+                timeScale: { borderColor: colors.gridColor },
+            });
+        }
+
+        function setConnectionStatus(connected) {
+            const badge = document.getElementById('connBadge');
+            const text = document.getElementById('connText');
+            const badgeBig = document.getElementById('connBadgeBig');
+            const textBig = document.getElementById('connTextBig');
+            if (connected) {
+                if (badge) badge.className = 'conn-badge connected';
+                if (text) text.textContent = 'Connected';
+                if (badgeBig) badgeBig.className = 'conn-badge connected';
+                if (textBig) textBig.textContent = 'Connected';
+            } else {
+                if (badge) badge.className = 'conn-badge disconnected';
+                if (text) text.textContent = 'Disconnected';
+                if (badgeBig) badgeBig.className = 'conn-badge disconnected';
+                if (textBig) textBig.textContent = 'Disconnected';
+            }
+        }
+
+        function connectRustWebSocket(mode) {
+            mode = mode || 'trade';
+            if (mode === 'trade') shouldStayConnected = true;
+
+            if (localWs) {
+                localWs.onclose = null; // กันไม่ให้ trigger reconnect ขณะปิดตัวเก่า
+                localWs.close();
+            }
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            localWs = new WebSocket(`${protocol}//${window.location.host}/ws`);
+
+            localWs.onopen = () => {
+                console.log(`🟢 Connected to Rust Backend WebSocket (mode: ${mode})`);
+                setConnectionStatus(true);
+
+                // ═══ ดึงสถานะปัจจุบัน: บอทกำลังทำงานอยู่หรือไม่? ═══
+                fetch('/api/status').then(r => r.json()).then(status => {
+                    console.log("📊 Server Status:", status);
+                    if (status.is_trading) {
+                        isTradeRunning = true;
+                        shouldStayConnected = true; // ถ้าบอทกำลังทำงาน ให้ connect ถาวร
+                        const msg = `Trading Active (${status.bot_count} bot${status.bot_count > 1 ? 's' : ''}: ${status.active_assets.join(', ')})`;
+                        const connText = document.getElementById('connText');
+                        if (connText) connText.textContent = msg;
+                        const connTextBig = document.getElementById('connTextBig');
+                        if (connTextBig) connTextBig.textContent = msg;
+                        appendBotLog(`🔄 เชื่อมต่อสำเร็จ — พบบอทกำลังทำงาน ${status.bot_count} ตัว: ${status.active_assets.join(', ')}`, 'system');
+                    } else {
+                        appendBotLog('🔌 เชื่อมต่อสำเร็จ — ยังไม่มีบอททำงาน (กด Go Trade เพื่อเริ่ม)', 'system');
+                    }
+                    if (status.balance !== undefined) {
+                        document.getElementById('status-balance').textContent = `Balance: $${status.balance.toFixed(2)} 🔄`;
+                        updateBalanceSummary(status.balance);
+                    }
+
+                    // ═══ ตรวจสอบ Schedule Status ═══
+                    checkScheduleStatus();
+
+                    // ═══ ถ้าเป็น initial mode และยังไม่ได้เทรด → ปิด WS เพื่อประหยัด traffic ═══
+                    if (mode === 'initial' && !status.is_trading) {
+                        console.log('📴 Balance fetched. จะปิด WS เพื่อประหยัด Traffic ใน 2 วินาที...');
+                        setTimeout(() => {
+                            if (localWs && !shouldStayConnected) {
+                                localWs.onclose = null;
+                                localWs.close();
+                                localWs = null;
+                                setConnectionStatus(false);
+                                const ct = document.getElementById('connText');
+                                if (ct) ct.textContent = 'ยังไม่เทรด (ประหยัด Traffic)';
+                                const ctb = document.getElementById('connTextBig');
+                                if (ctb) ctb.textContent = 'ยังไม่เทรด — รอ Schedule หรือกด Go Trade';
+                                console.log('📴 WS ปิดแล้ว — รอ Schedule หรือ Go Trade เพื่อ reconnect');
+                            }
+                        }, 2000);
+                    }
+                }).catch(e => console.error("Error fetching status:", e));
+            };
+
+            localWs.onmessage = (event) => {
+                try {
+                    const payload = JSON.parse(event.data);
+                    
+                    if (payload.type === 'candles_history') {
+                        const asset = payload.asset || 'unknown';
+                        console.log(`📊 [${asset}] ได้รับประวัติแท่งเทียน: ${payload.data.length} แท่ง`);
+                        
+                        // เก็บข้อมูลแยกตาม asset
+                        allDataByAsset[asset] = payload.data;
+                        
+                        // อัปเดตปุ่ม asset
+                        const select = document.getElementById('chartAssetSelect');
+                        if (!document.getElementById(`chart-btn-${asset}`)) {
+                            if (select.innerHTML.includes('รอข้อมูล')) select.innerHTML = '';
+                            const btn = document.createElement('button');
+                            btn.id = `chart-btn-${asset}`;
+                            btn.className = 'chart-asset-btn';
+                            btn.dataset.asset = asset;
+                            btn.textContent = asset.toUpperCase();
+                            btn.style.cssText = "padding:4px 12px; border-radius:16px; border:1px solid var(--border); background:var(--bg3); color:var(--text); font-size:12px; cursor:pointer; font-weight:600; transition:all 0.2s;";
+                            btn.onclick = () => window.switchChartAsset(asset);
+                            select.appendChild(btn);
+                        }
+                        
+                        // ถ้ายังไม่ได้เลือก asset → เลือก asset แรกที่เข้ามา
+                        if (!currentChartAsset) {
+                            window.switchChartAsset(asset);
+                        }
+                        
+                        // วาดกราฟเฉพาะ asset ที่กำลังแสดงอยู่
+                        if (asset === currentChartAsset) {
+                            allAnalysisData = allDataByAsset[asset];
+                            document.getElementById('status-count').textContent = `Candles: ${allAnalysisData.length}`;
+                            initChart();
+                            const prevRange = lwChart ? lwChart.timeScale().getVisibleRange() : null;
+                            renderChart(allAnalysisData);
+                            if (prevRange) {
+                                try { lwChart.timeScale().setVisibleRange(prevRange); } catch(e) {}
+                            }
+                            renderTable(allAnalysisData);
+                        }
+                    }
+                    else if (payload.type === 'ohlc_update') {
+                        const newData = payload.data;
+                        const asset = payload.asset || 'unknown';
+                        if (!newData || !newData.epoch || !newData.close) return;
+                        if (newData.open <= 0 || newData.high <= 0 || newData.low <= 0 || newData.close <= 0) return;
+                        
+                        // เก็บข้อมูลแยกตาม asset
+                        if (!allDataByAsset[asset]) allDataByAsset[asset] = [];
+                        const assetData = allDataByAsset[asset];
+                        
+                        if (assetData.length > 0) {
+                            const lastIdx = assetData.length - 1;
+                            if (assetData[lastIdx].epoch === newData.epoch) {
+                                assetData[lastIdx] = newData;
+                            } else if (newData.epoch > assetData[lastIdx].epoch) {
+                                assetData.push(newData);
+                            } else {
+                                return;
+                            }
+                        } else {
+                            assetData.push(newData);
+                        }
+                        
+                        // อัปเดตปุ่มถ้า asset ใหม่
+                        const select = document.getElementById('chartAssetSelect');
+                        if (!document.getElementById(`chart-btn-${asset}`)) {
+                            if (select.innerHTML.includes('รอข้อมูล')) select.innerHTML = '';
+                            const btn = document.createElement('button');
+                            btn.id = `chart-btn-${asset}`;
+                            btn.className = 'chart-asset-btn';
+                            btn.dataset.asset = asset;
+                            btn.textContent = asset.toUpperCase();
+                            btn.style.cssText = "padding:4px 12px; border-radius:16px; border:1px solid var(--border); background:var(--bg3); color:var(--text); font-size:12px; cursor:pointer; font-weight:600; transition:all 0.2s;";
+                            btn.onclick = () => window.switchChartAsset(asset);
+                            select.appendChild(btn);
+                        }
+                        if (!currentChartAsset) {
+                            window.switchChartAsset(asset);
+                        }
+
+                        // อัปเดตกราฟเฉพาะ asset ที่กำลังแสดงอยู่
+                        if (asset !== currentChartAsset) return;
+                        
+                        allAnalysisData = assetData;
+                        document.getElementById('status-count').textContent = `Candles: ${allAnalysisData.length}`;
+
+                        if (candleSeries) {
+                            const showSpike = document.getElementById('spikeShowToggle').checked;
+                            const greenSpikeColor = document.getElementById('spikeGreenColor').value;
+                            const redSpikeColor = document.getElementById('spikeRedColor').value;
+
+                            let colorProps = {};
+                            if (showSpike && newData.is_atr) {
+                                if (newData.this_color === 'green') {
+                                    colorProps = { color: greenSpikeColor, wickColor: greenSpikeColor, borderColor: greenSpikeColor };
+                                } else if (newData.this_color === 'red') {
+                                    colorProps = { color: redSpikeColor, wickColor: redSpikeColor, borderColor: redSpikeColor };
+                                }
+                            }
+
+                            candleSeries.update({
+                                time: toThaiTime(newData.epoch),
+                                open: newData.open,
+                                high: newData.high,
+                                low: newData.low,
+                                close: newData.close,
+                                ...colorProps
+                            });
+
+                            const tTime = toThaiTime(newData.epoch);
+                            if (emaShortSeries && document.getElementById('emaShortToggle') && document.getElementById('emaShortToggle').checked && newData.ema_short_val) {
+                                emaShortSeries.update({ time: tTime, value: newData.ema_short_val });
+                            }
+                            if (emaMediumSeries && document.getElementById('emaMediumToggle') && document.getElementById('emaMediumToggle').checked && newData.ema_medium_val) {
+                                emaMediumSeries.update({ time: tTime, value: newData.ema_medium_val });
+                            }
+                            if (emaLongSeries && document.getElementById('emaLongToggle') && document.getElementById('emaLongToggle').checked && newData.ema_long_val) {
+                                emaLongSeries.update({ time: tTime, value: newData.ema_long_val });
+                            }
+
+                            // Re-render chart to update markers
+                            const prevRange = lwChart ? lwChart.timeScale().getVisibleRange() : null;
+                            renderChart(allAnalysisData);
+                            if (prevRange && lwChart) {
+                                try { lwChart.timeScale().setVisibleRange(prevRange); } catch(e) {}
+                            }
+
+                            // Update Spike counts for real-time
+                            let gc = 0, rc = 0;
+                            allAnalysisData.forEach(d => {
+                                if (d.is_atr) {
+                                    if (d.this_color === 'green') gc++;
+                                    else if (d.this_color === 'red') rc++;
+                                }
+                            });
+                            document.getElementById('spike-green-count').textContent = gc;
+                            document.getElementById('spike-red-count').textContent = rc;
+                        }
+
+                        document.getElementById('status-count').textContent = `Candles: ${allAnalysisData.length}`;
+                    }
+                    else if (payload.type === 'order_update') {
+                        const data = payload.data;
+                        if (data && data.contract_id) {
+                            if (data.status === 'won' || data.status === 'lost' || data.status === 'sold' || data.is_sold === 1) {
+                                delete window.activeOrders[data.contract_id];
+                            } else {
+                                window.activeOrders[data.contract_id] = data;
+                            }
+                            updateTrackOrdersTable();
+                        }
+                    }
+                    else if (payload.type === 'trade_result') {
+                        console.log("💰 ข้อมูลการตบท้ายไม้:", payload.data);
+                        // alert(`Trade Finished: ${payload.data.win_status} | Profit: $${payload.data.profit} | Balance: $${payload.data.balance}`);
+                        document.getElementById('status-balance').textContent = `Balance: $${payload.data.balance.toFixed(2)} 🔄`;
+                        updateBalanceSummary(payload.data.balance);
+                        
+                        // อัปเดต History ทันทีเพื่อให้วาด Marker อัตโนมัติ
+                        if (document.getElementById('showTradeMarkersToggle') && document.getElementById('showTradeMarkersToggle').checked) {
+                            if (typeof reloadTradeHistory === 'function') {
+                                reloadTradeHistory(true);
+                            }
+                        }
+                        
+                        // อัปเดตปุ่ม Asset ว่าเทรดจบแล้ว
+                        const assetName = payload.asset || '';
+                        if (assetName && window.assetTradingStates[assetName]) {
+                            window.assetTradingStates[assetName].isTrading = false;
+                            updateActiveAssetButtons();
+                        }
+                    }
+                    else if (payload.type === 'trade_start') {
+                        const assetName = payload.asset || '';
+                        const lossCon = payload.data?.loss_con || 0;
+                        if (assetName) {
+                            if (!window.assetTradingStates[assetName]) {
+                                window.assetTradingStates[assetName] = { isTrading: false, lossCon: 0 };
+                            }
+                            window.assetTradingStates[assetName].isTrading = true;
+                            window.assetTradingStates[assetName].lossCon = lossCon;
+                            updateActiveAssetButtons();
+                        }
+
+                        // Play sound when entering a trade
+                        if (document.getElementById('playSoundToggle') && document.getElementById('playSoundToggle').checked) {
+                            try {
+                                const audio = new Audio('/sounds/icq_uh_oh.mp3');
+                                audio.play().catch(e => console.log('Audio play failed:', e));
+                            } catch(e) {}
+                        }
+                    }
+                    else if (payload.type === 'balance_update') {
+                         if(payload.data && payload.data.balance !== undefined) {
+                             document.getElementById('status-balance').textContent = `Balance: $${payload.data.balance.toFixed(2)} 🔄`;
+                             updateBalanceSummary(payload.data.balance);
+                         }
+                    }
+                    else if (payload.type === 'bot_log') {
+                        appendBotLog(payload.data?.message || '', payload.asset || '');
+                    }
+                } catch (e) {
+                    console.error("Error parsing message:", e);
+                }
+            };
+
+            localWs.onerror = (err) => {
+                console.error("WebSocket error:", err);
+                setConnectionStatus(false);
+            };
+
+            localWs.onclose = () => {
+                console.log('🔴 Disconnected from Rust Backend');
+                setConnectionStatus(false);
+                // Auto-reconnect เฉพาะเมื่ออยู่ในโหมดเทรด (ประหยัด traffic)
+                if (shouldStayConnected) {
+                    console.log('🔄 Auto-reconnecting in 3s (trade mode)...');
+                    setTimeout(() => connectRustWebSocket('trade'), 3000);
+                } else {
+                    console.log('📴 WS ปิด (traffic saving mode — ไม่ reconnect)');
+                    const ct = document.getElementById('connText');
+                    if (ct) ct.textContent = 'ยังไม่เทรด (ประหยัด Traffic)';
+                    const ctb = document.getElementById('connTextBig');
+                    if (ctb) ctb.textContent = 'ยังไม่เทรด — รอ Schedule หรือกด Go Trade';
+                }
+            };
+        }
+
+        function updateTrackOrdersTable() {
+            const tbody = document.querySelector('#trackOrdersTable tbody');
+            const orders = Object.values(window.activeOrders);
+            document.getElementById('track-orders-count').textContent = `${orders.length} active orders`;
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="14">ไม่มีออเดอร์ที่กำลังทำงานอยู่</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            orders.sort((a, b) => (b.purchase_time || 0) - (a.purchase_time || 0)).forEach((order, index) => {
+                const tr = document.createElement('tr');
+                const profit = order.profit || 0;
+                const buyTime = order.purchase_time ? new Date(order.purchase_time * 1000).toLocaleTimeString('th-TH') : '-';
+                const expiryTime = order.date_expiry ? new Date(order.date_expiry * 1000).toLocaleTimeString('th-TH') : '-';
+                
+                // Calculate Time Left and Progress
+                const now = Math.floor(Date.now() / 1000);
+                let timeLeftStr = "-";
+                let isOvertime = false;
+                let progressHtml = "";
+                let timeLeftColor = "inherit";
+
+                if (order.date_expiry && order.purchase_time) {
+                    const totalDuration = order.date_expiry - order.purchase_time;
+                    const elapsed = Math.max(0, now - order.purchase_time);
+                    
+                    if (now > order.date_expiry) {
+                        isOvertime = true;
+                        const overTimeSecs = now - order.date_expiry;
+                        timeLeftStr = `Over ${overTimeSecs}s ⚠️`;
+                        timeLeftColor = "var(--red)";
+                    } else {
+                        const timeLeft = order.date_expiry - now;
+                        timeLeftStr = timeLeft > 60 ? `${Math.floor(timeLeft / 60)}m ${timeLeft % 60}s` : `${timeLeft}s`;
+                        if (timeLeft < 10) timeLeftColor = "var(--red)";
+                    }
+
+                    if (totalDuration > 0) {
+                        let percent = (elapsed / totalDuration) * 100;
+                        percent = Math.min(100, Math.max(0, percent));
+                        
+                        let barColor = 'var(--green)';
+                        if (percent > 90 || isOvertime) barColor = 'var(--red)';
+                        else if (percent > 70) barColor = 'var(--orange)';
+                        
+                        progressHtml = `
+                            <div style="width:100%; min-width:60px; max-width:100px; background:var(--bg3); border-radius:4px; height:6px; margin-top:4px; overflow:hidden;">
+                                <div style="width:${percent}%; height:100%; background:${barColor}; transition:width 1s linear;"></div>
+                            </div>
+                        `;
+                    }
+                } else if (order.date_expiry) {
+                    const timeLeft = Math.max(0, order.date_expiry - now);
+                    timeLeftStr = `${timeLeft}s`;
+                    if (timeLeft < 10) timeLeftColor = "var(--red)";
+                }
+
+                // Auto Sell Logic (Frontend side simple check)
+                const targetProfit = window.targetProfits[order.contract_id] || 0;
+                if (targetProfit > 0 && profit >= targetProfit) {
+                    console.log(`🎯 Target profit reached for ${order.contract_id}! Selling...`);
+                    sellContract(order.contract_id, true);
+                    window.targetProfits[order.contract_id] = 0; // Prevent duplicate sell calls
+                }
+
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${order.contract_id}</td>
+                    <td>${order.display_name || order.symbol}</td>
+                    <td style="color:${order.contract_type === 'CALL' ? 'var(--green)' : 'var(--red)'}">${order.contract_type}</td>
+                    <td>$${(order.buy_price || 0).toFixed(2)}</td>
+                    <td>$${(order.payout || 0).toFixed(2)}</td>
+                    <td style="color:${profit >= 0 ? 'var(--green)' : 'var(--red)'}; font-weight:bold;">
+                        ${profit >= 0 ? '+' : ''}${profit.toFixed(2)}
+                    </td>
+                    <td>${buyTime}</td>
+                    <td>${expiryTime}</td>
+                    <td style="font-weight:bold; color:${timeLeftColor}">
+                        <div style="display:flex; flex-direction:column; align-items:center;">
+                            <span>${timeLeftStr}</span>
+                            ${progressHtml}
+                        </div>
+                    </td>
+                    <td style="color:var(--red);">$${(order.min_profit || 0).toFixed(2)}</td>
+                    <td style="color:var(--green);">$${(order.max_profit || 0).toFixed(2)}</td>
+                    <td>
+                        <input type="number" class="target-profit-input" id="target-${order.contract_id}" value="${targetProfit || ''}" step="0.01" placeholder="0.00">
+                        <button class="set-btn" onclick="setTargetProfit(${order.contract_id})">Set</button>
+                    </td>
+                    <td>
+                        <button class="sell-btn" onclick="sellContract(${order.contract_id})">ขายทันที</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function setTargetProfit(contractId) {
+            const val = parseFloat(document.getElementById(`target-${contractId}`).value) || 0;
+            window.targetProfits[contractId] = val;
+            console.log(`Set Target Profit for ${contractId}: ${val}`);
+        }
+
+        async function sellContract(contractId, skipConfirm) {
+            if (!skipConfirm) {
+                if (!confirm(`คุณต้องการขายสัญญา ID ${contractId} ทันทีใช่หรือไม่?`)) return;
+            }
+            
+            try {
+                const res = await fetch('/api/sell', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contract_id: contractId })
+                });
+                const data = await res.json();
+                console.log("Sell Response:", data);
+            } catch (e) {
+                console.error("Error selling contract:", e);
+            }
+        }
+
+        // Update time left every second
+        setInterval(() => {
+            if (Object.keys(window.activeOrders).length > 0) {
+                updateTrackOrdersTable();
+            }
+        }, 1000);
+
+        function renderTable(analysisList) {
+            const tbody = document.querySelector('.data-table tbody');
+            document.getElementById('table-count').textContent = `${analysisList.length} records`;
+            
+            if (!analysisList || analysisList.length === 0) return;
+            
+            tbody.innerHTML = '';
+            // โชว์แค่ 50 แท่งล่าสุดเอาไว้บนสุดเพื่อไม่ให้หนักเบราว์เซอร์
+            const displayAnalysis = analysisList.slice(-50).reverse();
+            
+            displayAnalysis.forEach(data => {
+                const tr = document.createElement('tr');
+                const timeStr = new Date(data.epoch * 1000).toLocaleTimeString('th-TH');
+                
+                tr.innerHTML = `
+                    <td>${timeStr}</td>
+                    <td>${data.open.toFixed(4)}</td>
+                    <td>${data.high.toFixed(4)}</td>
+                    <td>${data.low.toFixed(4)}</td>
+                    <td>${data.close.toFixed(4)}</td>
+                    <td>${data.this_color === 'green' ? '🟢 เขียว' : '🔴 แดง'}</td>
+                    <td>${data.is_atr ? '💥 ใช่' : 'ไม่ใช่'}</td>
+                    <td>${data.ema_short_direction === 'Up' ? '<span style="color:var(--green); font-weight:bold;">▲ ขึ้น</span>' : '<span style="color:var(--red); font-weight:bold;">▼ ลง</span>'}</td>
+                    <td>${data.ema_medium_direction === 'Up' ? '<span style="color:var(--green); font-weight:bold;">▲ ขึ้น</span>' : '<span style="color:var(--red); font-weight:bold;">▼ ลง</span>'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // เชื่อมต่อแบบ initial: ดึง balance แล้วปิด WS เพื่อประหยัด traffic
+        connectRustWebSocket('initial');
+
+        // ══════════════════════════════════════════
+        //  4. CONDITION STOP TRADE → enable/disable
+        // ══════════════════════════════════════════
+        const DISABLED_STYLE = 'background:darkgray;color:#444;cursor:not-allowed;opacity:.7;';
+
+        function applyConditionUI() {
+            const idx = document.getElementById('conditionStopTrade').selectedIndex;
+            const targetMoney = document.getElementById('targetMoney');
+            const targetLot = document.getElementById('targetLot');
+
+            const setField = (el, enabled) => {
+                el.disabled = !enabled;
+                el.style.cssText = enabled ? '' : DISABLED_STYLE;
+            };
+
+            if (idx === 0) { setField(targetMoney, true); setField(targetLot, false); }
+            else if (idx === 1) { setField(targetMoney, false); setField(targetLot, true); }
+            else { setField(targetMoney, false); setField(targetLot, false); }
+        }
+
+        document.getElementById('conditionStopTrade').addEventListener('change', () => {
+            applyConditionUI();
+            updateJSON();
+        });
+        applyConditionUI();
+
+        // Martingale list — enable only when martingale selected
+        document.querySelectorAll('input[name="useMartingale"]').forEach(rb => {
+            rb.addEventListener('change', () => {
+                const isMart = rb.value === 'martingale' && rb.checked;
+                const listEl = document.getElementById('martingaleList');
+                listEl.disabled = !isMart;
+                listEl.style.cssText = isMart ? '' : DISABLED_STYLE;
+                updateJSON();
+            });
+        });
+        // init martingale list state
+        (function () {
+            const isMart = document.querySelector('input[name="useMartingale"]:checked')?.value === 'martingale';
+            const listEl = document.getElementById('martingaleList');
+            listEl.disabled = !isMart;
+            listEl.style.cssText = isMart ? '' : DISABLED_STYLE;
+        })();
+
+        // ══════════════════════════════════════════
+        //  THEME SWITCHER
+        // ══════════════════════════════════════════
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.body.setAttribute('data-theme', btn.dataset.theme);
+                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                updateJSON();
+                updateChartTheme();
+            });
+        });
+
+        // ══════════════════════════════════════════
+        //  MODAL
+        // ══════════════════════════════════════════
+        const modal = document.getElementById('settingsModal');
+        document.getElementById('openSettingsBtn').addEventListener('click', () => modal.classList.add('active'));
+        document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.remove('active'));
+        document.getElementById('cancelBtn').addEventListener('click', () => modal.classList.remove('active'));
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            updateJSON(); modal.classList.remove('active');
+        });
+        modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
+
+        // ══════════════════════════════════════════
+        //  TABS
+        // ══════════════════════════════════════════
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab + '-tab').classList.add('active');
+                if (btn.dataset.tab === 'jsonsetting') updateJSON();
+            });
+        });
+
+        // ══════════════════════════════════════════
+        //  GRANULARITY BUTTONS
+        // ══════════════════════════════════════════
+        document.querySelectorAll('.gran-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.gran-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('status-gran').textContent = 'Granularity: ' + btn.textContent;
+                updateJSON();
+            });
+        });
+        document.querySelectorAll('.gran-setting-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.gran-setting-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                updateJSON();
+            });
+        });
+
+        // ══════════════════════════════════════════
+        //  ATTACH CHANGE LISTENERS → AUTO UPDATE JSON
+        // ══════════════════════════════════════════
+        const watchIds = [
+            'useSchedule', 'scheduleTradeNo', 'atrPeriod', 'atrMulti', 'ciPeriod', 'adxPeriod', 'bbPeriod', 'smcPeriod',
+            'emaShortPeriod', 'emaShortType', 'emaShortColor', 'emaShortToggle',
+            'emaMediumPeriod', 'emaMediumType', 'emaMediumColor', 'emaMediumToggle',
+            'emaLongPeriod', 'emaLongType', 'emaLongColor', 'emaLongToggle',
+            'martingaleList', 'targetMoney', 'targetLot', 'telegramToggle', 'playSoundToggle',
+            'spikeShowToggle', 'spikeGreenColor', 'spikeRedColor', 'showTradeMarkersToggle',
+            'autoSellTimeoutToggle', 'autoSellTimeoutSeconds'
+        ];
+        watchIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('change', () => {
+                    if(id !== 'showTradeMarkersToggle') {
+                        updateJSON();
+                    }
+                    // ถ้าเปลี่ยนการตั้งค่า Spike หรือ Markers หรือ EMA ให้วาดกราฟใหม่
+                    if ((id.startsWith('spike') || id === 'showTradeMarkersToggle' || id.startsWith('ema')) && allAnalysisData && allAnalysisData.length > 0) {
+                        if (id.includes('Color')) {
+                            if (id === 'emaShortColor' && emaShortSeries) emaShortSeries.applyOptions({ color: document.getElementById('emaShortColor').value });
+                            if (id === 'emaMediumColor' && emaMediumSeries) emaMediumSeries.applyOptions({ color: document.getElementById('emaMediumColor').value });
+                            if (id === 'emaLongColor' && emaLongSeries) emaLongSeries.applyOptions({ color: document.getElementById('emaLongColor').value });
+                        }
+                        const timeRange = lwChart && lwChart.timeScale() ? lwChart.timeScale().getVisibleRange() : null;
+                        renderChart(allAnalysisData);
+                        if (timeRange && lwChart) {
+                            try { lwChart.timeScale().setVisibleRange(timeRange); } catch(e) {}
+                        }
+                    }
+                });
+            }
+        });
+        document.querySelectorAll('input[name="asset"]').forEach(cb =>
+            cb.addEventListener('change', () => {
+                const checked = [...document.querySelectorAll('input[name="asset"]:checked')].map(c => c.value);
+                document.getElementById('status-asset').textContent = 'Asset: ' + (checked.length ? checked.join(', ') : '—');
+                updateJSON();
+            })
+        );
+
+        // ══════════════════════════════════════════
+        //  CHART ASSET SELECTOR — สลับ asset ที่แสดงบนกราฟ
+        // ══════════════════════════════════════════
+        window.switchChartAsset = function(selected) {
+            if (!selected || !allDataByAsset[selected]) return;
+            
+            currentChartAsset = selected;
+            allAnalysisData = allDataByAsset[selected];
+            document.getElementById('status-count').textContent = `Candles: ${allAnalysisData.length}`;
+            document.getElementById('status-asset').textContent = `Asset: ${selected.toUpperCase()}`;
+            
+            // อัปเดตปุ่ม active
+            document.querySelectorAll('.chart-asset-btn').forEach(btn => {
+                if (btn.dataset.asset === selected) {
+                    btn.style.background = 'var(--accent)';
+                    btn.style.color = '#fff';
+                    btn.style.borderColor = 'var(--accent)';
+                } else {
+                    btn.style.background = 'var(--bg3)';
+                    btn.style.color = 'var(--text)';
+                    btn.style.borderColor = 'var(--border)';
+                }
+            });
+            
+            // วาดกราฟใหม่ด้วยข้อมูลของ asset ที่เลือก
+            initChart();
+            renderChart(allAnalysisData);
+            lwChart.timeScale().fitContent();
+            renderTable(allAnalysisData);
+            console.log(`📊 Switched chart to: ${selected}`);
+        };
+
+        // ══════════════════════════════════════════
+        //  COPY JSON BUTTON
+        // ══════════════════════════════════════════
+        document.getElementById('copyJsonBtn').addEventListener('click', () => {
+            const ta = document.getElementById('jsonSettingTextarea');
+            ta.select();
+            document.execCommand('copy');
+            const btn = document.getElementById('copyJsonBtn');
+            btn.textContent = '✅ คัดลอกแล้ว!';
+            setTimeout(() => btn.textContent = '📋 คัดลอก JSON', 2000);
+        });
+
+        // ══════════════════════════════════════════
+        //  INITIAL RENDER
+        // ══════════════════════════════════════════
+        loadSetup();
+        setTimeout(() => reloadTradeHistory(true), 500); // โหลดประวัติและคำนวณกำไรทันทีเมื่อเปิดเว็บ
+
+        // ══════════════════════════════════════════
+        //  SCHEDULE TIMER
+        // ══════════════════════════════════════════
+        setInterval(() => {
+            // อัปเดต Schedule Status ทุกวินาที
+            checkScheduleStatus();
+
+            const useScheduleEl = document.getElementById('useSchedule');
+            if(!useScheduleEl || !useScheduleEl.checked) return;
+            
+            const startVal = document.getElementById('startDate').value;
+            const stopVal = document.getElementById('stopDate').value;
+            if(!startVal) return;
+            
+            const start = new Date(startVal).getTime();
+            const now = Date.now();
+            
+            if(!isTradeRunning && now >= start) {
+                const stop = stopVal ? new Date(stopVal).getTime() : 0;
+                if(!stop || now < stop) {
+                    console.log("⏰ Schedule reached! Auto starting trade...");
+                    isTradeRunning = true;
+                    tradeStartTime = Date.now();
+                    if (tradeDurationInterval) clearInterval(tradeDurationInterval);
+                    tradeDurationInterval = setInterval(updateTradingDuration, 1000);
+                    updateTradingDuration();
+                    // ═══ Reconnect WS ก่อนเทรดอัตโนมัติ ═══
+                    shouldStayConnected = true;
+                    if (!localWs || localWs.readyState !== WebSocket.OPEN) {
+                        console.log('🔌 Schedule: Reconnecting WS before auto-trade...');
+                        connectRustWebSocket('trade');
+                        setTimeout(() => {
+                            document.getElementById('goTradeBtn').click();
+                        }, 1500);
+                    } else {
+                        document.getElementById('goTradeBtn').click();
+                    }
+                }
+            }
+            
+            if(isTradeRunning && stopVal) {
+                const stop = new Date(stopVal).getTime();
+                const cond = document.getElementById('conditionStopTrade').value;
+                if(now >= stop && cond === 'stopDate') {
+                    console.log("⏰ StopDate reached! Auto stopping trade...");
+                    document.getElementById('stopTradeBtn').click();
+                    document.getElementById('useSchedule').checked = false;
+                    isTradeRunning = false;
+                    if (tradeDurationInterval) clearInterval(tradeDurationInterval);
+                    tradeDurationInterval = null;
+                    updateTradingDuration();
+                    updateJSON();
+                }
+            }
+        }, 1000);
+
+        // ══════════════════════════════════════════
+        //  LOAD TRADE HISTORY
+        // ══════════════════════════════════════════
+        async function reloadTradeHistory(isAuto = false) {
+            const today = new Date();
+            const d = String(today.getDate()).padStart(2, '0');
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const y = today.getFullYear();
+            const dateStr = `${y}-${m}-${d}`;
+            
+            const loadHistoryBtn = document.getElementById('loadHistoryBtn');
+            if (loadHistoryBtn && !isAuto) {
+                loadHistoryBtn.textContent = 'กำลังโหลด...';
+            }
+            
+            try {
+                const res = await fetch(`/api/history?date=${dateStr}`);
+                const historyData = await res.json();
+                
+                window.currentTradeHistory = historyData; // Store globally for chart markers
+                updateBalanceSummary(currentBalance); // อัปเดตการแสดงผลกำไรทันที
+                
+                // Trigger chart re-render to show markers
+                if (allAnalysisData && allAnalysisData.length > 0) {
+                    const timeRange = lwChart ? lwChart.timeScale().getVisibleRange() : null;
+                    renderChart(allAnalysisData);
+                    if (timeRange && lwChart) {
+                        try { lwChart.timeScale().setVisibleRange(timeRange); } catch(e) {}
+                    }
+                }
+                
+                const tbody = document.querySelector('#historyTable tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    if(!historyData || historyData.length === 0) {
+                        tbody.innerHTML = '<tr class="empty-row"><td colspan="11">ไม่พบประวัติการเทรดในวันนี้</td></tr>';
+                    } else {
+                        const scheduleColors = [
+                            'rgba(40, 167, 69, 0.15)',  // green
+                            'rgba(0, 123, 255, 0.15)',  // blue
+                            'rgba(255, 193, 7, 0.15)',  // yellow/orange
+                            'rgba(23, 162, 184, 0.15)', // cyan
+                            'rgba(102, 16, 242, 0.15)', // purple
+                            'rgba(253, 126, 20, 0.15)'  // orange
+                        ];
+                        // Calculate running schedule balance (from oldest to newest)
+                        const scheduleBalances = {};
+                        const scheduleStats = {}; // สำหรับเก็บยอดรวมและ Max Loss Streak
+
+                        for (let i = historyData.length - 1; i >= 0; i--) {
+                            const t = historyData[i];
+                            const rNo = t.scheduleTradeNo || 0;
+                            const p = t.ThisProfit || 0;
+                            
+                            if (rNo > 0) {
+                                if (!scheduleBalances[rNo]) scheduleBalances[rNo] = 0;
+                                scheduleBalances[rNo] += p;
+                                t.scheduleRunningBalance = scheduleBalances[rNo];
+
+                                // เก็บข้อมูลสำหรับ Summary Row
+                                if (!scheduleStats[rNo]) {
+                                    scheduleStats[rNo] = {
+                                        totalProfit: 0,
+                                        maxSubTradeByAsset: {}
+                                    };
+                                }
+                                scheduleStats[rNo].totalProfit += p;
+                                const asset = t.Asset || 'Unknown';
+                                const sub = t.subTradeno || 1;
+                                if (!scheduleStats[rNo].maxSubTradeByAsset[asset] || sub > scheduleStats[rNo].maxSubTradeByAsset[asset]) {
+                                    scheduleStats[rNo].maxSubTradeByAsset[asset] = sub;
+                                }
+                            } else {
+                                t.scheduleRunningBalance = p;
+                            }
+                        }
+
+                        const thbRate = parseFloat(document.getElementById('thb-rate') ? document.getElementById('thb-rate').value : 35) || 35;
+                        
+                        let prevRunNo = historyData.length > 0 ? historyData[0].scheduleTradeNo || 0 : 0;
+
+                        historyData.forEach((trade, index) => {
+                            const tr = document.createElement('tr');
+                            const runNo = trade.scheduleTradeNo || 0;
+                            
+                            // แทรก Summary Row ถ้ารอบ schedule เปลี่ยน
+                            if (prevRunNo !== 0 && prevRunNo !== runNo) {
+                                const stats = scheduleStats[prevRunNo];
+                                if (stats) {
+                                    const trSum = document.createElement('tr');
+                                    trSum.style.backgroundColor = '#ffffff';
+                                    trSum.style.color = '#000000';
+                                    const profitColor = stats.totalProfit > 0 ? '#10b981' : (stats.totalProfit < 0 ? '#ef4444' : '#000000');
+                                    const thb = stats.totalProfit * thbRate;
+                                    const maxStreaks = Object.entries(stats.maxSubTradeByAsset)
+                                        .map(([a, m]) => `${a}: ${m}`)
+                                        .join(', ');
+                                    
+                                    trSum.innerHTML = `
+                                        <td colspan="11" style="text-align: center; padding: 10px; font-size: 13px; font-weight: bold; border-bottom: 3px solid var(--border);">
+                                            🏁 สรุปรอบที่ #${prevRunNo} &nbsp;|&nbsp; 
+                                            <span style="color: ${profitColor};">
+                                                ยอดรวม: ${stats.totalProfit > 0 ? '+' : ''}${stats.totalProfit.toFixed(2)} USD 
+                                                (${thb > 0 ? '+' : (thb < 0 ? '-' : '')}฿${Math.abs(thb).toFixed(2)})
+                                            </span> &nbsp;|&nbsp; 
+                                            <span style="color: #4b5563;">Max Loss Streak: ${maxStreaks || '-'}</span>
+                                        </td>
+                                    `;
+                                    tbody.appendChild(trSum);
+                                }
+                            }
+                            if (trade.isAnomaly) {
+                                tr.style.backgroundColor = 'rgba(232, 48, 74, 0.2)'; // Highlight red for anomaly
+                                tr.title = 'Anomaly: ใช้เวลาปิดไม้นานกว่าปกติ (' + (trade.actualDuration || 0) + ' วินาที)';
+                            } else if (runNo > 0) {
+                                const colorIndex = (runNo - 1) % scheduleColors.length;
+                                tr.style.backgroundColor = scheduleColors[colorIndex];
+                                tr.title = `Schedule Trade No: ${runNo}`;
+                            }
+                            
+                            const runningBal = trade.scheduleRunningBalance || 0;
+                            const balColor = runningBal > 0 ? '#06D6A0' : (runningBal < 0 ? '#E8304A' : 'inherit');
+                            
+                            const balThb = runningBal * thbRate;
+                            
+                            tr.innerHTML = `
+                                <td>${new Date((trade.timeCandle || 0) * 1000).toLocaleString('th-TH')}</td>
+                                <td>${trade.sellTimeDisplay || '-'}</td>
+                                <td><span style="font-size:11px; background:var(--accent-bg, var(--bg3)); padding:2px 8px; border-radius:12px; font-weight:600; color:var(--accent, var(--text));">#${runNo || '-'}</span></td>
+                                <td>${trade.subTradeno || '-'}${(trade.subTradeno || 0) > 5 ? ' 🔴' : (trade.subTradeno || 0) >= 4 ? ' 🟠' : ''}</td>
+                                <td>${trade.Asset || '-'}</td>
+                                <td>${trade.thisAction || '-'}</td>
+                                <td>${trade.MoneyTrade !== undefined ? trade.MoneyTrade.toFixed(2) : '-'}</td>
+                                <td style="color:${(trade.ThisProfit || 0) > 0 ? '#06D6A0' : ((trade.ThisProfit || 0) < 0 ? '#E8304A' : 'inherit')}">
+                                    ${(trade.ThisProfit || 0) > 0 ? '+' : ''}${trade.ThisProfit !== undefined ? trade.ThisProfit.toFixed(2) : '0.00'}
+                                </td>
+                                <td>${trade.GrandBalance !== undefined ? trade.GrandBalance.toFixed(2) : '-'}</td>
+                                <td style="color:${balColor}; font-weight:bold;">
+                                    ${runningBal > 0 ? '+' : ''}${runningBal.toFixed(2)}
+                                </td>
+                                <td style="color:white; font-weight:bold;">
+                                    ${balThb > 0 ? '+' : (balThb < 0 ? '-' : '')}฿${Math.abs(balThb).toFixed(2)}
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                            prevRunNo = runNo;
+                        });
+                        
+                        // แทรก Summary Row สำหรับรอบ schedule สุดท้ายในตาราง
+                        if (prevRunNo !== 0) {
+                            const stats = scheduleStats[prevRunNo];
+                            if (stats) {
+                                const trSum = document.createElement('tr');
+                                trSum.style.backgroundColor = '#ffffff';
+                                trSum.style.color = '#000000';
+                                const profitColor = stats.totalProfit > 0 ? '#10b981' : (stats.totalProfit < 0 ? '#ef4444' : '#000000');
+                                const thb = stats.totalProfit * thbRate;
+                                const maxStreaks = Object.entries(stats.maxSubTradeByAsset)
+                                    .map(([a, m]) => `${a}: ${m}`)
+                                    .join(', ');
+                                
+                                trSum.innerHTML = `
+                                    <td colspan="11" style="text-align: center; padding: 10px; font-size: 13px; font-weight: bold; border-bottom: 3px solid var(--border);">
+                                        🏁 สรุปรอบที่ #${prevRunNo} &nbsp;|&nbsp; 
+                                        <span style="color: ${profitColor};">
+                                            ยอดรวม: ${stats.totalProfit > 0 ? '+' : ''}${stats.totalProfit.toFixed(2)} USD 
+                                            (${thb > 0 ? '+' : (thb < 0 ? '-' : '')}฿${Math.abs(thb).toFixed(2)})
+                                        </span> &nbsp;|&nbsp; 
+                                        <span style="color: #4b5563;">Max Loss Streak: ${maxStreaks || '-'}</span>
+                                    </td>
+                                `;
+                                tbody.appendChild(trSum);
+                            }
+                        }
+                        updateScheduleSummaryTable(historyData);
+                    }
+                }
+            } catch(e) {
+                console.error("Failed to load history", e);
+                const tbody = document.querySelector('#historyTable tbody');
+                if (tbody && !isAuto) {
+                    tbody.innerHTML = '<tr class="empty-row"><td colspan="11" style="color:var(--red);">โหลดข้อมูลผิดพลาด</td></tr>';
+                }
+            } finally {
+                if (loadHistoryBtn && !isAuto) {
+                    loadHistoryBtn.textContent = 'โหลดประวัติวันนี้';
+                }
+            }
+        }
+
+        function updateScheduleSummaryTable(historyData) {
+            const tbody = document.querySelector('#scheduleSummaryTable tbody');
+            if (!tbody) return;
+            
+            if (!historyData || historyData.length === 0) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="7">ไม่มีข้อมูลรอบการเทรด</td></tr>';
+                document.getElementById('schedule-summary-count').textContent = '0 รอบ';
+                return;
+            }
+            
+            const summary = {};
+            let grandProfitUsd = 0;
+            
+            historyData.forEach(t => {
+                const rNo = t.scheduleTradeNo || 0;
+                if (rNo === 0) return; // ข้ามไม้เทรดมือเปล่าที่ไม่มีรอบ
+                
+                if (!summary[rNo]) {
+                    summary[rNo] = { trades: 0, wins: 0, losses: 0, profit: 0, startTime: Infinity, endTime: 0 };
+                }
+                
+                summary[rNo].trades++;
+                const profit = t.ThisProfit || 0;
+                summary[rNo].profit += profit;
+                
+                if (profit > 0) summary[rNo].wins++;
+                else if (profit < 0) summary[rNo].losses++;
+                
+                if (t.timeCandle) {
+                    if (t.timeCandle < summary[rNo].startTime) summary[rNo].startTime = t.timeCandle;
+                    if (t.timeCandle > summary[rNo].endTime) summary[rNo].endTime = t.timeCandle;
+                }
+            });
+            
+            const rounds = Object.keys(summary).map(Number).sort((a,b) => b - a); // เรียงจากรอบล่าสุดไปเก่าสุด
+            document.getElementById('schedule-summary-count').textContent = `${rounds.length} รอบ`;
+            
+            if (rounds.length === 0) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="7">ไม่มีข้อมูลรอบการเทรด</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            const thbRate = parseFloat(document.getElementById('thb-rate') ? document.getElementById('thb-rate').value : 35) || 35;
+            const currentScheduleNo = parseInt(document.getElementById('scheduleTradeNo') ? document.getElementById('scheduleTradeNo').value : '0');
+            
+            function formatTimeOnly(epochSec) {
+                if (!epochSec || epochSec === Infinity) return '-';
+                return new Date(epochSec * 1000).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }
+            
+            rounds.forEach(rNo => {
+                const data = summary[rNo];
+                grandProfitUsd += data.profit;
+                const tr = document.createElement('tr');
+                const profitColor = data.profit > 0 ? 'var(--green)' : (data.profit < 0 ? 'var(--red)' : 'inherit');
+                const thbProfit = data.profit * thbRate;
+                
+                const startTimeStr = formatTimeOnly(data.startTime);
+                const endTimeStr = formatTimeOnly(data.endTime);
+                
+                if (rNo === currentScheduleNo) {
+                    tr.style.background = 'rgba(6, 214, 160, 0.15)'; // Green tint
+                    tr.style.borderLeft = '3px solid var(--green)';
+                }
+                
+                tr.innerHTML = `
+                    <td><span style="font-size:12px; background:var(--accent-bg, var(--bg3)); padding:4px 12px; border-radius:12px; font-weight:600; color:var(--accent, var(--text));">#${rNo}</span></td>
+                    <td style="font-family:monospace; font-size:12px; color:var(--text2);">${startTimeStr} - ${endTimeStr}</td>
+                    <td>${data.trades}</td>
+                    <td style="color:var(--green)">${data.wins}</td>
+                    <td style="color:var(--red)">${data.losses}</td>
+                    <td style="color:${profitColor}; font-weight:bold;">${data.profit > 0 ? '+' : ''}${data.profit.toFixed(2)}</td>
+                    <td style="color:white; font-weight:bold;">${thbProfit > 0 ? '+' : (thbProfit < 0 ? '-' : '')}฿${Math.abs(thbProfit).toFixed(2)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            const grandThb = grandProfitUsd * thbRate;
+            const usdEl = document.getElementById('schedule-grand-usd');
+            const thbEl = document.getElementById('schedule-grand-thb');
+            
+            if (usdEl) {
+                usdEl.style.color = grandProfitUsd > 0 ? 'var(--green)' : (grandProfitUsd < 0 ? 'var(--red)' : 'var(--text)');
+                usdEl.textContent = `${grandProfitUsd > 0 ? '+' : ''}${grandProfitUsd.toFixed(2)}`;
+            }
+            if (thbEl) {
+                thbEl.style.color = grandThb > 0 ? 'var(--green)' : (grandThb < 0 ? 'var(--red)' : 'var(--text)');
+                thbEl.textContent = `${grandThb > 0 ? '+' : ''}฿${Math.abs(grandThb).toFixed(2)}`;
+            }
+        }
+
+        const loadHistoryBtn = document.getElementById('loadHistoryBtn');
+        if(loadHistoryBtn) {
+            loadHistoryBtn.addEventListener('click', () => reloadTradeHistory(false));
+        }
+
+        // ══════════════════════════════════════════
+        //  CHECK VERSION (non-blocking — ไม่ใช้ alert เพื่อไม่บล็อก UI/chart)
+        // ══════════════════════════════════════════
+        fetch('/api/version').then(res => res.json()).then(data => {
+            const htmlVer = "1.0.2";
+            console.log(`✅ Server OK | Backend: ${data.main_rs_version} | Frontend: ${htmlVer} | Compiled: ${data.compiled_at}`);
+            // แสดงใน status bar แทน alert
+            const connText = document.getElementById('connText');
+            if (connText && connText.textContent.includes('Connected')) {
+                connText.textContent = `Connected (v${data.main_rs_version})`;
+            }
+            const connTextBig = document.getElementById('connTextBig');
+            if (connTextBig && connTextBig.textContent.includes('Connected')) {
+                connTextBig.textContent = `Connected (v${data.main_rs_version})`;
+            }
+        }).catch(err => {
+            console.error("Error fetching version", err);
+        });
+
+        // ══════════════════════════════════════════
+        //  DERIV TIME SYNC & DURATION CALCULATOR
+        // ══════════════════════════════════════════
+        function updateStopDateFromDuration() {
+            const startVal = document.getElementById('startDate').value;
+            if(!startVal) return;
+            const start = new Date(startVal);
+            const addMins = parseInt(document.getElementById('addMinutes').value) || 0;
+            const stopDate = new Date(start.getTime() + addMins * 60000);
+            
+            // ใช้ timezone offset ของเครื่องเพื่อให้ตรงกับฟอร์แมต datetime-local
+            const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+            document.getElementById('stopDate').value = (new Date(stopDate - tzoffset)).toISOString().slice(0, 16);
+            updateJSON();
+        }
+
+        const addMinsEl = document.getElementById('addMinutes');
+        if(addMinsEl) {
+            addMinsEl.addEventListener('input', updateStopDateFromDuration);
+        }
+        
+        const startDateEl = document.getElementById('startDate');
+        if(startDateEl) {
+            startDateEl.addEventListener('change', updateStopDateFromDuration);
+        }
+
+        const setDerivTimeBtn = document.getElementById('setDerivTimeBtn');
+        if(setDerivTimeBtn) {
+            setDerivTimeBtn.addEventListener('click', () => {
+                const btn = setDerivTimeBtn;
+                const originalText = btn.textContent;
+                btn.textContent = "⏳ กำลังดึงเวลา...";
+                btn.disabled = true;
+
+                const ws = new WebSocket('wss://ws.binaryws.com/websockets/v3?app_id=1089');
+                ws.onopen = () => {
+                    ws.send(JSON.stringify({ time: 1 }));
+                };
+                ws.onmessage = (msg) => {
+                    try {
+                        const data = JSON.parse(msg.data);
+                        if(data.time) {
+                            const date = new Date(data.time * 1000);
+                            const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+                            const localISOTime = (new Date(date - tzoffset)).toISOString().slice(0, 16);
+                            document.getElementById('startDate').value = localISOTime;
+                            updateStopDateFromDuration();
+                        }
+                    } catch(e) {
+                        console.error('Error parsing deriv time', e);
+                    }
+                    btn.textContent = "✅ อัปเดตเวลาแล้ว!";
+                    setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
+                    ws.close();
+                };
+                ws.onerror = () => {
+                    alert('เชื่อมต่อ Deriv API เพื่อดึงเวลาล้มเหลว');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                };
+            });
+        }
+
+        // ══════════════════════════════════════════
+        //  BOT LOG — แสดงสถานะบอทแบบ real-time
+        // ══════════════════════════════════════════
+        let botLogCount = 0;
+        const MAX_LOG_LINES = 500;
+
+        function appendBotLog(message, asset) {
+            const body = document.getElementById('botLogBody');
+            if (!body || !message) return;
+
+            botLogCount++;
+            document.getElementById('botLogCount').textContent = `(${botLogCount})`;
+
+            // กำหนดสีตามประเภทข้อความ
+            let cssClass = 'log-wait';
+            if (message.includes('🚀') || message.includes('เข้าเทรด')) cssClass = 'log-trade';
+            else if (message.includes('🎉') || message.includes('ชนะ')) cssClass = 'log-win';
+            else if (message.includes('😢') || message.includes('แพ้')) cssClass = 'log-loss';
+            else if (message.includes('✅') || message.includes('Spike: ✅')) cssClass = 'log-spike';
+            else if (message.includes('🟢') || message.includes('🔴') || asset === 'system') cssClass = 'log-system';
+
+            const now = new Date();
+            const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+
+            const div = document.createElement('div');
+            div.className = `log-line ${cssClass}`;
+            div.textContent = `[${timeStr}] ${message}`;
+            body.appendChild(div);
+
+            // จำกัดจำนวน log ไม่ให้มากเกินไป
+            while (body.children.length > MAX_LOG_LINES) {
+                body.removeChild(body.firstChild);
+            }
+
+            // Auto scroll ลงล่าง
+            body.scrollTop = body.scrollHeight;
+        }
+
+        document.getElementById('clearLogBtn').addEventListener('click', () => {
+            const body = document.getElementById('botLogBody');
+            body.innerHTML = '<div class="log-line log-system">🗑 ล้าง Log แล้ว</div>';
+            botLogCount = 0;
+            document.getElementById('botLogCount').textContent = '(0)';
+        });
+
+        // ══════════════════════════════════════════
+        //  MANUAL BALANCE SYNC
+        // ══════════════════════════════════════════
+        document.getElementById('status-balance').addEventListener('click', async () => {
+            const el = document.getElementById('status-balance');
+            const originalText = el.textContent;
+            el.style.opacity = '0.5';
+            el.style.pointerEvents = 'none';
+            
+            try {
+                const res = await fetch('/api/balance/sync', { method: 'POST' });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    el.textContent = `Balance: $${data.balance.toFixed(2)} 🔄`;
+                    updateBalanceSummary(data.balance);
+                    console.log("💰 Balance synced successfully:", data.balance);
+                } else {
+                    console.error("❌ Balance sync failed:", data.message);
+                    alert("Sync Balance ล้มเหลว: " + data.message);
+                }
+            } catch (e) {
+                console.error("❌ Balance sync error:", e);
+                alert("ไม่สามารถเชื่อมต่อกับ Server เพื่อ Sync Balance");
+            } finally {
+                el.style.opacity = '1';
+                el.style.pointerEvents = 'auto';
+            }
+        });
+
+        // ══════════════════════════════════════════
+        //  SCHEDULE STATUS CHECK — ตรวจสอบว่าอยู่ในช่วงเวลาเทรดหรือไม่
+        // ══════════════════════════════════════════
+        function checkScheduleStatus() {
+            const statusEl = document.getElementById('schedule-status');
+            if (!statusEl) return;
+
+            const useScheduleEl = document.getElementById('useSchedule');
+            if (!useScheduleEl || !useScheduleEl.checked) {
+                statusEl.innerHTML = '<span style="color:var(--text3);">📅 Schedule: ปิดอยู่</span>';
+                return;
+            }
+
+            const startVal = document.getElementById('startDate').value;
+            const stopVal = document.getElementById('stopDate').value;
+            if (!startVal) {
+                statusEl.innerHTML = '<span style="color:var(--text3);">📅 ยังไม่ได้ตั้งเวลา</span>';
+                return;
+            }
+
+            const now = Date.now();
+            const start = new Date(startVal).getTime();
+            const stop = stopVal ? new Date(stopVal).getTime() : 0;
+
+            if (now < start) {
+                // ยังไม่ถึงเวลาเทรด — แสดง countdown
+                const diff = start - now;
+                const h = Math.floor(diff / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+                const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                statusEl.innerHTML = `<span style="color:var(--orange); font-weight:600;">⏳ รอ Schedule อีก ${timeStr}</span>`;
+            } else if (!stop || now < stop) {
+                // อยู่ในช่วงเวลาเทรด
+                statusEl.innerHTML = '<span style="color:var(--green); font-weight:700;">🟢 อยู่ในช่วงเวลาเทรด</span>';
+            } else {
+                // เลยเวลาเทรดไปแล้ว
+                statusEl.innerHTML = '<span style="color:var(--red); font-weight:600;">🔴 เลยช่วงเวลาเทรดแล้ว</span>';
+            }
+        }
+
+    </script>
+</body>
+
+</html>

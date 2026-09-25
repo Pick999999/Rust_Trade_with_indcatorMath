@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อธิบายกลไกการทำงานของ Project</title>
+    <style>
+        body { font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; padding: 20px; color: #333; max-width: 900px; margin: 0 auto; }
+        h1, h2, h3 { color: #0056b3; }
+        code { background: #f4f4f4; padding: 3px 6px; border-radius: 4px; color: #d63384; font-family: Consolas, monospace; font-size: 0.95em; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 6px; overflow-x: auto; border: 1px solid #ddd; }
+        pre code { background: none; padding: 0; color: #333; }
+        .box { background: #eef7ff; border-left: 5px solid #0056b3; padding: 15px 20px; margin-bottom: 25px; border-radius: 0 6px 6px 0; }
+        ol li { margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <h1>อธิบายกลไกการส่งผ่านข้อมูลใน Project</h1>
+
+    <h2>1. ทำไม Rust ถึงไม่มี Global Variable ในโปรเจกต์นี้?</h2>
+    <div class="box">
+        <p>ภาษา Rust ถูกออกแบบมาให้เน้นความปลอดภัยของหน่วยความจำ (Memory Safety) และความปลอดภัยในการทำงานแบบพร้อมกันหลายเธรด (Concurrency Safety) การใช้ Global Variable แบบที่แก้ไขค่าได้ (Mutable Global State เช่น <code>static mut</code>) ถือเป็นความเสี่ยงอย่างมาก (Unsafe) และอาจทำให้เกิดปัญหา Data Race หรือข้อมูลพังเมื่อถูกเข้าถึงพร้อมกันหลายจุด</p>
+        <p><strong>วิธีแก้ปัญหาของ Rust (และ Web Framework อย่าง Axum):</strong> แทนที่จะประกาศตัวแปรไว้ลอยๆ (Global) โปรเจกต์นี้ใช้กลไกที่เรียกว่า <strong>Shared State</strong> โดยประกาศโครงสร้างข้อมูล <code>AppState</code> ที่ถูกห่อหุ้มด้วย <code>Arc&lt;Mutex&lt;T&gt;&gt;</code> หรือช่องทางสื่อสาร <code>broadcast::Sender</code></p>
+        <p><code>Arc</code> ช่วยจัดการวงจรชีวิตของตัวแปร ส่วน <code>Mutex</code> ช่วยล็อกข้อมูลเวลาอ่านเขียนไม่ให้ชนกัน จากนั้นส่งผ่านตัวแปรนี้เข้าไปในแต่ละฟังก์ชัน (Handler) ผ่านระบบของ Axum คือ <code>State(state): State&lt;AppState&gt;</code> ทำให้การแชร์ข้อมูลปลอดภัยและมีประสิทธิภาพ</p>
+    </div>
+
+    <h2>2. กลไกการส่งผ่านข้อมูลจากหน้าเว็บ (index.html) ไปยัง Rust Backend</h2>
+    <p>ขอยกตัวอย่างการส่งรายชื่อ <strong>Asset List</strong> จากหน้าเว็บไปยัง Backend ว่ามีกระบวนการอย่างไร</p>
+
+    <h3>ขั้นตอนที่ 1: ฝั่ง Frontend (JavaScript ใน <code>index.html</code>)</h3>
+    <p>เมื่อผู้ใช้คลิกปุ่ม "Go Trade" (ปุ่มที่มี ID เป็น <code>goTradeBtn</code>) ตัว JavaScript จะเริ่มทำงานดังนี้:</p>
+    <ol>
+        <li>เรียกใช้งานฟังก์ชัน <code>collectSettings()</code> ซึ่งมีหน้าที่รวบรวมข้อมูลทั้งหมดที่ผู้ใช้กรอก โดยรายชื่อ Asset จะถูกอ่านจาก Checkbox ผ่านคำสั่งนี้:<br>
+            <code>const assets = [...document.querySelectorAll('input[name="asset"]:checked')].map(cb =&gt; cb.value);</code>
+        </li>
+        <li>นำข้อมูลรวมกันเป็น JSON Object (ตัวแปร <code>settings</code>) แล้วใช้ฟังก์ชัน <strong><code>fetch()</code></strong> ส่ง HTTP Request แบบ POST ไปที่ Endpoint ของ Rust Backend คือ <code>/api/trade</code>:
+<pre><code>const response = await fetch('/api/trade', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(settings)
+});</code></pre>
+        </li>
+    </ol>
+
+    <h3>ขั้นตอนที่ 2: ฝั่ง Backend (Rust ใน <code>src/main.rs</code>)</h3>
+    <p>ในฝั่ง Rust มีการผูก Route ของ <code>/api/trade</code> ไว้ให้เรียกใช้งานฟังก์ชัน <strong><code>handle_post_trade</code></strong> ทันทีเมื่อมี Request เข้ามา</p>
+    <p>ฟังก์ชันนี้จะรับข้อมูล JSON ที่ส่งมาจากหน้าเว็บอัตโนมัติ ผ่าน Extractor ที่ชื่อว่า <code>Json()</code> โดยจะแปลงข้อมูล (Deserialize) จาก JSON String ให้กลายเป็นโครงสร้าง (Struct) ของ Rust ที่ชื่อ <code>AppConfigPayload</code></p>
+<pre><code>async fn handle_post_trade(
+    State(state): State&lt;AppState&gt;,
+    Json(payload): Json&lt;AppConfigPayload&gt;,
+) -&gt; Json&lt;serde_json::Value&gt;</code></pre>
+
+    <p>ภายใน Struct <code>AppConfigPayload</code> มีการเตรียมฟิลด์สำหรับรับรายชื่อ Asset เอาไว้แล้ว:</p>
+<pre><code>pub struct AppConfigPayload {
+    // ... ฟิลด์อื่นๆ
+    pub assets: Vec&lt;String&gt;,
+    // ...
+}</code></pre>
+    <p>จากจุดนี้ ข้อมูลรายชื่อ Asset ที่ผู้ใช้เลือกจะถูกเก็บอยู่ในตัวแปร <strong><code>payload.assets</code></strong></p>
+
+    <h3>ขั้นตอนที่ 3: การนำตัวแปรไปใช้งานต่อในฟังก์ชันอื่นๆ</h3>
+    <p>ภายในฟังก์ชัน <code>handle_post_trade</code> ระบบจะนำตัวแปร <code>payload.assets</code> ไปทำงานต่อเนื่องดังนี้:</p>
+    <ol>
+        <li><strong>สร้าง State ย่อยสำหรับแต่ละ Asset:</strong> ระบบจะใช้ลูป <code>for</code> วนตามรายชื่อ <code>payload.assets.iter()</code> เพื่อสร้างตัวแปรสัญญาณ (<code>AtomicBool</code>) เตรียมไว้สำหรับคุมการทำงานของแต่ละ Asset แล้วเก็บลงใน Global Shared State (<code>state.overtime_signals</code>)</li>
+        <li><strong>ส่งต่อไปยังฟังก์ชันการเทรด:</strong> ตัวแปรรายชื่อ Asset จะถูกทำสำเนา (Clone) ไปยังตัวแปรชื่อ <code>spawned_assets</code> และ <code>assets</code> จากนั้นระบบจะสร้างเธรดการทำงานใหม่ (<code>tokio::spawn</code>) เพื่อเรียกใช้ฟังก์ชัน <strong><code>deriv::start_deriv_bot_multiplexed()</code></strong> โดยส่งตัวแปร <code>assets</code> เข้าไปเป็นพารามิเตอร์ เพื่อบอกให้บอทเริ่มดึงข้อมูลและเทรดเฉพาะ Asset เหล่านั้น</li>
+    </ol>
+<pre><code>let handle = tokio::spawn(async move {
+    // ส่งผ่าน assets และ config อื่นๆ เข้าไปในฟังก์ชันของไฟล์ deriv.rs
+    if let Err(e) = deriv::start_deriv_bot_multiplexed(
+        app_id, api_token, account_id, config, assets, tx, cmd_rx, ot_signals
+    ).await {
+        eprintln!("Multiplexed bot crashed: {}", e);
+    }
+});</code></pre>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Analysis API</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #0f172a; 
+            color: #f8fafc; 
+            padding: 20px; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: auto; 
+            background: #1e293b; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+        }
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold;
+            margin-bottom: 20px; 
+            transition: 0.2s;
+        }
+        button:hover { 
+            background: #2563eb; 
+            transform: scale(1.02);
+        }
+        .payload-info {
+            background: #334155;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+        pre { 
+            background: #020617; 
+            padding: 20px; 
+            border-radius: 8px; 
+            overflow-x: auto; 
+            color: #10b981; 
+            font-size: 13px;
+            line-height: 1.5;
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #334155;
+        }
+        .error { color: #ef4444 !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🚀 Test /getAnalysisdata API</h2>
+        <p>ตัวอย่างการส่งข้อมูล Raw Candle ไปประมวลผลและรอรับ Full Analysis JSON กลับมา</p>
+        
+        <div class="payload-info">
+            <strong>รูปแบบที่ส่งไป (RawCandleInput):</strong> <br>
+            [ { epoch, open, high, low, close }, ... ]
+        </div>
+
+        <button id="sendBtn">ส่ง Request ทันที</button>
+        
+        <h3>ผลลัพธ์จาก Server:</h3>
+        <pre id="output">คลิกปุ่มด้านบนเพื่อเริ่มทดสอบ...</pre>
+    </div>
+
+    <script>
+        document.getElementById("sendBtn").addEventListener("click", async function() {
+            const output = document.getElementById("output");
+            output.textContent = "กำลังส่งข้อมูล Request ไปที่ /getAnalysisdata ...";
+            output.classList.remove("error");
+
+            // จำลองข้อมูลดิบ 5 แท่งเทียน (ย้อนหลังถึงปัจจุบัน)
+            const rawCandles = [
+                { epoch: 1700000000, open: 100.0, high: 102.0, low: 99.0,  close: 101.5 },
+                { epoch: 1700000060, open: 101.5, high: 103.0, low: 100.5, close: 102.0 },
+                { epoch: 1700000120, open: 102.0, high: 102.5, low: 98.0,  close: 99.5  },
+                { epoch: 1700000180, open: 99.5,  high: 101.0, low: 99.0,  close: 100.8 },
+                { epoch: 1700000240, open: 100.8, high: 105.0, low: 100.5, close: 104.5 } // แท่งปัจจุบัน (กระชากแรง)
+            ];
+
+            try {
+                // ยิง Fetch API (AJAX แบบสมัยใหม่)
+                const response = await fetch('/getAnalysisdata', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(rawCandles)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // รับผลลัพธ์กลับมาเป็น JSON
+                const data = await response.json();
+
+                // แสดงผลลัพธ์หน้าจอ (ใช้ null, 2 เพื่อจัดระเบียบตัวย่อหน้าให้อ่านง่าย)
+                output.textContent = JSON.stringify(data, null, 2);
+                
+                console.log("ได้ข้อมูล Analysis เรียบร้อยแล้ว:", data);
+
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาดในการ Fetch:", error);
+                output.textContent = "Error: " + error.message;
+                output.classList.add("error");
+            }
+        });
+    </script>
+</body>
+</html>

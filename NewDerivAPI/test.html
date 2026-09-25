@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deriv Balance Checker</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d14;
+    --panel: #0f1520;
+    --border: #1a2540;
+    --accent: #ff444f;
+    --accent2: #00d4ff;
+    --green: #00ff88;
+    --text: #c8d8f0;
+    --dim: #4a5a7a;
+    --glow: rgba(0,212,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 24px 16px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    animation: gridScroll 20s linear infinite;
+  }
+
+  @keyframes gridScroll {
+    from { background-position: 0 0; }
+    to   { background-position: 40px 40px; }
+  }
+
+  .container {
+    width: 100%;
+    max-width: 460px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    opacity: 0.7;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 28px 20px;
+    position: relative;
+    box-shadow: 0 0 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  .panel::before, .panel::after {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    border-color: var(--accent2);
+    border-style: solid;
+  }
+  .panel::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .panel::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+  .panel-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .panel-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    margin-bottom: 28px;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent2), transparent);
+    margin-bottom: 28px;
+    opacity: 0.3;
+  }
+
+  /* API Mode Tabs */
+  .mode-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .mode-btn {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    color: var(--dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid var(--border);
+  }
+  .mode-btn:last-child { border-right: none; }
+  .mode-btn:hover { color: var(--accent2); background: rgba(0,212,255,0.05); }
+  .mode-btn.active {
+    background: rgba(0,212,255,0.1);
+    color: var(--accent2);
+  }
+
+  .mode-hint {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    margin-bottom: 20px;
+    padding: 8px 10px;
+    background: rgba(0,0,0,0.2);
+    border-left: 2px solid var(--accent2);
+    opacity: 0.7;
+    line-height: 1.6;
+  }
+
+  label {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 1px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 6px;
+  }
+
+  input:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.08), 0 0 20px rgba(0,212,255,0.1);
+  }
+
+  input::placeholder { color: var(--dim); }
+
+  .field-hint {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    margin-bottom: 18px;
+    letter-spacing: 0.5px;
+  }
+
+  .field-hint a {
+    color: var(--accent2);
+    text-decoration: none;
+    opacity: 0.8;
+  }
+  .field-hint a:hover { opacity: 1; }
+
+  /* server selector */
+  .server-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .server-btn {
+    flex: 1;
+    padding: 9px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .server-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .server-btn.active {
+    border-color: var(--accent2);
+    background: rgba(0,212,255,0.08);
+    color: var(--accent2);
+  }
+
+  /* extra fields for new API */
+  .extra-fields { display: none; }
+  .extra-fields.visible { display: block; }
+
+  .btn-connect {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid var(--accent2);
+    border-radius: 2px;
+    color: var(--accent2);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .btn-connect::before {
+    content: '';
+    position: absolute;
+    left: -100%; top: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.15), transparent);
+    transition: left 0.4s;
+  }
+
+  .btn-connect:hover { background: rgba(0,212,255,0.1); box-shadow: 0 0 30px rgba(0,212,255,0.2); }
+  .btn-connect:hover::before { left: 100%; }
+  .btn-connect:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-connect:disabled::before { display: none; }
+
+  .status-bar {
+    margin-top: 20px;
+    padding: 12px 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--dim);
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+
+  .status-dot.connecting { background: #ffb800; animation: pulse 1s infinite; }
+  .status-dot.connected  { background: var(--green); }
+  .status-dot.error      { background: var(--accent); }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .status-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 0.5px;
+    flex: 1;
+  }
+
+  .result-card {
+    margin-top: 20px;
+    padding: 24px;
+    background: rgba(0,255,136,0.04);
+    border: 1px solid rgba(0,255,136,0.2);
+    border-radius: 2px;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .result-card.visible { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+
+  .balance-amount {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 36px;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(0,255,136,0.4);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .balance-currency {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+
+  .account-info {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0,255,136,0.1);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .info-key {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .info-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .error-card {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255,68,79,0.05);
+    border: 1px solid rgba(255,68,79,0.25);
+    border-radius: 2px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .error-card.visible { display: block; }
+  .error-msg {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+  }
+
+  .log-area {
+    margin-top: 16px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 12px 14px;
+    max-height: 120px;
+    overflow-y: auto;
+    display: none;
+  }
+  .log-area.visible { display: block; }
+  .log-line {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    line-height: 1.8;
+    letter-spacing: 0.3px;
+  }
+  .log-line.send { color: rgba(0,212,255,0.6); }
+  .log-line.recv { color: rgba(0,255,136,0.5); }
+  .log-line.err  { color: rgba(255,68,79,0.7); }
+  .log-line.sys  { color: rgba(255,184,0,0.6); }
+
+  .log-toggle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 14px;
+    text-align: right;
+    display: block;
+    transition: color 0.2s;
+    user-select: none;
+  }
+  .log-toggle:hover { color: var(--accent2); }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── Trading Section ── */
+  .trade-panel {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(0,212,255,0.03);
+    border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 2px;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .trade-panel.visible { display: block; }
+
+  .trade-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 14px;
+  }
+
+  .tick-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .tick-symbol {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+  .tick-price {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 28px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    text-shadow: 0 0 15px rgba(0,212,255,0.3);
+    transition: color 0.2s;
+  }
+  .tick-price.up   { color: var(--green); text-shadow: 0 0 15px rgba(0,255,136,0.3); }
+  .tick-price.down { color: var(--accent); text-shadow: 0 0 15px rgba(255,68,79,0.3); }
+
+  .trade-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .trade-field label {
+    font-size: 10px;
+    margin-bottom: 6px;
+    color: var(--dim);
+  }
+
+  .trade-field input, .trade-field select {
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 9px 10px;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    margin-bottom: 0;
+    transition: border-color 0.2s;
+  }
+  .trade-field input:focus, .trade-field select:focus {
+    border-color: var(--accent2);
+  }
+  .trade-field select option { background: #0f1520; }
+
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .btn-rise, .btn-fall {
+    padding: 14px;
+    border: none;
+    border-radius: 2px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-rise {
+    background: rgba(0,255,136,0.12);
+    border: 1px solid rgba(0,255,136,0.4);
+    color: var(--green);
+  }
+  .btn-rise:hover { background: rgba(0,255,136,0.22); box-shadow: 0 0 20px rgba(0,255,136,0.2); }
+
+  .btn-fall {
+    background: rgba(255,68,79,0.12);
+    border: 1px solid rgba(255,68,79,0.4);
+    color: var(--accent);
+  }
+  .btn-fall:hover { background: rgba(255,68,79,0.22); box-shadow: 0 0 20px rgba(255,68,79,0.2); }
+
+  .btn-rise:disabled, .btn-fall:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* contract result */
+  .contract-card {
+    margin-top: 14px;
+    padding: 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .contract-card.visible { display: block; }
+  .contract-card.win  { border-color: rgba(0,255,136,0.4); background: rgba(0,255,136,0.05); }
+  .contract-card.loss { border-color: rgba(255,68,79,0.4); background: rgba(255,68,79,0.05); }
+
+  .contract-status {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .contract-card.win  .contract-status { color: var(--green); }
+  .contract-card.loss .contract-status { color: var(--accent); }
+  .contract-card.open .contract-status { color: var(--accent2); }
+
+  .contract-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .c-key {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .c-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 10px 0 0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 2px;
+    transition: width 1s linear;
+    width: 0%;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-tag">deriv.com / balance checker</div>
+
+  <div class="panel">
+    <div class="panel-title">Balance Check</div>
+    <div class="panel-sub">// connect via WebSocket · real-time account data</div>
+    <div class="divider"></div>
+
+    <!-- API Mode Selector -->
+    <label>API MODE</label>
+    <div class="mode-row">
+      <button class="mode-btn" onclick="setMode('legacy')">LEGACY API<br><span style="font-size:9px;opacity:0.6">app.deriv.com</span></button>
+      <button class="mode-btn active" onclick="setMode('new')">NEW API<br><span style="font-size:9px;opacity:0.6">developers.deriv.com</span></button>
+    </div>
+
+    <div class="mode-hint" id="modeHint">
+      Token จาก <strong style="color:var(--accent2)">developers.deriv.com</strong> Dashboard → API Tokens<br>ต้องสร้าง App ก่อนถึงจะได้ App ID
+    </div>
+
+    <!-- TOKEN -->
+    <label for="apiToken">API TOKEN</label>
+    <input type="password" id="apiToken" value="pat_672ced3d26f230b870d18c6e8b793d8ef5ce8dfa2e22b8ce675a437d7ac5fd72" placeholder="ใส่ Deriv API Token ของคุณ" autocomplete="off">
+    <div class="field-hint" id="tokenHint">
+      รับ token ได้ที่ <a href="https://developers.deriv.com" target="_blank" id="tokenLink">developers.deriv.com</a>
+    </div>
+
+    <!-- Extra fields for New API -->
+    <div class="extra-fields visible" id="extraFields">
+      <label for="appId">APP ID</label>
+      <input type="text" id="appId" value="33oMfwq7Au6O1aNyHppR9" placeholder="App ID จาก developers.deriv.com">
+      <div class="field-hint">สร้าง App ที่ <a href="https://developers.deriv.com" target="_blank">developers.deriv.com</a> → Dashboard → Register App</div>
+
+      <label for="accountId">ACCOUNT ID</label>
+      <input type="text" id="accountId" value="DOT92631882" placeholder="เช่น DOT92631882 หรือ CR12345678">
+      <div class="field-hint">Login ID ของบัญชีที่ต้องการเช็ค</div>
+    </div>
+
+    <!-- Server selector (legacy only) -->
+    <div id="serverSection" style="display: none;">
+      <label>SERVER</label>
+      <div class="server-row">
+        <button class="server-btn active" data-url="wss://ws.derivws.com/websockets/v3?app_id=1089" onclick="selectServer(this)">REAL</button>
+        <button class="server-btn" data-url="wss://ws.derivws.com/websockets/v3?app_id=36544" onclick="selectServer(this)">DEMO</button>
+      </div>
+    </div>
+
+    <button class="btn-connect" id="btnConnect" onclick="connectAndCheck()">
+      ▶ CONNECT &amp; CHECK BALANCE
+    </button>
+
+    <div class="status-bar">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-text" id="statusText">รอการเชื่อมต่อ...</span>
+    </div>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-label">// account balance</div>
+      <div class="balance-amount" id="balanceAmount">0.00</div>
+      <div class="balance-currency" id="balanceCurrency">USD</div>
+      <div class="account-info">
+        <div class="info-item">
+          <div class="info-key">LOGIN ID</div>
+          <div class="info-val" id="infoLoginid">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">ACCOUNT TYPE</div>
+          <div class="info-val" id="infoType">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">FULL NAME</div>
+          <div class="info-val" id="infoName">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">COUNTRY</div>
+          <div class="info-val" id="infoCountry">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-card" id="errorCard">
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+    <span class="log-toggle" onclick="toggleLog()">[ LOG ]</span>
+    <div class="log-area" id="logArea"></div>
+  </div>
+
+  <!-- ── TRADING PANEL ── -->
+  <div class="trade-panel" id="tradePanel">
+    <div class="trade-title">// rise / fall trading</div>
+
+    <!-- Live tick -->
+    <div class="tick-display">
+      <span class="tick-symbol" id="tickSymbol">R_100</span>
+      <span class="tick-price" id="tickPrice">—</span>
+    </div>
+
+    <div class="trade-row">
+      <div class="trade-field">
+        <label>SYMBOL</label>
+        <select id="tradeSymbol" onchange="changeSymbol()">
+          <option value="R_10">Volatility 10</option>
+          <option value="R_25">Volatility 25</option>
+          <option value="R_50">Volatility 50</option>
+          <option value="R_75">Volatility 75</option>
+          <option value="R_100" selected>Volatility 100</option>
+          <option value="1HZ10V">Volatility 10 (1s)</option>
+          <option value="1HZ100V">Volatility 100 (1s)</option>
+        </select>
+      </div>
+      <div class="trade-field">
+        <label>DURATION</label>
+        <select id="tradeDuration">
+          <option value="1" selected>1 Minute</option>
+          <option value="3">3 Minutes</option>
+          <option value="5">5 Minutes</option>
+          <option value="10">10 Minutes</option>
+          <option value="15">15 Minutes</option>
+          <option value="30">30 Minutes</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="trade-row">
+      <div class="trade-field">
+        <label>STAKE (USD)</label>
+        <input type="number" id="tradeStake" value="1" min="0.35" step="0.1">
+      </div>
+      <div class="trade-field">
+        <label>PAYOUT (EST.)</label>
+        <input type="text" id="tradePayout" value="—" readonly style="color:var(--green)">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-rise" id="btnRise" onclick="placeTrade('CALL')">▲ RISE</button>
+      <button class="btn-fall" id="btnFall" onclick="placeTrade('PUT')">▼ FALL</button>
+    </div>
+
+    <div class="contract-card" id="contractCard">
+      <div class="contract-status" id="contractStatus">OPEN</div>
+      <div class="contract-grid">
+        <div><div class="c-key">CONTRACT ID</div><div class="c-val" id="cId">—</div></div>
+        <div><div class="c-key">DIRECTION</div><div class="c-val" id="cDir">—</div></div>
+        <div><div class="c-key">ENTRY</div><div class="c-val" id="cEntry">—</div></div>
+        <div><div class="c-key">EXIT</div><div class="c-val" id="cExit">—</div></div>
+        <div><div class="c-key">STAKE</div><div class="c-val" id="cStake">—</div></div>
+        <div><div class="c-key">PROFIT</div><div class="c-val" id="cProfit">—</div></div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <button id="btnSell" onclick="sellContract()" style="width:100%; margin-top:14px; padding:10px; border:1px solid var(--accent); background:rgba(255,68,79,0.1); color:var(--accent); border-radius:2px; font-family:'Rajdhani', sans-serif; font-weight:700; letter-spacing:2px; cursor:pointer; display:none; transition:all 0.2s;">SELL AT MARKET</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let ws = null;
+  let selectedUrl = 'wss://ws.derivws.com/websockets/v3?app_id=1089';
+  let currentMode = 'new';
+
+  // ── Mode switching ──────────────────────────────────────────
+  function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach((b, i) => {
+      b.classList.toggle('active', (i === 0 && mode === 'legacy') || (i === 1 && mode === 'new'));
+    });
+
+    const extraFields   = document.getElementById('extraFields');
+    const serverSection = document.getElementById('serverSection');
+    const modeHint      = document.getElementById('modeHint');
+    const tokenHint     = document.getElementById('tokenHint');
+    const tokenLink     = document.getElementById('tokenLink');
+
+    if (mode === 'new') {
+      extraFields.classList.add('visible');
+      serverSection.style.display = 'none';
+      modeHint.innerHTML = 'Token จาก <strong style="color:var(--accent2)">developers.deriv.com</strong> Dashboard → API Tokens<br>ต้องสร้าง App ก่อนถึงจะได้ App ID';
+      tokenLink.href = 'https://developers.deriv.com';
+      tokenLink.textContent = 'developers.deriv.com';
+    } else {
+      extraFields.classList.remove('visible');
+      serverSection.style.display = 'block';
+      modeHint.innerHTML = 'Token จาก <strong style="color:var(--accent2)">app.deriv.com/account/api-token</strong><br>ใช้ WebSocket ตรงได้เลย (ระบบเก่า ยังใช้งานได้)';
+      tokenLink.href = 'https://app.deriv.com/account/api-token';
+      tokenLink.textContent = 'app.deriv.com/account/api-token';
+    }
+
+    hideCards();
+    log('sys', `mode → ${mode === 'legacy' ? 'Legacy WebSocket' : 'New REST + WebSocket'}`);
+  }
+
+  // ── Server selector (legacy) ────────────────────────────────
+  function selectServer(btn) {
+    document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedUrl = btn.dataset.url;
+    log('sys', `server → ${btn.textContent.trim()}`);
+  }
+
+  // ── UI helpers ──────────────────────────────────────────────
+  function setStatus(state, msg) {
+    document.getElementById('statusDot').className = 'status-dot ' + state;
+    document.getElementById('statusText').textContent = msg;
+  }
+
+  function log(type, msg) {
+    const area = document.getElementById('logArea');
+    const now  = new Date().toLocaleTimeString('th-TH', { hour12: false });
+    const line = document.createElement('div');
+    line.className = 'log-line ' + type;
+    const prefix = { send: '→', recv: '←', err: '✕', sys: '·' }[type] || '·';
+    line.textContent = `${now} ${prefix} ${msg}`;
+    area.appendChild(line);
+    area.scrollTop = area.scrollHeight;
+  }
+
+  function toggleLog() {
+    document.getElementById('logArea').classList.toggle('visible');
+  }
+
+  function showError(msg) {
+    const card = document.getElementById('errorCard');
+    document.getElementById('errorMsg').textContent = '✕ ERROR: ' + msg;
+    card.classList.add('visible');
+  }
+
+  function hideCards() {
+    document.getElementById('resultCard').classList.remove('visible');
+    document.getElementById('errorCard').classList.remove('visible');
+  }
+
+  function showBalance(loginid, isVirtual, fullname, country, balance, currency) {
+    document.getElementById('infoLoginid').textContent  = loginid  || '—';
+    document.getElementById('infoType').textContent     = isVirtual ? 'VIRTUAL' : 'REAL';
+    document.getElementById('infoName').textContent     = fullname  || '—';
+    document.getElementById('infoCountry').textContent  = (country  || '—').toUpperCase();
+    document.getElementById('balanceAmount').textContent =
+      parseFloat(balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('balanceCurrency').textContent = currency;
+    document.getElementById('resultCard').classList.add('visible');
+    setStatus('connected', 'สำเร็จ · balance อัปเดตแล้ว');
+    document.getElementById('btnConnect').disabled = false;
+  }
+
+  // ── Main connect ────────────────────────────────────────────
+  function connectAndCheck() {
+    const token = document.getElementById('apiToken').value.trim();
+    if (!token) { showError('กรุณาใส่ API Token ก่อนเชื่อมต่อ'); return; }
+
+    if (ws) { ws.close(); ws = null; }
+    hideCards();
+    document.getElementById('btnConnect').disabled = true;
+
+    if (currentMode === 'legacy') {
+      connectLegacy(token);
+    } else {
+      connectNew(token);
+    }
+  }
+
+  // ── LEGACY: WebSocket ตรง ───────────────────────────────────
+  function connectLegacy(token) {
+    setStatus('connecting', 'กำลังเชื่อมต่อ WebSocket (Legacy)...');
+    log('sys', 'opening → ' + selectedUrl);
+
+    ws = new WebSocket(selectedUrl);
+
+    ws.onopen = () => {
+      setStatus('connecting', 'เชื่อมต่อแล้ว · กำลัง authorize...');
+      log('sys', 'connected');
+      const req = { authorize: token };
+      ws.send(JSON.stringify(req));
+      log('send', JSON.stringify(req).replace(token, token.slice(0,6) + '****'));
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      log('recv', JSON.stringify(data).substring(0, 120) + (JSON.stringify(data).length > 120 ? '...' : ''));
+
+      if (data.msg_type === 'authorize') {
+        if (data.error) {
+          setStatus('error', 'Authorize ล้มเหลว');
+          showError(data.error.message + ' → ลองใช้ Token จาก app.deriv.com/account/api-token');
+          document.getElementById('btnConnect').disabled = false;
+          ws.close(); return;
+        }
+        const acc = data.authorize;
+        // store for later
+        ws._acc = acc;
+        setStatus('connecting', 'Authorized · กำลังดึง balance...');
+        ws.send(JSON.stringify({ balance: 1, account: 'current' }));
+        log('send', '{"balance":1,"account":"current"}');
+      }
+
+      if (data.msg_type === 'balance') {
+        if (data.error) {
+          setStatus('error', 'ดึง balance ล้มเหลว');
+          showError(data.error.message);
+          document.getElementById('btnConnect').disabled = false;
+          ws.close(); return;
+        }
+        const acc = ws._acc || {};
+        const bal = data.balance;
+        showBalance(acc.loginid, acc.is_virtual, acc.fullname, acc.country, bal.balance, bal.currency);
+        ws.close();
+      }
+    };
+
+    ws.onerror = () => {
+      log('err', 'WebSocket error');
+      setStatus('error', 'WebSocket error');
+      showError('ไม่สามารถเชื่อมต่อได้ ตรวจสอบ internet หรือ token');
+      document.getElementById('btnConnect').disabled = false;
+    };
+
+    ws.onclose = (e) => {
+      log('sys', `closed (code ${e.code})`);
+    };
+  }
+
+  // ── showBalance → also show trade panel ────────────────────
+  // Override to show trade panel and init tick stream
+  const _origShowBalance = showBalance;
+  window.showBalance = function(loginid, isVirtual, fullname, country, balance, currency) {
+    _origShowBalance(loginid, isVirtual, fullname, country, balance, currency);
+    // show trade panel and start tick stream
+    document.getElementById('tradePanel').classList.add('visible');
+    startTickStream();
+  };
+
+  // ── Tick stream ─────────────────────────────────────────────
+  let tickWs = null;
+  let lastTickPrice = null;
+  let tickSubId = null;
+
+  function getTradeWsUrl() {
+    // Use same server as selected for legacy, or new API ws
+    if (currentMode === 'legacy') return selectedUrl;
+    return null; // new API uses OTP — reuse existing ws or open new legacy
+  }
+
+  function startTickStream() {
+    const symbol = document.getElementById('tradeSymbol').value;
+    document.getElementById('tickSymbol').textContent = symbol;
+    openTickWs(symbol);
+  }
+
+  function openTickWs(symbol) {
+    if (tickWs) { tickWs.close(); tickWs = null; }
+
+    // Always use public WS for tick data (no auth needed)
+    const url = currentMode === 'legacy'
+      ? selectedUrl
+      : 'wss://ws.derivws.com/websockets/v3?app_id=36544';
+
+    tickWs = new WebSocket(url);
+
+    tickWs.onopen = () => {
+      tickWs.send(JSON.stringify({ ticks: symbol, subscribe: 1 }));
+      log('sys', `tick stream → ${symbol}`);
+      // Also get proposal for payout estimate
+      getProposal(symbol);
+    };
+
+    tickWs.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.msg_type === 'tick') {
+        const price = parseFloat(data.tick.quote);
+        const el = document.getElementById('tickPrice');
+        if (lastTickPrice !== null) {
+          el.className = 'tick-price ' + (price > lastTickPrice ? 'up' : price < lastTickPrice ? 'down' : '');
+        }
+        el.textContent = price.toFixed(data.tick.pip_size || 2);
+        lastTickPrice = price;
+      }
+
+      if (data.msg_type === 'proposal') {
+        if (!data.error) {
+          const payout = parseFloat(data.proposal?.payout || 0);
+          document.getElementById('tradePayout').value = payout > 0 ? payout.toFixed(2) : '—';
+          tickWs._proposalId = data.proposal?.id;
+        }
+      }
+
+      if (data.msg_type === 'buy') {
+        if (data.error) {
+          showContractError(data.error.message);
+          enableTradeButtons();
+          return;
+        }
+        const buy = data.buy;
+        document.getElementById('cId').textContent    = buy.contract_id;
+        document.getElementById('cEntry').textContent = parseFloat(buy.start_spot || 0).toFixed(5);
+        document.getElementById('cExit').textContent  = '—';
+        document.getElementById('cStake').textContent = buy.buy_price + ' USD';
+        document.getElementById('cProfit').textContent = '—';
+        document.getElementById('contractStatus').textContent = '⏳ OPEN';
+        document.getElementById('contractCard').className = 'contract-card open visible';
+        startProgress(parseInt(document.getElementById('tradeDuration').value));
+        // subscribe to contract updates
+        tickWs.send(JSON.stringify({ proposal_open_contract: 1, contract_id: buy.contract_id, subscribe: 1 }));
+        log('recv', `bought contract ${buy.contract_id}`);
+      }
+
+      if (data.msg_type === 'proposal_open_contract') {
+        const c = data.proposal_open_contract;
+        if (!c) return;
+        if (c.exit_tick) {
+          document.getElementById('cExit').textContent = parseFloat(c.exit_tick).toFixed(5);
+        }
+        if (c.status === 'won' || c.status === 'lost') {
+          const won = c.status === 'won';
+          const profit = parseFloat(c.profit || 0);
+          document.getElementById('contractStatus').textContent = won ? '✓ WIN' : '✕ LOSS';
+          document.getElementById('contractCard').className = `contract-card ${won ? 'win' : 'loss'} visible`;
+          document.getElementById('cProfit').textContent = (profit >= 0 ? '+' : '') + profit.toFixed(2) + ' USD';
+          document.getElementById('cProfit').style.color = won ? 'var(--green)' : 'var(--accent)';
+          document.getElementById('progressFill').style.width = '100%';
+          enableTradeButtons();
+          // refresh balance
+          setTimeout(() => connectAndCheck(), 800);
+        }
+      }
+    };
+
+    tickWs.onerror = () => log('err', 'tick ws error');
+    tickWs.onclose = () => log('sys', 'tick ws closed');
+  }
+
+  function getProposal(symbol) {
+    if (!tickWs || tickWs.readyState !== WebSocket.OPEN) return;
+    const stake    = parseFloat(document.getElementById('tradeStake').value) || 1;
+    const duration = parseInt(document.getElementById('tradeDuration').value) || 5;
+    tickWs.send(JSON.stringify({
+      proposal: 1, amount: stake, basis: 'stake',
+      contract_type: 'CALL', currency: 'USD',
+      duration: duration, duration_unit: 'm',
+      underlying_symbol: symbol
+    }));
+  }
+
+  function changeSymbol() {
+    const symbol = document.getElementById('tradeSymbol').value;
+    document.getElementById('tickSymbol').textContent = symbol;
+    lastTickPrice = null;
+    document.getElementById('tickPrice').textContent = '—';
+    document.getElementById('tickPrice').className = 'tick-price';
+    openTickWs(symbol);
+  }
+
+  // ── Place trade ─────────────────────────────────────────────
+  function placeTrade(direction) {
+    const token    = document.getElementById('apiToken').value.trim();
+    const symbol   = document.getElementById('tradeSymbol').value;
+    const stake    = parseFloat(document.getElementById('tradeStake').value) || 1;
+    const duration = parseInt(document.getElementById('tradeDuration').value) || 5;
+
+    if (!token) { alert('กรุณา Connect ก่อนเทรด'); return; }
+
+    disableTradeButtons();
+    document.getElementById('contractCard').className = 'contract-card';
+
+    // For new API: need authorized ws; for legacy, re-use tickWs after authorize
+    if (currentMode === 'new') {
+      placeTradeNew(token, direction, symbol, stake, duration);
+    } else {
+      placeTradeLegacy(token, direction, symbol, stake, duration);
+    }
+  }
+
+  function placeTradeLegacy(token, direction, symbol, stake, duration) {
+    // Authorize on trade ws then buy
+    const tradeUrl = selectedUrl;
+    const tws = new WebSocket(tradeUrl);
+    window.tradeWs = tws;
+
+    tws.onopen = () => {
+      tws.send(JSON.stringify({ authorize: token }));
+    };
+    tws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.msg_type === 'authorize') {
+        if (data.error) { showContractError(data.error.message); enableTradeButtons(); tws.close(); return; }
+        // buy directly
+        tws.send(JSON.stringify({
+          buy: 1, price: stake,
+          parameters: {
+            amount: stake, basis: 'stake',
+            contract_type: direction,
+            currency: 'USD',
+            duration: duration, duration_unit: 'm',
+            underlying_symbol: symbol
+          }
+        }));
+        log('send', 'buy ' + direction + ' ' + symbol + ' stake=' + stake + ' dur=' + duration + 't');
+      }
+      if (data.msg_type === 'buy') {
+        // forward to tickWs handler via manual dispatch
+        if (tickWs) tickWs.dispatchEvent ? null : null;
+        handleBuy(data, tws, direction);
+      }
+      if (data.msg_type === 'sell') {
+        if (data.error) {
+          showContractError('Sell Error: ' + data.error.message);
+          window.isSelling = false;
+        } else {
+          log('recv', `sold contract ${data.sell.contract_id}`);
+        }
+      }
+      if (data.msg_type === 'proposal_open_contract') {
+        handlePOC(data);
+        if (data.proposal_open_contract?.is_sold) tws.close();
+      }
+    };
+    tws.onerror = () => { showContractError('Trade WebSocket error'); enableTradeButtons(); };
+  }
+
+  async function placeTradeNew(token, direction, symbol, stake, duration) {
+    const appId     = document.getElementById('appId').value.trim();
+    const accountId = document.getElementById('accountId').value.trim();
+    try {
+      const otpRes = await fetch(
+        `https://api.derivws.com/trading/v1/options/accounts/${accountId}/otp`,
+        { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Deriv-App-ID': appId } }
+      );
+      if (!otpRes.ok) throw new Error('OTP failed: ' + otpRes.status);
+      const { data: { url: wsUrl } } = await otpRes.json();
+
+      const tws = new WebSocket(wsUrl);
+      window.tradeWs = tws;
+      tws.onopen = () => {
+        tws.send(JSON.stringify({
+          buy: 1, price: stake,
+          parameters: {
+            amount: stake, basis: 'stake',
+            contract_type: direction, currency: 'USD',
+            duration: duration, duration_unit: 'm',
+            underlying_symbol: symbol
+          }
+        }));
+        log('send', `buy ${direction} ${symbol} stake=${stake} dur=${duration}m (new api)`);
+      };
+      tws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.msg_type === 'buy') handleBuy(data, tws, direction);
+        if (data.msg_type === 'sell') {
+          if (data.error) {
+            showContractError('Sell Error: ' + data.error.message);
+            window.isSelling = false;
+          } else {
+            log('recv', `sold contract ${data.sell.contract_id}`);
+          }
+        }
+        if (data.msg_type === 'proposal_open_contract') {
+          handlePOC(data);
+          if (data.proposal_open_contract?.is_sold) tws.close();
+        }
+      };
+      tws.onerror = () => { showContractError('Trade WS error (new api)'); enableTradeButtons(); };
+    } catch(e) { showContractError(e.message); enableTradeButtons(); }
+  }
+
+  function handleBuy(data, tws, direction) {
+    if (data.error) { showContractError(data.error.message); enableTradeButtons(); tws.close(); return; }
+    const buy = data.buy;
+    document.getElementById('cId').textContent     = buy.contract_id;
+    document.getElementById('cDir').textContent    = direction === 'CALL' ? '▲ RISE' : '▼ FALL';
+    document.getElementById('cDir').style.color    = direction === 'CALL' ? 'var(--green)' : 'var(--accent)';
+    document.getElementById('cEntry').textContent  = parseFloat(buy.start_spot || 0).toFixed(5);
+    document.getElementById('cExit').textContent   = '—';
+    document.getElementById('cStake').textContent  = buy.buy_price + ' USD';
+    document.getElementById('cProfit').textContent = '—';
+    document.getElementById('contractStatus').textContent = '⏳ OPEN';
+    document.getElementById('contractCard').className = 'contract-card open visible';
+    
+    document.getElementById('btnSell').style.display = 'block';
+    document.getElementById('btnSell').disabled = true;
+    document.getElementById('btnSell').textContent = 'WAITING...';
+    window.isSelling = false;
+
+    startProgress(parseInt(document.getElementById('tradeDuration').value));
+    tws.send(JSON.stringify({ proposal_open_contract: 1, contract_id: buy.contract_id, subscribe: 1 }));
+    log('recv', `contract ${buy.contract_id} opened`);
+  }
+
+  function handlePOC(data) {
+    const c = data.proposal_open_contract;
+    if (!c) return;
+    if (c.exit_tick) document.getElementById('cExit').textContent = parseFloat(c.exit_tick).toFixed(5);
+    
+    // Realtime profit tracking while open
+    if (c.status === 'open') {
+      const profit = parseFloat(c.profit || 0);
+      document.getElementById('cProfit').textContent = (profit >= 0 ? '+' : '') + profit.toFixed(2) + ' USD';
+      document.getElementById('cProfit').style.color = profit >= 0 ? 'var(--green)' : 'var(--accent)';
+      
+      const btnSell = document.getElementById('btnSell');
+      if (!window.isSelling) {
+        if (c.is_valid_to_sell === 1) {
+          btnSell.disabled = false;
+          btnSell.textContent = `SELL AT MARKET ( ${parseFloat(c.bid_price || 0).toFixed(2)} USD )`;
+        } else {
+          btnSell.disabled = true;
+          btnSell.textContent = 'SELLING NOT AVAILABLE';
+        }
+      }
+    }
+
+    if (c.status === 'won' || c.status === 'lost' || c.status === 'sold' || c.is_sold === 1) {
+      const won = parseFloat(c.profit || 0) >= 0;
+      const profit = parseFloat(c.profit || 0);
+      
+      let statusText = won ? '✓ WIN' : '✕ LOSS';
+      if (c.status === 'sold' || c.is_sold === 1) {
+        statusText = '✓ SOLD';
+      }
+      
+      document.getElementById('contractStatus').textContent = statusText;
+      document.getElementById('contractCard').className = `contract-card ${won ? 'win' : 'loss'} visible`;
+      document.getElementById('cProfit').textContent = (profit >= 0 ? '+' : '') + profit.toFixed(2) + ' USD';
+      document.getElementById('cProfit').style.color = won ? 'var(--green)' : 'var(--accent)';
+      document.getElementById('progressFill').style.width = '100%';
+      document.getElementById('btnSell').style.display = 'none';
+      window.isSelling = false;
+      enableTradeButtons();
+      setTimeout(() => connectAndCheck(), 800);
+    }
+  }
+
+  function showContractError(msg) {
+    document.getElementById('contractStatus').textContent = '✕ ERROR';
+    document.getElementById('contractCard').className = 'contract-card loss visible';
+    document.getElementById('cProfit').textContent = msg;
+    document.getElementById('cProfit').style.color = 'var(--accent)';
+  }
+
+  function disableTradeButtons() {
+    document.getElementById('btnRise').disabled = true;
+    document.getElementById('btnFall').disabled = true;
+  }
+  function enableTradeButtons() {
+    document.getElementById('btnRise').disabled = false;
+    document.getElementById('btnFall').disabled = false;
+  }
+
+  function sellContract() {
+    if (!window.tradeWs) return;
+    const contractId = document.getElementById('cId').textContent;
+    if (!contractId || contractId === '—') return;
+
+    window.isSelling = true;
+    document.getElementById('btnSell').disabled = true;
+    document.getElementById('btnSell').textContent = 'SELLING...';
+    
+    window.tradeWs.send(JSON.stringify({
+      sell: parseInt(contractId),
+      price: 0
+    }));
+    log('send', `sell contract ${contractId} at market`);
+  }
+
+  let progressInterval = null;
+  function startProgress(minutes) {
+    const fill = document.getElementById('progressFill');
+    fill.style.transition = 'none';
+    fill.style.width = '0%';
+    clearInterval(progressInterval);
+    const total = minutes * 60 * 1000;
+    const start = Date.now();
+    progressInterval = setInterval(() => {
+      const pct = Math.min(((Date.now() - start) / total) * 100, 95);
+      fill.style.transition = 'width 1s linear';
+      fill.style.width = pct + '%';
+      if (pct >= 95) clearInterval(progressInterval);
+    }, 1000);
+  }
+
+  // ── NEW API: REST → OTP → WebSocket ────────────────────────
+  async function connectNew(token) {
+    const appId     = document.getElementById('appId').value.trim();
+    const accountId = document.getElementById('accountId').value.trim();
+
+    if (!appId)     { showError('กรุณาใส่ App ID'); document.getElementById('btnConnect').disabled = false; return; }
+    if (!accountId) { showError('กรุณาใส่ Account ID'); document.getElementById('btnConnect').disabled = false; return; }
+
+    try {
+      setStatus('connecting', 'Step 1/3 · กำลังขอ WebSocket URL...');
+      log('sys', 'POST /trading/v1/options/accounts/' + accountId + '/otp');
+
+      const otpRes = await fetch(
+        'https://api.derivws.com/trading/v1/options/accounts/' + accountId + '/otp',
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Deriv-App-ID': appId,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!otpRes.ok) {
+        const errData = await otpRes.json().catch(() => ({}));
+        throw new Error('HTTP ' + otpRes.status + ': ' + (errData.message || errData.error || 'Unauthorized'));
+      }
+
+      const otpData = await otpRes.json();
+      const wsUrl   = otpData.data && otpData.data.url;
+      if (!wsUrl) throw new Error('ไม่ได้รับ WebSocket URL จาก OTP endpoint');
+
+      log('recv', 'wsUrl: ' + wsUrl.substring(0, 60) + '...');
+      setStatus('connecting', 'Step 2/3 · กำลังเชื่อมต่อ WebSocket...');
+
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        log('sys', 'WebSocket connected (new API)');
+        setStatus('connecting', 'Step 3/3 · กำลังดึง balance...');
+        const req = { balance: 1, subscribe: 1, req_id: 1 };
+        ws.send(JSON.stringify(req));
+        log('send', JSON.stringify(req));
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        log('recv', JSON.stringify(data).substring(0, 120));
+
+        if (data.error) {
+          setStatus('error', 'Error จาก WebSocket');
+          showError(data.error.message || JSON.stringify(data.error));
+          document.getElementById('btnConnect').disabled = false;
+          ws.close(); return;
+        }
+
+        if (data.msg_type === 'balance') {
+          const bal = data.balance;
+          const lid = bal.loginid || accountId;
+          showBalance(lid, lid.startsWith('VR') || lid.startsWith('DO'), '—', '—', bal.balance, bal.currency);
+          ws.close();
+        }
+      };
+
+      ws.onerror = () => {
+        log('err', 'WebSocket error (new API)');
+        setStatus('error', 'WebSocket error');
+        showError('เชื่อมต่อ WebSocket ล้มเหลว');
+        document.getElementById('btnConnect').disabled = false;
+      };
+
+      ws.onclose = (e) => { log('sys', 'closed (code ' + e.code + ')'); };
+
+    } catch (err) {
+      log('err', err.message);
+      setStatus('error', 'เกิดข้อผิดพลาด');
+      showError(err.message);
+      document.getElementById('btnConnect').disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
+<!-- 
+
+DOT92631882
+token :: pat_b699ad9f0f79af479b52441e1dbf9952e61d272a5e43994b2bd6ce17328dbb78
+token2 :: pat_e60026d6a53f74c60adec8ceafe3e0b14ae6d6d6c6c15c83b07269678360578f
+
+token3:: pat_672ced3d26f230b870d18c6e8b793d8ef5ce8dfa2e22b8ce675a437d7ac5fd72
+ -->

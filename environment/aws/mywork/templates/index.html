@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Button Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Flask Button Calculation</h1>
+    <button id="calculateBtn">Calculate</button>
+    <p id="result">Result will appear here</p>
+
+    <script>
+        $(document).ready(function() {
+            $("#calculateBtn").click(function() {
+                $.ajax({
+                    url: '/calculate',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ input: 42 }), // ส่งข้อมูลตัวอย่าง
+                    success: function(response) {
+                        $("#result").text("Result: " + response.result);
+                    },
+                    error: function(error) {
+                        $("#result").text("Error: " + error.responseJSON.error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

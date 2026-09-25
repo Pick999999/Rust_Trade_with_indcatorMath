@@ -1,0 +1,233 @@
+[
+  {
+    "action": "PUT",
+    "contractId": 5458347039,
+    "duration": 3600,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.01,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 09:51:00"
+  },
+  {
+    "action": "PUT",
+    "contractId": 5458346119,
+    "duration": 3600,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.01,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 09:51:00"
+  },
+  {
+    "action": "PUT",
+    "contractId": 5459052939,
+    "duration": 3600,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.01,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 10:03:41"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5459380839,
+    "duration": 3600,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": -0.16,
+    "status": "loss",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 10:10:00"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5461779499,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": -0.08,
+    "status": "loss",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 10:53:19"
+  },
+  {
+    "action": "PUT",
+    "contractId": 5461807779,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.13,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 10:53:46"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5462371339,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.1,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 11:02:57"
+  },
+  {
+    "action": "PUT",
+    "contractId": 5462969199,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.12,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 11:14:25"
+  },
+  {
+    "action": "PUT",
+    "contractId": 5468337119,
+    "duration": 1800,
+    "exitReason": "Expiry",
+    "payout": 1.92,
+    "profit": -0.52,
+    "status": "loss",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 12:36:46"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5468680779,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.12,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 12:41:09"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5469760459,
+    "duration": 1800,
+    "exitReason": "Expiry",
+    "payout": 1.92,
+    "profit": -0.33,
+    "status": "loss",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 12:54:50"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5470501159,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.01,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 13:04:40"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5470586259,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.12,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 13:05:55"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5470784199,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.04,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 13:08:34"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5470784179,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.07,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 13:08:34"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5470912719,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": -0.36,
+    "status": "loss",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 13:10:14"
+  },
+  {
+    "action": "CALL",
+    "contractId": 5470912739,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": -0.39,
+    "status": "loss",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 13:10:14"
+  },
+  {
+    "action": "PUT",
+    "contractId": 5471240059,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.11,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 13:14:27"
+  },
+  {
+    "action": "PUT",
+    "contractId": 5471240079,
+    "duration": 1800,
+    "exitReason": "Expiry",
+    "payout": 1.92,
+    "profit": -0.68,
+    "status": "loss",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 13:14:27"
+  },
+  {
+    "action": "PUT",
+    "contractId": 5479655119,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.12,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 15:01:45"
+  },
+  {
+    "action": "PUT",
+    "contractId": 5479655139,
+    "duration": 1800,
+    "exitReason": "Auto Sell (TP)",
+    "payout": 1.92,
+    "profit": 0.1,
+    "status": "win",
+    "tradeStrategy": "Manual",
+    "tradeTime": "15/7/2569 15:01:45"
+  }
+]

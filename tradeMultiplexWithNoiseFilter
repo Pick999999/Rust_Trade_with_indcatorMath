@@ -1,0 +1,22 @@
+[Service]
+User=ubuntu
+Group=ubuntu
+
+WorkingDirectory=/home/ubuntu/indicator_MultiplexWithNoiseFilter
+
+# มี ExecStart บรรทัดเดียวพอครับ
+ExecStart=/home/ubuntu/indicator_MultiplexWithNoiseFilter/target/release/turbo-indicators
+
+Restart=always
+RestartSec=5
+
+
+# ให้ restart อัตโนมัติถ้าโปรแกรม crash
+Restart=always
+RestartSec=5
+
+# ตั้งค่า Environment Variables (ถ้ามี) เช่นดึงจาก .env ได้
+# EnvironmentFile=/home/ubuntu/turbo-indicators_v2/indicators_MultiplexWithNoiseFilter/.env
+
+[Install]
+WantedBy=multi-user.target

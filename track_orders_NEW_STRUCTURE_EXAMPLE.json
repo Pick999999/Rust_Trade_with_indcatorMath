@@ -1,0 +1,94 @@
+[
+  {
+    "contract_id": 7393059439,
+    "asset": "vol10",
+    "buy_price": 1,
+    "contract_type": "CALL",
+    "date_expiry": 1785420878,
+    "date_start": 1785419978,
+    "entry_signal": "CrossUp",
+    "entry_spot": 9584.78,
+    "exit_strategy": "nextCross",
+    "final_profit": 0.92,
+    "max_profit": 0.92,
+    "min_profit": -0.3,
+    "payout": 1.92,
+    "purchase_time": 1785419978,
+    "symbol": "1HZ10V",
+    "target_profit": 0.1,
+    "trade_code": "SM",
+    "ListOfTrack": [
+      {
+        "contract_id": 7393059439,
+        "bid_value": 1.92,
+        "diffSpot": 0,
+        "profit": -0.3,
+        "spot_price": 9584.78,
+        "tick": 1,
+        "time": "31/7/2569 05:01:40",
+        "timestamp": 1785448900079
+      },
+      {
+        "contract_id": 7393059439,
+        "bid_value": 1.92,
+        "diffSpot": 2.86,
+        "profit": 0.92,
+        "spot_price": 9587.64,
+        "tick": 2,
+        "time": "31/7/2569 05:01:41",
+        "timestamp": 1785448901448
+      },
+      {
+        "contract_id": 7393059439,
+        "bid_value": 1.92,
+        "diffSpot": 2.72,
+        "profit": 0.85,
+        "spot_price": 9587.5,
+        "tick": 3,
+        "time": "31/7/2569 05:01:42",
+        "timestamp": 1785448902040
+      }
+    ]
+  },
+  {
+    "contract_id": 7392901819,
+    "asset": "vol10",
+    "buy_price": 1,
+    "contract_type": "PUT",
+    "date_expiry": 1785420789,
+    "date_start": 1785419889,
+    "entry_signal": "CrossDown",
+    "entry_spot": 9584.04,
+    "exit_strategy": "nextCross",
+    "final_profit": -1,
+    "max_profit": 0.07,
+    "min_profit": -1,
+    "payout": 1.92,
+    "purchase_time": 1785419889,
+    "symbol": "1HZ10V",
+    "target_profit": 0.1,
+    "trade_code": "SM",
+    "ListOfTrack": [
+      {
+        "contract_id": 7392901819,
+        "bid_value": 1.92,
+        "diffSpot": 0,
+        "profit": -0.5,
+        "spot_price": 9584.04,
+        "tick": 1,
+        "time": "31/7/2569 05:01:40",
+        "timestamp": 1785448900079
+      },
+      {
+        "contract_id": 7392901819,
+        "bid_value": 1.92,
+        "diffSpot": 2.06,
+        "profit": -1,
+        "spot_price": 9586.1,
+        "tick": 2,
+        "time": "31/7/2569 05:01:41",
+        "timestamp": 1785448901448
+      }
+    ]
+  }
+]

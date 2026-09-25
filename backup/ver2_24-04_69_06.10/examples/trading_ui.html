@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stateful Trading Entry System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: rgba(22, 28, 45, 0.6);
+            --text-main: #f0f3fa;
+            --text-muted: #8d9bb5;
+            --accent: #3371ff;
+            --success: #00d97e;
+            --danger: #ff4d4f;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-family: 'Outfit', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-family);
+            background: radial-gradient(circle at 10% 20%, #171d31, var(--bg-color));
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #bbd2ff, var(--accent), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Chart & Logs */
+        .logs-container {
+            height: 500px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-right: 0.5rem;
+        }
+        
+        /* Scrollbar */
+        .logs-container::-webkit-scrollbar { width: 6px; }
+        .logs-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .logs-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        
+        .log-row {
+            display: grid;
+            grid-template-columns: 80px 100px 100px 1fr;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            align-items: center;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric span.label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric span.value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .signal-badge {
+            padding: 0.6rem 1rem;
+            border-radius: 24px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid transparent;
+        }
+
+        .signal-badge.long {
+            background: rgba(0, 217, 126, 0.1);
+            color: var(--success);
+            border-color: rgba(0, 217, 126, 0.2);
+            box-shadow: 0 0 15px rgba(0, 217, 126, 0.15);
+        }
+
+        .signal-badge.short {
+            background: rgba(255, 77, 79, 0.1);
+            color: var(--danger);
+            border-color: rgba(255, 77, 79, 0.2);
+            box-shadow: 0 0 15px rgba(255, 77, 79, 0.15);
+        }
+
+        .signal-badge.neutral {
+            background: rgba(141, 155, 181, 0.1);
+            color: var(--text-muted);
+            border-color: rgba(141, 155, 181, 0.2);
+        }
+
+        /* Controls Panel */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .control-group h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 0.5rem;
+        }
+
+        .live-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card .val {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #1f5fff, #0a40d5);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(51, 113, 255, 0.3);
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #3a75ff, #1d51e5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(51, 113, 255, 0.4);
+        }
+
+        .btn.stop {
+            background: linear-gradient(135deg, #ff4d4f, #d42a2c);
+            box-shadow: 0 4px 15px rgba(255, 77, 79, 0.3);
+        }
+
+        .btn.stop:hover {
+            background: linear-gradient(135deg, #ff6b6d, #e53e40);
+            box-shadow: 0 6px 20px rgba(255, 77, 79, 0.4);
+        }
+        
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            margin-right: 0.5rem;
+            box-shadow: 0 0 10px var(--text-muted);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .status-dot.active {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Turbo-Indicators Engine</h1>
+        <p>Stateful Backend + Axum Web API Event Simulator</p>
+    </div>
+
+    <div class="dashboard">
+        
+        <!-- Live Data Display -->
+        <div class="glass-panel">
+            <h3 style="margin-bottom: 1rem; font-weight: 600; color: #fff;">Terminal Output / Trading Signals</h3>
+            <div class="logs-container" id="logsContainer">
+                <div style="text-align: center; color: var(--text-muted); padding-top: 50px;" id="emptyState">
+                    Waiting for data stream...
+                </div>
+            </div>
+        </div>
+
+        <!-- System Controls -->
+        <div class="glass-panel controls">
+            <div class="control-group">
+                <h3><span class="status-dot" id="sysStatus"></span> System Connection</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
+                    This simulator dispatches a synthetic candle price to the Axum rust backend every 0.5 seconds to build stateful indicator momentum.
+                </p>
+                <div class="live-stats">
+                    <div class="stat-card">
+                        <div class="label">Total Candles</div>
+                        <div class="val" id="totalCandles">0</div>
+                    </div>
+                     <div class="stat-card">
+                        <div class="label">Total Signals</div>
+                        <div class="val" id="totalSignals">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" id="streamBtn" onclick="toggleStream()">Start Market Stream</button>
+            <button class="btn" style="background: transparent; border: 1px solid var(--glass-border); box-shadow: none;" onclick="sendSingleCandle()">Push Single Candle</button>
+        </div>
+
+    </div>
+
+    <script>
+        let isStreaming = false;
+        let streamInterval = null;
+        let candleCount = 0;
+        let signalCount = 0;
+        
+        let dummyPrice = 65000;
+        let trend = 0;
+
+        function toggleStream() {
+            const btn = document.getElementById('streamBtn');
+            const dot = document.getElementById('sysStatus');
+            
+            if (!isStreaming) {
+                isStreaming = true;
+                btn.textContent = 'Stop Market Stream';
+                btn.classList.add('stop');
+                dot.classList.add('active');
+                
+                streamInterval = setInterval(() => {
+                    sendSingleCandle();
+                }, 500);
+            } else {
+                isStreaming = false;
+                btn.textContent = 'Start Market Stream';
+                btn.classList.remove('stop');
+                dot.classList.remove('active');
+                clearInterval(streamInterval);
+            }
+        }
+
+        async function sendSingleCandle() {
+            // Simulate random market walk
+            const noise = (Math.random() - 0.5) * 50;
+            const volatility = Math.sin(candleCount * 0.1) * 30; // Sine wave pattern
+            dummyPrice = dummyPrice + noise + volatility;
+            
+            candleCount++;
+            document.getElementById('totalCandles').textContent = candleCount;
+
+            const candle = {
+                symbol: "BTC/USDT",
+                open: dummyPrice - (Math.random() * 10),
+                high: dummyPrice + (Math.random() * 20),
+                low: dummyPrice - (Math.random() * 20),
+                close: dummyPrice,
+                volume: Math.random() * 1000 + 500,
+                timestamp: Math.floor(Date.now() / 1000)
+            };
+
+            try {
+                const res = await fetch('/api/tick', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(candle)
+                });
+                
+                const data = await res.json();
+                appendLog(data);
+            } catch (err) {
+                console.error("Backend offline", err);
+            }
+        }
+
+        function appendLog(data) {
+            const container = document.getElementById('logsContainer');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (emptyState) emptyState.remove();
+
+            const row = document.createElement('div');
+            row.className = 'log-row';
+
+            const time = new Date(data.timestamp * 1000).toLocaleTimeString();
+            const formatOrNull = val => val ? val.toFixed(2) : '-';
+
+            // Check if signal generated 
+            let signalClass = 'neutral';
+            let signalText = data.signal;
+            if (data.signal.startsWith("LONG")) { signalClass = 'long'; signalCount++; }
+            if (data.signal.startsWith("SHORT")) { signalClass = 'short'; signalCount++; }
+            
+            document.getElementById('totalSignals').textContent = signalCount;
+
+            row.innerHTML = `
+                <div class="metric">
+                    <span class="label">Time</span>
+                    <span class="value" style="font-size: 0.9rem;">${time}</span>
+                </div>
+                <div class="metric">
+                    <span class="label">Price</span>
+                    <span class="value">$${data.price.toFixed(0)}</span>
+                </div>
+                <div class="metric">
+                    <span class="label">Indicators</span>
+                    <span class="value" style="font-size: 0.85rem; color: var(--text-muted);">
+                        RSI: ${formatOrNull(data.rsi)} <br>
+                        HMA: ${formatOrNull(data.hma)}
+                    </span>
+                </div>
+                <div class="signal-badge ${signalClass}">
+                    ${signalText}
+                </div>
+            `;
+
+            container.prepend(row);
+            
+            // Keep maximum 50 rows
+            if (container.children.length > 50) {
+                container.lastElementChild.remove();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Export Trade Data API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #06D6A0;
+        }
+
+        .section {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #06D6A0;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        input[type="date"] {
+            padding: 10px;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #06D6A0;
+            color: #0f172a;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #05b589;
+        }
+
+        button:disabled {
+            background: #334155;
+            cursor: not-allowed;
+        }
+
+        .output {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .success {
+            color: #06D6A0;
+        }
+
+        .error {
+            color: #E8304A;
+        }
+
+        .warning {
+            color: #F59E0B;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #334155;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #06D6A0;
+        }
+
+        .loading {
+            display: none;
+            color: #F59E0B;
+            margin-top: 10px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Export Trade Data API</h1>
+
+        <!-- Section 1: Basic Export -->
+        <div class="section">
+            <div class="section-title">📦 1. Basic Export & Unzip</div>
+            <div class="input-group">
+                <label>เลือกวันที่:</label>
+                <input type="date" id="date1" value="2026-07-29">
+                <button onclick="testBasicExport()">Export & Unzip</button>
+                <button onclick="downloadZip()">Download ZIP</button>
+            </div>
+            <div class="loading" id="loading1">⏳ กำลังประมวลผล...</div>
+            <div class="output" id="output1">คลิกปุ่มเพื่อเริ่มทดสอบ...</div>
+        </div>
+
+        <!-- Section 2: Summary Analysis -->
+        <div class="section">
+            <div class="section-title">📊 2. Summary Analysis</div>
+            <div class="input-group">
+                <label>เลือกวันที่:</label>
+                <input type="date" id="date2" value="2026-07-29">
+                <button onclick="testSummaryAnalysis()">Analyze</button>
+            </div>
+            <div class="loading" id="loading2">⏳ กำลังวิเคราะห์...</div>
+            <div class="stats" id="stats2"></div>
+            <div class="output" id="output2">คลิกปุ่มเพื่อวิเคราะห์ข้อมูล...</div>
+        </div>
+
+        <!-- Section 3: Get by Asset -->
+        <div class="section">
+            <div class="section-title">🎯 3. Get Trades by Asset</div>
+            <div class="input-group">
+                <label>เลือกวันที่:</label>
+                <input type="date" id="date3" value="2026-07-29">
+                <label>Asset Code:</label>
+                <input type="text" id="asset3" value="1HZ50V" style="width: 120px; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #e2e8f0; border-radius: 4px;">
+                <button onclick="testGetByAsset()">Get Asset Data</button>
+            </div>
+            <div class="loading" id="loading3">⏳ กำลังดึงข้อมูล...</div>
+            <div class="output" id="output3">คลิกปุ่มเพื่อดึงข้อมูล asset...</div>
+        </div>
+
+        <!-- Section 4: Multiple Dates -->
+        <div class="section">
+            <div class="section-title">📅 4. Export Multiple Dates</div>
+            <div class="input-group">
+                <label>วันที่เริ่มต้น:</label>
+                <input type="date" id="dateStart" value="2026-07-27">
+                <label>วันที่สิ้นสุด:</label>
+                <input type="date" id="dateEnd" value="2026-07-29">
+                <button onclick="testMultipleDates()">Export All</button>
+            </div>
+            <div class="loading" id="loading4">⏳ กำลังดึงข้อมูลหลายวัน...</div>
+            <div class="output" id="output4">คลิกปุ่มเพื่อดึงข้อมูลหลายวัน...</div>
+        </div>
+
+        <!-- Console Log -->
+        <div class="section">
+            <div class="section-title">📋 Console Log</div>
+            <div class="output" id="consoleLog" style="max-height: 300px;">Console logs will appear here...</div>
+        </div>
+    </div>
+
+    <!-- Load JSZip Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <!-- Load Our API Script -->
+    <script src="/js/getHistoryTradeFromHost.js"></script>
+
+    <!-- Test Functions -->
+    <script>
+        // Override console.log to show in page
+        const originalLog = console.log;
+        const consoleLogDiv = document.getElementById('consoleLog');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            consoleLogDiv.textContent += message + '\n';
+            consoleLogDiv.scrollTop = consoleLogDiv.scrollHeight;
+        };
+
+        // Test 1: Basic Export
+        async function testBasicExport() {
+            const date = document.getElementById('date1').value;
+            const output = document.getElementById('output1');
+            const loading = document.getElementById('loading1');
+            
+            loading.classList.add('active');
+            output.textContent = '⏳ กำลังดึงข้อมูล...';
+            
+            const result = await getHistoryTradeFromHost(date);
+            
+            loading.classList.remove('active');
+            
+            if (result.success) {
+                output.innerHTML = `<div class="success">✅ สำเร็จ!</div>\n\n${JSON.stringify(result, null, 2)}`;
+            } else {
+                output.innerHTML = `<div class="error">❌ ล้มเหลว: ${result.error}</div>`;
+            }
+        }
+
+        // Download ZIP
+        async function downloadZip() {
+            const date = document.getElementById('date1').value;
+            await downloadTradeDataZip(date);
+        }
+
+        // Test 2: Summary Analysis
+        async function testSummaryAnalysis() {
+            const date = document.getElementById('date2').value;
+            const output = document.getElementById('output2');
+            const stats = document.getElementById('stats2');
+            const loading = document.getElementById('loading2');
+            
+            loading.classList.add('active');
+            output.textContent = '⏳ กำลังวิเคราะห์...';
+            stats.innerHTML = '';
+            
+            const result = await getHistoryTradeFromHost(date);
+            const summary = analyzeTradeData(result);
+            
+            loading.classList.remove('active');
+            
+            if (summary) {
+                // Show stats cards
+                stats.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-label">📊 Total Trades</div>
+                        <div class="stat-value">${summary.totalTrades}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">💰 Total Profit</div>
+                        <div class="stat-value" style="color: ${summary.totalProfit >= 0 ? '#06D6A0' : '#E8304A'}">
+                            ${summary.totalProfit >= 0 ? '+' : ''}$${summary.totalProfit.toFixed(2)}
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">✅ Win Rate</div>
+                        <div class="stat-value">${summary.winRate}%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">🎯 Assets</div>
+                        <div class="stat-value">${summary.assets.length}</div>
+                    </div>
+                `;
+                
+                output.innerHTML = `<div class="success">✅ วิเคราะห์เสร็จแล้ว</div>\n\n${JSON.stringify(summary, null, 2)}`;
+            } else {
+                output.innerHTML = `<div class="error">❌ ไม่สามารถวิเคราะห์ข้อมูลได้</div>`;
+            }
+        }
+
+        // Test 3: Get by Asset
+        async function testGetByAsset() {
+            const date = document.getElementById('date3').value;
+            const asset = document.getElementById('asset3').value;
+            const output = document.getElementById('output3');
+            const loading = document.getElementById('loading3');
+            
+            loading.classList.add('active');
+            output.textContent = '⏳ กำลังดึงข้อมูล...';
+            
+            const assetData = await getTradesByAsset(date, asset);
+            
+            loading.classList.remove('active');
+            
+            if (assetData) {
+                output.innerHTML = `<div class="success">✅ ดึงข้อมูล ${asset} สำเร็จ</div>\n\n${JSON.stringify(assetData, null, 2)}`;
+            } else {
+                output.innerHTML = `<div class="error">❌ ไม่พบข้อมูลสำหรับ ${asset}</div>`;
+            }
+        }
+
+        // Test 4: Multiple Dates
+        async function testMultipleDates() {
+            const dateStart = new Date(document.getElementById('dateStart').value);
+            const dateEnd = new Date(document.getElementById('dateEnd').value);
+            const output = document.getElementById('output4');
+            const loading = document.getElementById('loading4');
+            
+            // Generate date array
+            const dates = [];
+            for (let d = new Date(dateStart); d <= dateEnd; d.setDate(d.getDate() + 1)) {
+                dates.push(d.toISOString().split('T')[0]);
+            }
+            
+            loading.classList.add('active');
+            output.textContent = `⏳ กำลังดึงข้อมูล ${dates.length} วัน...`;
+            
+            const results = await getHistoryTradeMultipleDates(dates);
+            
+            loading.classList.remove('active');
+            
+            const successCount = results.filter(r => r.success).length;
+            output.innerHTML = `<div class="success">✅ ดึงข้อมูลสำเร็จ ${successCount}/${dates.length} วัน</div>\n\n${JSON.stringify(results, null, 2)}`;
+        }
+
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date1').value = today;
+        document.getElementById('date2').value = today;
+        document.getElementById('date3').value = today;
+        document.getElementById('dateStart').value = today;
+        document.getElementById('dateEnd').value = today;
+
+        console.log('🎉 Test page loaded successfully!');
+        console.log('JSZip loaded:', typeof JSZip !== 'undefined');
+        console.log('API functions loaded:', typeof getHistoryTradeFromHost !== 'undefined');
+    </script>
+</body>
+</html>

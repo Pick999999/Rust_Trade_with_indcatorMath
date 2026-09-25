@@ -1,0 +1,28 @@
+[
+  {
+    "serverCode": 2,
+    "tradeRoundNo": 1,
+    "usestrategyCode": "PKTrendV5",
+    "startTimeTrade": "2026-09-13 05:49:24",
+    "stopTimeTrade": "",
+    "durationTrade": "",
+    "assetTrade": [
+      {
+        "assetCode": "1HZ10V",
+        "MaxWinCon": 1,
+        "MaxLossCon": 1
+      },
+      {
+        "assetCode": "1HZ50V",
+        "MaxWinCon": 1,
+        "MaxLossCon": 3
+      },
+      {
+        "assetCode": "1HZ75V",
+        "MaxWinCon": 0,
+        "MaxLossCon": 2
+      }
+    ],
+    "MaxLossCon": 3
+  }
+]

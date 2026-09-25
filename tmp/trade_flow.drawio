@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-04-30T00:00:00.000Z" agent="Mozilla/5.0" version="24.2.5" type="device">
+  <diagram id="trade_flow" name="Trade System Flow">
+    <mxGraphModel dx="1422" dy="798" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="1653" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="node1" value="&lt;b&gt;[main.rs]&lt;/b&gt;&lt;br&gt;handle_post_trade / auto_schedule_trade&lt;br&gt;&lt;i&gt;รับคำสั่งเริ่มทำงาน (จาก Web หรือ Schedule)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="484" y="40" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node2" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;start_deriv_bot_multiplexed&lt;br&gt;&lt;i&gt;เตรียมตัวแปรสถานะและเชื่อมต่อ WebSocket&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="140" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node3" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;ส่งคำขอผ่าน WS&lt;br&gt;&lt;i&gt;ยืนยันตัวตน (authorize) และขอแท่งเทียนย้อนหลัง (ticks_history)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="240" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node4" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;รับข้อมูลจาก WS (candles)&lt;br&gt;&lt;i&gt;แปลงข้อมูลแท่งเทียนย้อนหลัง 1,000 แท่ง&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="340" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node5" value="&lt;b&gt;[analysis.rs]&lt;/b&gt;&lt;br&gt;AnalysisEngine::process_history&lt;br&gt;&lt;i&gt;คำนวณ EMA และ ATR รวดเดียวแบบประหยัดพลังงาน (SIMD Batch)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="440" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node6" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;รับข้อมูลจาก WS (ohlc)&lt;br&gt;&lt;i&gt;รับข้อมูลราคาสดๆ ทุกๆ 1 วินาที&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="540" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node7" value="&lt;b&gt;[analysis.rs]&lt;/b&gt;&lt;br&gt;AnalysisEngine::update_tick&lt;br&gt;&lt;i&gt;คำนวณอินดิเคเตอร์เฉพาะแท่งล่าสุดแบบอัพเดทค่า (O(1))&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="640" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node8" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;ขึ้นแท่งเทียนใหม่?&lt;br&gt;และไม่ได้เทรดค้างอยู่?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="484" y="740" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="node9" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;เลยเวลาปิดรอบ?&lt;br&gt;และไม่ได้ติด Martingale?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="484" y="860" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="node21" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;หยุดพักการเทรด&lt;br&gt;&lt;i&gt;รอจนกว่าจะถึงรอบเวลาถัดไป&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="800" y="870" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node10" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;ตรวจสอบสัญญาณเข้าเทรด&lt;br&gt;&lt;i&gt;ต้องติด Martingale อยู่ หรือมี Spike ในแท่งก่อนหน้า&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="980" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node11" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;เข้าเงื่อนไขเทรดหรือไม่?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="484" y="1080" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="node12" value="&lt;b&gt;[get_action.rs]&lt;/b&gt;&lt;br&gt;get_suggest_color&lt;br&gt;&lt;i&gt;หาจุดเข้าเทรด (กด Call/Put) ตามกลยุทธ์ Martingale&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="1200" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node13" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;ส่งคำขอผ่าน WS (buy)&lt;br&gt;&lt;i&gt;ยิงคำสั่งซื้อ (Buy Contract)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="1300" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node14" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;รับข้อมูลจาก WS (buy)&lt;br&gt;&lt;i&gt;บันทึก contract_id และติดตามสถานะไม้ที่เปิดอยู่&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="1400" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node15" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;รับข้อมูลจาก WS (proposal_open_contract)&lt;br&gt;&lt;i&gt;รับสถานะผลกำไรขาดทุนล่าสุดของไม้ที่เทรดอยู่&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="1500" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node16" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;ปิดไม้แล้วหรือยัง?&lt;br&gt;&lt;i&gt;is_sold == 1 หรือ status สรุปผลแล้ว&lt;/i&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="484" y="1600" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="node17" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;ชนะ / แพ้ ?&lt;br&gt;&lt;i&gt;กำไร (profit) &amp;gt; 0&lt;/i&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="484" y="1720" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="node18" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;กรณีชนะ (Win)&lt;br&gt;&lt;i&gt;รีเซ็ต loss_con เป็น 0, ล้างสถานะ Martingale&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="304" y="1840" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node19" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;กรณีแพ้ (Loss)&lt;br&gt;&lt;i&gt;นับ loss_con เพิ่มขึ้น, เปิดโหมดทบไม้ Martingale&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="664" y="1840" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="node20" value="&lt;b&gt;[deriv.rs]&lt;/b&gt;&lt;br&gt;บันทึกประวัติและแจ้งเตือน&lt;br&gt;&lt;i&gt;เซฟลง trades.json และส่งแจ้งเตือน Telegram&lt;br&gt;(รีเซ็ตสถานะ is_trading เป็น false เพื่อรอรอบใหม่)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="484" y="1940" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node1" target="node2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node2" target="node3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node3" target="node4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node4" target="node5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node5" target="node6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node6" target="node7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node7" target="node8">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" value="ใช่" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node8" target="node9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e9" value="ไม่ใช่" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="node8" target="node6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="384" y="780"/>
+              <mxPoint x="384" y="555"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10" value="ไม่ใช่" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node9" target="node10">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e11" value="ใช่" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node9" target="node21">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node10" target="node11">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e13" value="ใช่" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node11" target="node12">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e14" value="ไม่ใช่" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node11" target="node6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="784" y="1120"/>
+              <mxPoint x="784" y="570"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node12" target="node13">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node13" target="node14">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node14" target="node15">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node15" target="node16">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e19" value="ใช่" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="node16" target="node17">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e20" value="ไม่ใช่" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node16" target="node15">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="734" y="1640"/>
+              <mxPoint x="734" y="1530"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e21" value="ชนะ (กำไร &gt; 0)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node17" target="node18">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e22" value="แพ้ (ขาดทุน)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node17" target="node19">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node18" target="node20">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e24" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="node19" target="node20">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e25" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="node20" target="node6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="584" y="2030"/>
+              <mxPoint x="184" y="2030"/>
+              <mxPoint x="184" y="585"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

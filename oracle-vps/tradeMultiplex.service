@@ -1,0 +1,15 @@
+[Unit]
+Description=Trade Multiplex Server
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/indicatorMultiplex
+ExecStart=/home/ubuntu/indicatorMultiplex/target/release/turbo-indicators
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

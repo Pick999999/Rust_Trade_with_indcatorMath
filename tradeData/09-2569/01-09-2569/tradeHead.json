@@ -1,0 +1,132 @@
+[
+  {
+    "serverCode": 1,
+    "tradeRoundNo": 6,
+    "usestrategyCode": "ForecastSequence",
+    "startTimeTrade": "2026-09-01 15:32:01",
+    "stopTimeTrade": "2026-09-01 16:33:56",
+    "durationTrade": "1h 1m 55s",
+    "assetTrade": [
+      {
+        "assetCode": "1HZ10V",
+        "MaxWinCon": 6,
+        "MaxLossCon": 4
+      },
+      {
+        "assetCode": "1HZ50V",
+        "MaxWinCon": 6,
+        "MaxLossCon": 5
+      },
+      {
+        "assetCode": "1HZ75V",
+        "MaxWinCon": 5,
+        "MaxLossCon": 3
+      }
+    ],
+    "MaxLossCon": 5
+  },
+  {
+    "serverCode": 1,
+    "tradeRoundNo": 7,
+    "usestrategyCode": "ForecastSequence",
+    "startTimeTrade": "2026-09-01 17:01:01",
+    "stopTimeTrade": "2026-09-01 18:01:56",
+    "durationTrade": "1h 0m 55s",
+    "assetTrade": [
+      {
+        "assetCode": "1HZ10V",
+        "MaxWinCon": 3,
+        "MaxLossCon": 4
+      },
+      {
+        "assetCode": "1HZ50V",
+        "MaxWinCon": 5,
+        "MaxLossCon": 2
+      },
+      {
+        "assetCode": "1HZ75V",
+        "MaxWinCon": 5,
+        "MaxLossCon": 4
+      }
+    ],
+    "MaxLossCon": 4
+  },
+  {
+    "serverCode": 1,
+    "tradeRoundNo": 8,
+    "usestrategyCode": "ForecastSequence",
+    "startTimeTrade": "2026-09-01 18:36:00",
+    "stopTimeTrade": "2026-09-01 19:36:56",
+    "durationTrade": "1h 0m 56s",
+    "assetTrade": [
+      {
+        "assetCode": "1HZ10V",
+        "MaxWinCon": 2,
+        "MaxLossCon": 6
+      },
+      {
+        "assetCode": "1HZ50V",
+        "MaxWinCon": 6,
+        "MaxLossCon": 7
+      },
+      {
+        "assetCode": "1HZ75V",
+        "MaxWinCon": 5,
+        "MaxLossCon": 3
+      }
+    ],
+    "MaxLossCon": 7
+  },
+  {
+    "serverCode": 1,
+    "tradeRoundNo": 9,
+    "usestrategyCode": "ForecastSequence",
+    "startTimeTrade": "2026-09-01 19:55:00",
+    "stopTimeTrade": "2026-09-01 20:57:02",
+    "durationTrade": "1h 2m 2s",
+    "assetTrade": [
+      {
+        "assetCode": "1HZ10V",
+        "MaxWinCon": 3,
+        "MaxLossCon": 6
+      },
+      {
+        "assetCode": "1HZ50V",
+        "MaxWinCon": 6,
+        "MaxLossCon": 3
+      },
+      {
+        "assetCode": "1HZ75V",
+        "MaxWinCon": 3,
+        "MaxLossCon": 6
+      }
+    ],
+    "MaxLossCon": 6
+  },
+  {
+    "serverCode": 1,
+    "tradeRoundNo": 10,
+    "usestrategyCode": "ForecastSequence",
+    "startTimeTrade": "2026-09-01 21:25:01",
+    "stopTimeTrade": "2026-09-01 22:25:30",
+    "durationTrade": "1h 0m 29s",
+    "assetTrade": [
+      {
+        "assetCode": "1HZ10V",
+        "MaxWinCon": 5,
+        "MaxLossCon": 5
+      },
+      {
+        "assetCode": "1HZ50V",
+        "MaxWinCon": 4,
+        "MaxLossCon": 6
+      },
+      {
+        "assetCode": "1HZ75V",
+        "MaxWinCon": 2,
+        "MaxLossCon": 6
+      }
+    ],
+    "MaxLossCon": 6
+  }
+]

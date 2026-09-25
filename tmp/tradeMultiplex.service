@@ -1,0 +1,31 @@
+
+[Unit]
+Description=Trade Multiplex Server
+After=network.target
+
+[Service]
+# ระบุ user ที่ใช้ run (เปลี่ยนเป็น ubuntu หรือ ec2-user ถ้าใช้ Amazon Linux/Ubuntu)
+User=ubuntu
+Group=ubuntu
+
+# ระบุ Path ไปยัง folder project ของคุณ (ต้องเปลี่ยนให้ตรงกับบน EC2)
+WorkingDirectory=/home/ubuntu/indicators_Multiplex
+
+# คำสั่งที่ใช้ run server แนะนำให้ build เป็น release ก่อน (cargo build --release)
+# จากนั้นเรียกตัว binary โดยตรง (เพื่อประสิทธิภาพที่ดีที่สุด)
+ExecStart=/home/ubuntu/indicators_Multiplex/target/release/turbo-indicators
+
+
+
+# หรือถ้าต้องการ run ด้วย cargo run ตรงๆ (ไม่ค่อยแนะนำบน production แต่ทำได้)
+# ExecStart=/home/ubuntu/.cargo/bin/cargo run --release
+
+# ให้ restart อัตโนมัติถ้าโปรแกรม crash
+Restart=always
+RestartSec=5
+
+# ตั้งค่า Environment Variables (ถ้ามี) เช่นดึงจาก .env ได้
+# EnvironmentFile=/home/ubuntu/turbo-indicators_v2/indicators_Multiplex/.env
+
+[Install]
+WantedBy=multi-user.target

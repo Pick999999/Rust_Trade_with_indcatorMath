@@ -1,0 +1,142 @@
+
+ 
+
+<div class="wrap">
+  <h2 style="display:flex;align-items:center;gap:8px;"><i class="ti ti-chart-candle" aria-hidden="true"></i> Trade Schedule Calculator</h2>
+  <p class="sub">กำหนดเวลาและระยะเวลาการเทรดในแต่ละวัน</p>
+
+  <div class="card">
+    <p class="section-title">ตั้งค่าเวลา</p>
+    <div class="grid" style="margin-bottom:1rem;">
+      <div class="field">
+        <label><i class="ti ti-clock-play" style="font-size:14px;vertical-align:-1px;" aria-hidden="true"></i> เริ่มต้นเวลา (Start)</label>
+        <input type="datetime-local" id="startDT" />
+      </div>
+      <div class="field">
+        <label><i class="ti ti-clock-stop" style="font-size:14px;vertical-align:-1px;" aria-hidden="true"></i> ระยะเวลาต่อรอบ (Duration)</label>
+        <select id="duration">
+          <option value="30">30 นาที</option>
+          <option value="45">45 นาที</option>
+          <option value="60" selected>1 ชั่วโมง (60 นาที)</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label><i class="ti ti-clock-check" style="font-size:14px;vertical-align:-1px;" aria-hidden="true"></i> สิ้นสุดรอบแรก (Stop = Start + Duration)</label>
+        <div class="stop-val" id="stopDisplay">—</div>
+      </div>
+      <div class="field">
+        <label><i class="ti ti-coffee" style="font-size:14px;vertical-align:-1px;" aria-hidden="true"></i> เวลาพักก่อนรอบถัดไป (นาที)</label>
+        <input type="number" id="breakMin" value="30" min="0" max="120" step="5" placeholder="เช่น 30" />
+      </div>
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calculate()">
+    <i class="ti ti-calendar-stats" aria-hidden="true"></i> Calculate Schedule
+  </button>
+
+  <div id="result" style="margin-top:1.25rem;"></div>
+</div>
+
+<script>
+const startDT = document.getElementById('startDT');
+const durSel = document.getElementById('duration');
+const breakMin = document.getElementById('breakMin');
+const stopDisplay = document.getElementById('stopDisplay');
+
+function fmt(d) {
+  const h = String(d.getHours()).padStart(2,'0');
+  const m = String(d.getMinutes()).padStart(2,'0');
+  return h + ':' + m;
+}
+function fmtFull(d) {
+  const yy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return dd+'/'+mm+'/'+yy+' '+fmt(d);
+}
+function now8() {
+  const n = new Date();
+  n.setHours(3,0,0,0);
+  const pad = v => String(v).padStart(2,'0');
+  return n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate())+'T03:00';
+}
+startDT.value = now8();
+
+function updateStop() {
+  if (!startDT.value) { stopDisplay.textContent = '—'; return; }
+  const s = new Date(startDT.value);
+  const dur = parseInt(durSel.value);
+  const e = new Date(s.getTime() + dur * 60000);
+  stopDisplay.textContent = fmtFull(e);
+}
+startDT.addEventListener('change', updateStop);
+durSel.addEventListener('change', updateStop);
+updateStop();
+
+function calculate() {
+  if (!startDT.value) { alert('กรุณาเลือกเวลาเริ่มต้น'); return; }
+  const base = new Date(startDT.value);
+  const dur = parseInt(durSel.value);
+  const brk = parseInt(breakMin.value) || 0;
+  const step = dur + brk;
+
+  const dayStart = new Date(base);
+  dayStart.setHours(0,0,0,0);
+  const dayEnd = new Date(base);
+  dayEnd.setHours(23,59,0,0);
+
+  const rows = [];
+  let cur = new Date(base);
+  let round = 1;
+  while (cur <= dayEnd) {
+    const end = new Date(cur.getTime() + dur * 60000 - 60000);
+    const partial = end > dayEnd;
+    const actualEnd = partial ? new Date(dayEnd) : end;
+    rows.push({ round, start: new Date(cur), end: actualEnd, partial });
+    if (partial) break;
+    cur = new Date(cur.getTime() + step * 60000);
+    round++;
+  }
+
+  const totalRounds = rows.length;
+  const tradeMins = rows.reduce((a,r) => a + (r.end - r.start)/60000 + (r.partial ? 0 : 1), 0);
+  const breakMins = (totalRounds - 1) * brk;
+
+  const el = document.getElementById('result');
+  el.innerHTML = `
+    <div class="stats">
+      <div class="stat"><div class="stat-label">รอบทั้งหมด</div><div class="stat-val">${totalRounds}</div></div>
+      <div class="stat"><div class="stat-label">เวลาเทรดรวม</div><div class="stat-val">${Math.round(tradeMins)} นาที</div></div>
+      <div class="stat"><div class="stat-label">เวลาพักรวม</div><div class="stat-val">${breakMins} นาที</div></div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:70px;">รอบที่</th>
+            <th>เริ่มเวลา</th>
+            <th>สิ้นสุดเวลา</th>
+            <th style="width:90px;">ระยะเวลา</th>
+            <th style="width:90px;">สถานะ</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r => {
+            const mins = Math.round((r.end - r.start)/60000) + (r.partial ? 0 : 1);
+            return `<tr>
+              <td><span class="badge badge-num">${r.round}</span></td>
+              <td><span class="badge badge-start"><i class="ti ti-player-play" style="font-size:11px;margin-right:4px;" aria-hidden="true"></i>${fmt(r.start)}</span></td>
+              <td><span class="badge badge-end"><i class="ti ti-player-stop" style="font-size:11px;margin-right:4px;" aria-hidden="true"></i>${fmt(r.end)}</span></td>
+              <td style="color:var(--color-text-secondary);font-size:12px;">${mins} นาที</td>
+              <td>${r.partial ? '<span class="badge badge-partial">ตัดที่ 23:59</span>' : '<span style="font-size:12px;color:var(--color-text-tertiary);">ครบรอบ</span>'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+</script>

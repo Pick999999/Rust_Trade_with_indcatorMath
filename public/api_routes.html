@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Routes Documentation - PK Deriv Trade</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .route-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .route-card:hover {
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            transform: translateX(4px);
+        }
+        
+        .route-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .method {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        .method.get {
+            background: #28a745;
+            color: white;
+        }
+        
+        .method.post {
+            background: #007bff;
+            color: white;
+        }
+        
+        .route-path {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+        
+        .route-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        
+        .route-example {
+            background: #e9ecef;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #495057;
+            margin-top: 12px;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 8px;
+            transition: background 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+        
+        .filter-section {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 API Routes Documentation</h1>
+            <p>PK Deriv Trade - Backend API Reference</p>
+        </div>
+        
+        <div class="content">
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 ค้นหา API route...">
+            
+            <div class="filter-section">
+                <button class="filter-btn active" data-filter="all">ทั้งหมด</button>
+                <button class="filter-btn" data-filter="short-term">Short Term</button>
+                <button class="filter-btn" data-filter="long-term">Long Term</button>
+                <button class="filter-btn" data-filter="data">Data & History</button>
+                <button class="filter-btn" data-filter="system">System</button>
+            </div>
+            
+            <!-- SHORT TERM TRADE -->
+            <div class="section" data-category="short-term">
+                <h2 class="section-title">📊 Short Term Trade</h2>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/trade</span>
+                    </div>
+                    <div class="route-desc">เริ่มต้น Short Term Trading bot</div>
+                    <div class="route-example">Body: { "assets": ["vol10", "vol50"], "strategy": "ATRSpike", ... }</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/stop</span>
+                    </div>
+                    <div class="route-desc">หยุด Short Term Trading bot</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/manual_trade</span>
+                    </div>
+                    <div class="route-desc">เปิด Order แบบ Manual (Short Term)</div>
+                    <div class="route-example">Body: { "asset": "vol10", "contract_type": "CALL", "amount": 1 }</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/sell</span>
+                    </div>
+                    <div class="route-desc">ขาย Order ก่อนหมดเวลา (Short Term)</div>
+                    <div class="route-example">Body: { "contract_id": 123456789 }</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/setup</span>
+                    </div>
+                    <div class="route-desc">ดึงการตั้งค่า Short Term Trade</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/setup</span>
+                    </div>
+                    <div class="route-desc">บันทึกการตั้งค่า Short Term Trade</div>
+                </div>
+
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/settings</span>
+                    </div>
+                    <div class="route-desc">ดึงการตั้งค่าระบบ settings.json (Sync Dashboard)</div>
+                </div>
+
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/settings</span>
+                    </div>
+                    <div class="route-desc">บันทึกการตั้งค่าระบบ settings.json (Sync Dashboard)</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/tradeControl</span>
+                    </div>
+                    <div class="route-desc">ดึงข้อมูล Trade Control (Short Term)</div>
+                </div>
+            </div>
+            
+            <!-- LONG TERM TRADE -->
+            <div class="section" data-category="long-term">
+                <h2 class="section-title">📈 Long Term Trade</h2>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/start</span>
+                    </div>
+                    <div class="route-desc">เริ่มต้น Long Term Trading bot</div>
+                    <div class="route-example">Body: { "assets": ["vol10"], "granularity": 60 }</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/stop</span>
+                    </div>
+                    <div class="route-desc">หยุด Long Term Trading bot</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/toggle_auto</span>
+                    </div>
+                    <div class="route-desc">เปิด/ปิด Auto Trade (Long Term)</div>
+                    <div class="route-example">Body: { "enabled": true }</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/manual_trade</span>
+                    </div>
+                    <div class="route-desc">เปิด Order แบบ Manual (Long Term)</div>
+                    <div class="route-example">Body: { "asset": "vol10", "contract_type": "CALL", "amount": 1, "target_profit": 10, "exit_strategy": "targetProfit" }</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/sell</span>
+                    </div>
+                    <div class="route-desc">ขาย Order (Long Term)</div>
+                    <div class="route-example">Body: { "contract_id": 123456789 }</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/target</span>
+                    </div>
+                    <div class="route-desc">เปลี่ยน Target Profit ของ Order ที่กำลังเปิดอยู่</div>
+                    <div class="route-example">Body: { "contract_id": 123456789, "new_target": 15 }</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/longterm/candles</span>
+                    </div>
+                    <div class="route-desc">ดึงข้อมูล Candles สำหรับกราฟ Long Term</div>
+                    <div class="route-example">?asset=vol10&granularity=60&count=300</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/longterm/settings</span>
+                    </div>
+                    <div class="route-desc">ดึงการตั้งค่า Long Term Trade</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/settings</span>
+                    </div>
+                    <div class="route-desc">บันทึกการตั้งค่า Long Term Trade</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/longterm/active-settings</span>
+                    </div>
+                    <div class="route-desc">ดึงการตั้งค่าที่กำลังใช้งานอยู่ (Active Settings)</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/longterm/schedule</span>
+                    </div>
+                    <div class="route-desc">ดึงการตั้งค่า Schedule (Long Term)</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/schedule</span>
+                    </div>
+                    <div class="route-desc">บันทึกการตั้งค่า Schedule (Long Term)</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/save_track_snapshot</span>
+                    </div>
+                    <div class="route-desc">บันทึก Track Order Snapshot (1 รายการ)</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/save_track_snapshots_batch</span>
+                    </div>
+                    <div class="route-desc">บันทึก Track Order Snapshots (หลายรายการพร้อมกัน)</div>
+                </div>
+            </div>
+            
+            <!-- DATA & HISTORY -->
+            <div class="section" data-category="data">
+                <h2 class="section-title">📁 Data & History</h2>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/getTradeHistory</span>
+                    </div>
+                    <div class="route-desc">ดึงข้อมูล Trade History จากไฟล์ trades.json</div>
+                    <div class="route-example">?day_trade=2026-08-18&asset=1HZ10V</div>
+                    <button class="copy-btn" onclick="copyExample('/api/getTradeHistory?day_trade=2026-08-18&asset=1HZ10V')">Copy Example</button>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/availableTradeData</span>
+                    </div>
+                    <div class="route-desc">ดึงรายการ Trade Data ทั้งหมดที่มีในระบบ (สแกนโฟลเดอร์ tradeData)</div>
+                    <button class="copy-btn" onclick="copyExample('/api/availableTradeData')">Copy Example</button>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/export_trade_data</span>
+                    </div>
+                    <div class="route-desc">Export Trade Data เป็นไฟล์ ZIP</div>
+                    <div class="route-example">?startdatetime=2026-08-01</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/getStrategyComparison</span>
+                    </div>
+                    <div class="route-desc">ดึงข้อมูลเปรียบเทียบกลยุทธ์</div>
+                    <div class="route-example">?day_trade=2026-08-18</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/history</span>
+                    </div>
+                    <div class="route-desc">ดึงข้อมูล Manual Trade History</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/save_manual_history</span>
+                    </div>
+                    <div class="route-desc">บันทึก Manual Trade History</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/generate_analysis</span>
+                    </div>
+                    <div class="route-desc">สร้างไฟล์วิเคราะห์ (Analysis) จาก Candles</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/getanalysisdata</span>
+                    </div>
+                    <div class="route-desc">ดึงข้อมูล Analysis Data</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/getFullAnalysisData</span>
+                    </div>
+                    <div class="route-desc">ดึงข้อมูล Full Analysis Data (รวมข้อมูลทั้งหมด)</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/getAnalysisdata</span>
+                    </div>
+                    <div class="route-desc">ดึงข้อมูล Analysis Data (POST version)</div>
+                </div>
+            </div>
+            
+            <!-- SYSTEM -->
+            <div class="section" data-category="system">
+                <h2 class="section-title">⚙️ System & Configuration</h2>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/status</span>
+                    </div>
+                    <div class="route-desc">ดึงสถานะระบบ (bot_count, active_assets, balance, is_trading, etc.)</div>
+                    <button class="copy-btn" onclick="copyExample('/api/status')">Copy Example</button>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/version</span>
+                    </div>
+                    <div class="route-desc">ดึงเวอร์ชันของ Backend</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/terminate</span>
+                    </div>
+                    <div class="route-desc">ปิดโปรแกรม Backend ทั้งหมด</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/notify</span>
+                    </div>
+                    <div class="route-desc">ส่ง Notification (Telegram)</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/balance/sync</span>
+                    </div>
+                    <div class="route-desc">ซิงค์ยอดเงิน (Balance) จาก Deriv</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/deriv-config</span>
+                    </div>
+                    <div class="route-desc">ดึงการตั้งค่า Deriv API</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/deriv-otp</span>
+                    </div>
+                    <div class="route-desc">ดึง OTP Code สำหรับ Deriv 2FA</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/longterm/reconnect_ws</span>
+                    </div>
+                    <div class="route-desc">Reconnect WebSocket (Long Term)</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/config/url_ajax_post</span>
+                    </div>
+                    <div class="route-desc">ดึง URL สำหรับ AJAX POST</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/api/thereshold</span>
+                    </div>
+                    <div class="route-desc">ดึงการตั้งค่า Threshold</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/thereshold</span>
+                    </div>
+                    <div class="route-desc">บันทึกการตั้งค่า Threshold</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method post">POST</span>
+                        <span class="route-path">/api/verify_fingerprint</span>
+                    </div>
+                    <div class="route-desc">ตรวจสอบ Fingerprint (Authentication)</div>
+                </div>
+            </div>
+            
+            <!-- WEBSOCKET & STATIC FILES -->
+            <div class="section" data-category="system">
+                <h2 class="section-title">🔌 WebSocket & Static Files</h2>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/ws</span>
+                    </div>
+                    <div class="route-desc">WebSocket Connection Endpoint (Real-time communication)</div>
+                    <div class="route-example">ws://localhost:3000/ws?token=YOUR_API_KEY</div>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/tradeData/**</span>
+                    </div>
+                    <div class="route-desc">Static file serving สำหรับโฟลเดอร์ tradeData</div>
+                    <div class="route-example">/tradeData/08-2569/18-08-2569/1HZ10V/trades.json</div>
+                    <button class="copy-btn" onclick="copyExample('/tradeData/08-2569/18-08-2569/1HZ10V/trades.json')">Copy Example</button>
+                </div>
+                
+                <div class="route-card">
+                    <div class="route-header">
+                        <span class="method get">GET</span>
+                        <span class="route-path">/sounds/**</span>
+                    </div>
+                    <div class="route-desc">Static file serving สำหรับไฟล์เสียง</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Search functionality
+        const searchBox = document.getElementById('searchBox');
+        const routeCards = document.querySelectorAll('.route-card');
+        
+        searchBox.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            routeCards.forEach(card => {
+                const path = card.querySelector('.route-path').textContent.toLowerCase();
+                const desc = card.querySelector('.route-desc').textContent.toLowerCase();
+                
+                if (path.includes(searchTerm) || desc.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const sections = document.querySelectorAll('.section');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                
+                // Show/hide sections
+                sections.forEach(section => {
+                    if (filter === 'all' || section.dataset.category === filter) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Copy example URL
+        function copyExample(text) {
+            const fullUrl = window.location.origin + text;
+            navigator.clipboard.writeText(fullUrl).then(() => {
+                alert('✅ Copied: ' + fullUrl);
+            });
+        }
+    </script>
+</body>
+</html>

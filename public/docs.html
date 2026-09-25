@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turbo Indicators API Docs</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        /* Top Navigation Header */
+        .header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 28px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+            transition: background 0.25s ease, border-color 0.25s ease;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-badge {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Pill Group Base */
+        .pill-group {
+            display: flex;
+            align-items: center;
+            border-radius: 30px;
+            padding: 3px;
+            gap: 4px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .pill-label {
+            font-size: 12px;
+            padding-left: 8px;
+            font-weight: 500;
+        }
+
+        .pill-btn {
+            border: none;
+            background: transparent;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pill-btn:hover {
+            opacity: 0.9;
+        }
+
+        .pill-btn.active {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-link {
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        /* Swagger Container Wrapper */
+        .swagger-container {
+            max-width: 1340px;
+            margin: 20px auto 60px auto;
+            padding: 0 20px;
+        }
+
+        .swagger-ui .topbar {
+            display: none !important;
+        }
+
+        .swagger-ui {
+            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        }
+
+        .swagger-ui .opblock-summary-method {
+            border-radius: 6px !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            min-width: 80px !important;
+            text-align: center !important;
+            letter-spacing: 0.5px !important;
+        }
+
+        .swagger-ui .opblock {
+            border-radius: 10px !important;
+            margin: 0 0 14px 0 !important;
+            transition: all 0.2s ease;
+        }
+
+        .swagger-ui .opblock .opblock-summary {
+            padding: 10px 16px !important;
+        }
+
+        .swagger-ui .btn.execute {
+            background-color: #2563eb !important;
+            border-color: #2563eb !important;
+            color: #ffffff !important;
+            border-radius: 6px !important;
+            font-weight: 600 !important;
+        }
+
+        .swagger-ui .btn.try-out__btn {
+            border-radius: 6px !important;
+            font-weight: 600 !important;
+        }
+
+        /* ========================================================
+           LIGHT THEME (Font nostyle = BLACK)
+           ======================================================== */
+        body.theme-light {
+            background-color: #f8fafc;
+            color: #000000;
+        }
+
+        body.theme-light .header-bar {
+            background: #0f172a;
+            border-bottom: 1px solid #1e293b;
+            color: #ffffff;
+        }
+
+        body.theme-light .header-title {
+            color: #ffffff;
+        }
+
+        body.theme-light .pill-group {
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+
+        body.theme-light .pill-label {
+            color: #94a3b8;
+        }
+
+        body.theme-light .pill-btn {
+            color: #cbd5e1;
+        }
+
+        body.theme-light .pill-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        body.theme-light .header-link {
+            color: #93c5fd;
+        }
+
+        body.theme-light .header-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* nostyle = BLACK in light mode */
+        body.theme-light .swagger-ui .nostyle,
+        body.theme-light .swagger-ui a.nostyle,
+        body.theme-light .swagger-ui .opblock-summary-path,
+        body.theme-light .swagger-ui .opblock-summary-path span,
+        body.theme-light .swagger-ui .opblock-summary-description,
+        body.theme-light .swagger-ui .opblock-tag,
+        body.theme-light .swagger-ui .opblock-tag a,
+        body.theme-light .swagger-ui .opblock-tag small,
+        body.theme-light .swagger-ui .opblock-title_normal,
+        body.theme-light .swagger-ui .opblock-title_normal span,
+        body.theme-light .swagger-ui .opblock-description-wrapper,
+        body.theme-light .swagger-ui .opblock-description-wrapper p,
+        body.theme-light .swagger-ui .info .title,
+        body.theme-light .swagger-ui .info p,
+        body.theme-light .swagger-ui .info li,
+        body.theme-light .swagger-ui .responses-inner h4,
+        body.theme-light .swagger-ui .responses-inner h5,
+        body.theme-light .swagger-ui .response-col_status,
+        body.theme-light .swagger-ui .response-col_description,
+        body.theme-light .swagger-ui .response-col_description__inner div.markdown p,
+        body.theme-light .swagger-ui .parameter__name,
+        body.theme-light .swagger-ui .parameter__type,
+        body.theme-light .swagger-ui .parameter__in,
+        body.theme-light .swagger-ui .parameters-col_description p,
+        body.theme-light .swagger-ui table thead tr th,
+        body.theme-light .swagger-ui table thead tr td,
+        body.theme-light .swagger-ui label,
+        body.theme-light .swagger-ui .model-title,
+        body.theme-light .swagger-ui .servers > label {
+            color: #000000 !important;
+        }
+
+        body.theme-light .swagger-ui .opblock {
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        body.theme-light .swagger-ui .opblock.opblock-post {
+            border-color: #86efac !important;
+            background: rgba(240, 253, 244, 0.5) !important;
+        }
+
+        body.theme-light .swagger-ui .opblock.opblock-get {
+            border-color: #93c5fd !important;
+            background: rgba(239, 246, 255, 0.5) !important;
+        }
+
+        body.theme-light .swagger-ui .opblock .opblock-summary-path {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            color: #000000 !important;
+        }
+
+        body.theme-light .swagger-ui .opblock .opblock-summary-description {
+            color: #000000 !important;
+            font-size: 13.5px !important;
+            font-weight: 500 !important;
+        }
+
+        body.theme-light .swagger-ui .opblock-tag {
+            border-bottom: 2px solid #e2e8f0 !important;
+            color: #000000 !important;
+        }
+
+        body.theme-light .swagger-ui .opblock-tag small {
+            color: #1e293b !important;
+        }
+
+        /* ========================================================
+           DARK THEME (Deep Modern Charcoal / Slate)
+           ======================================================== */
+        body.theme-dark {
+            background-color: #0b0f19;
+            color: #f1f5f9;
+        }
+
+        body.theme-dark .header-bar {
+            background: #0f172a;
+            border-bottom: 1px solid #1e293b;
+            color: #ffffff;
+        }
+
+        body.theme-dark .header-title {
+            color: #ffffff;
+        }
+
+        body.theme-dark .pill-group {
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+
+        body.theme-dark .pill-label {
+            color: #94a3b8;
+        }
+
+        body.theme-dark .pill-btn {
+            color: #94a3b8;
+        }
+
+        body.theme-dark .pill-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        body.theme-dark .header-link {
+            color: #60a5fa;
+        }
+
+        body.theme-dark .header-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Dark mode typography */
+        body.theme-dark .swagger-ui .nostyle,
+        body.theme-dark .swagger-ui a.nostyle,
+        body.theme-dark .swagger-ui .info .title,
+        body.theme-dark .swagger-ui .info p,
+        body.theme-dark .swagger-ui .info li,
+        body.theme-dark .swagger-ui .opblock-title_normal,
+        body.theme-dark .swagger-ui .opblock-title_normal span,
+        body.theme-dark .swagger-ui .opblock-description-wrapper,
+        body.theme-dark .swagger-ui .opblock-description-wrapper p,
+        body.theme-dark .swagger-ui .responses-inner h4,
+        body.theme-dark .swagger-ui .responses-inner h5,
+        body.theme-dark .swagger-ui .response-col_status,
+        body.theme-dark .swagger-ui .response-col_description,
+        body.theme-dark .swagger-ui .response-col_description__inner div.markdown p,
+        body.theme-dark .swagger-ui .parameter__name,
+        body.theme-dark .swagger-ui .parameter__type,
+        body.theme-dark .swagger-ui .parameter__in,
+        body.theme-dark .swagger-ui .parameters-col_description p,
+        body.theme-dark .swagger-ui table thead tr th,
+        body.theme-dark .swagger-ui table thead tr td,
+        body.theme-dark .swagger-ui label,
+        body.theme-dark .swagger-ui .model-title,
+        body.theme-dark .swagger-ui .servers > label {
+            color: #f1f5f9 !important;
+        }
+
+        body.theme-dark .swagger-ui .opblock-tag {
+            color: #ffffff !important;
+            border-bottom: 2px solid #1e293b !important;
+        }
+
+        body.theme-dark .swagger-ui .opblock-tag small {
+            color: #94a3b8 !important;
+        }
+
+        body.theme-dark .swagger-ui .opblock {
+            border: 1px solid #1e293b !important;
+            background: #111827 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        body.theme-dark .swagger-ui .opblock.opblock-post {
+            border-color: rgba(34, 197, 94, 0.4) !important;
+            background: rgba(15, 30, 25, 0.9) !important;
+        }
+
+        body.theme-dark .swagger-ui .opblock.opblock-post .opblock-summary {
+            border-color: rgba(34, 197, 94, 0.3) !important;
+        }
+
+        body.theme-dark .swagger-ui .opblock.opblock-get {
+            border-color: rgba(59, 130, 246, 0.4) !important;
+            background: rgba(15, 23, 42, 0.9) !important;
+        }
+
+        body.theme-dark .swagger-ui .opblock.opblock-get .opblock-summary {
+            border-color: rgba(59, 130, 246, 0.3) !important;
+        }
+
+        body.theme-dark .swagger-ui .opblock .opblock-summary-path {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+        }
+
+        body.theme-dark .swagger-ui .opblock .opblock-summary-description {
+            color: #cbd5e1 !important;
+            font-size: 13.5px !important;
+            font-weight: 400 !important;
+        }
+
+        body.theme-dark .swagger-ui .opblock-body {
+            background: #0f172a !important;
+        }
+
+        body.theme-dark .swagger-ui table thead tr {
+            border-bottom: 1px solid #334155 !important;
+        }
+
+        body.theme-dark .swagger-ui .tabli button.tablinks {
+            color: #94a3b8 !important;
+        }
+
+        body.theme-dark .swagger-ui .tabli button.tablinks.active {
+            color: #60a5fa !important;
+        }
+
+        body.theme-dark .swagger-ui input[type=text],
+        body.theme-dark .swagger-ui select {
+            background-color: #1e293b !important;
+            border: 1px solid #334155 !important;
+            color: #f1f5f9 !important;
+        }
+
+        body.theme-dark .swagger-ui .model-box {
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+        }
+
+        body.theme-dark .swagger-ui .highlight-code,
+        body.theme-dark .swagger-ui .microlight {
+            background-color: #0b0f19 !important;
+            color: #e2e8f0 !important;
+            border: 1px solid #334155 !important;
+            border-radius: 6px !important;
+        }
+
+        body.theme-dark .swagger-ui .btn.try-out__btn {
+            border-color: #475569 !important;
+            color: #e2e8f0 !important;
+            background: #1e293b !important;
+        }
+
+        body.theme-dark .swagger-ui .btn.try-out__btn:hover {
+            background: #334155 !important;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <header class="header-bar">
+        <div class="header-left">
+            <div class="logo-badge">TURBO API</div>
+            <h1 class="header-title">Indicators & Trading Engine</h1>
+        </div>
+        <div class="header-right">
+            <!-- Theme Toggle Switcher -->
+            <div class="pill-group">
+                <span class="pill-label">ธีม:</span>
+                <button id="theme-btn-dark" class="pill-btn active" onclick="switchTheme('dark')">
+                    <span>🌙</span> มืด
+                </button>
+                <button id="theme-btn-light" class="pill-btn" onclick="switchTheme('light')">
+                    <span>☀️</span> สว่าง
+                </button>
+            </div>
+
+            <!-- Language Toggle Switcher -->
+            <div class="pill-group">
+                <span class="pill-label">ภาษา:</span>
+                <button id="lang-btn-th" class="pill-btn active" onclick="switchLanguage('th')">
+                    <span>🇹🇭</span> ไทย
+                </button>
+                <button id="lang-btn-en" class="pill-btn" onclick="switchLanguage('en')">
+                    <span>🇬🇧</span> EN
+                </button>
+            </div>
+
+            <div class="header-links">
+                <a href="/index_short_term.html" class="header-link">Short-Term UI ↗</a>
+                <a href="/index.html" class="header-link">Dashboard ↗</a>
+                <a href="/api-docs/openapi.json" target="_blank" class="header-link">OpenAPI JSON ↗</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="swagger-container">
+        <div id="swagger-ui"></div>
+    </main>
+
+    <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"></script>
+    <script>
+        // Dictionary แปลภาษาไทย / อังกฤษ ครบถ้วนทุก Endpoint และ Parameter
+        const TRANSLATIONS = {
+            th: {
+                info: {
+                    title: "Turbo Indicators & ระบบเทรด Multiplex API",
+                    description: "เอกสาร API แบบอินเตอร์แอคทีฟ สำหรับการคำนวณทางเทคนิคความเร็วสูงด้วย SIMD และ Axum พร้อมระบบตรวจจับรูปแบบแท่งเทียน PK Trend v5 (27 รูปแบบ) และดาวน์โหลดข้อมูลวิเคราะห์กราฟ"
+                },
+                tags: {
+                    "Analysis Engine": {
+                        name: "Analysis Engine (ระบบวิเคราะห์กราฟ)",
+                        description: "คำนวณ Indicator หลายช่วงเวลา (Multi-timeframe), ตรวจจับรูปแบบแท่งเทียน PK Trend v5 (27 Cases), SMC, RSI, CI และดาวน์โหลดผลลัพธ์ ZIP"
+                    },
+                    "Configuration": {
+                        name: "Configuration (การตั้งค่าระบบ)",
+                        description: "จัดการไฟล์ตั้งค่าบอท setup.json, thereshold.json และ case_codes.json (PK Trend 27 Cases)"
+                    },
+                    "Trading & History": {
+                        name: "Trading & History (ประวัติการเทรดและส่งออกข้อมูล)",
+                        description: "ค้นหาประวัติการเปิดออเดอร์, เปรียบเทียบผลลัพธ์แต่ละกลยุทธ์, และดาวน์โหลดไฟล์บันทึก ZIP"
+                    },
+                    "System": {
+                        name: "System (สถานะระบบและเวอร์ชัน)",
+                        description: "ตรวจสอบสถานะการทำงานของบอท, การเชื่อมต่อ WebSocket, ยอดเงินคงเหลือ และเวอร์ชันระบบ"
+                    }
+                },
+                paths: {
+                    "/getFullAnalysisData": {
+                        get: {
+                            summary: "ดึงแท่งเทียนจาก Deriv และคำนวณวิเคราะห์รอบด้าน (รองรับเลือกดาวน์โหลดเป็นไฟล์ ZIP)",
+                            description: "ดึงข้อมูลกราฟแท่งเทียนประวัติจาก Deriv API ตามช่วงเวลาที่ระบุ (startdatetime ถึง enddatetime) และ Timeframe (เช่น 1M, 5M, 15M, 1H) นำมาคำนวณ Indicator ครบชุด (SMC Market Structure, Choppiness Index, RSI, Simd HMA/WMA, PK Trend Detect v5 27 รูปแบบ) ส่งผลลัพธ์กลับแบบ JSON หรือบีบอัดเป็น .zip เมื่อระบุ ?zip=1",
+                            parameters: {
+                                "assetcode": "รหัสสินทรัพย์ เช่น R_100, R_10, 1HZ10V",
+                                "startdatetime": "เวลาเริ่มต้น รูปแบบ YYYY-MM-DDTHH:MM (เช่น 2026-09-08T05:00)",
+                                "enddatetime": "เวลาสิ้นสุด รูปแบบ YYYY-MM-DDTHH:MM (เช่น 2026-09-08T05:30)",
+                                "timeframe": "ขนาดแท่งเทียน เช่น 1M (ค่าเริ่มต้น), 3M, 5M, 15M, 30M, 1H, 2H, 4H",
+                                "zip": "ใส่ 1 หรือ true เพื่อดาวน์โหลดผลลัพธ์เป็นไฟล์บีบอัด .zip ช่วยประหยัดแบนด์วิธ",
+                                "format": "ระบุรูปแบบการส่งกลับ: json หรือ zip"
+                            }
+                        }
+                    },
+                    "/getAnalysisdata": {
+                        post: {
+                            summary: "คำนวณวิเคราะห์ทางเทคนิคเต็มรูปแบบจากข้อมูลดิบแท่งเทียนที่ส่งเข้ามา (POST)",
+                            description: "รับ JSON array ของแท่งเทียนดิบ (epoch, open, high, low, close) จาก Frontend จากนั้นประมวลผลผ่าน Rust & SIMD Engine เพื่อคำนวณ SMC, Indicators, และ PK Trend Detection v5 (27 Cases พร้อม CodeNo 1-27)"
+                        }
+                    },
+                    "/getanalysisdata": {
+                        get: {
+                            summary: "ดึงหรือสร้างข้อมูลวิเคราะห์ประจำวันตามชื่อสินทรัพย์และวันที่ พ.ศ.",
+                            description: "ตรวจสอบว่ามีไฟล์แคชอยู่ในโฟลเดอร์ analysisData หรือไม่ ถ้ามีจะส่ง JSON กลับทันที ถ้ายังไม่มีจะดึงจาก Deriv (01:00-23:59) มาคำนวณ บันทึกลง Disk และส่งกลับ",
+                            parameters: {
+                                "assetcode": "รหัสสินทรัพย์ เช่น R_10",
+                                "sdate": "วันที่ในรูปแบบ พ.ศ. เช่น 13-05-2569 (DD-MM-YYYY)"
+                            }
+                        }
+                    },
+                    "/api/setup": {
+                        get: {
+                            summary: "อ่านการตั้งค่าปัจจุบันของบอทและอินดิเคเตอร์ (setup.json)",
+                            description: "ส่งคืนค่าพารามิเตอร์ปัจจุบัน เช่น การตั้งค่า EMA, RSI, ATR, CI, SMC, การตั้งค่าการเทรด และขนาดสัญญา"
+                        }
+                    },
+                    "/api/setup/default": {
+                        get: {
+                            summary: "อ่านการตั้งค่าแม่แบบเริ่มต้นจากโรงงาน (setup/default/setup.json)",
+                            description: "ใช้สำหรับดูค่าเริ่มต้นมาตรฐานเพื่อใช้เปรียบเทียบหรือกู้คืนการตั้งค่าเดิม"
+                        }
+                    },
+                    "/api/settings": {
+                        get: {
+                            summary: "อ่านการตั้งค่าระบบและกลยุทธ์ (settings.json)",
+                            description: "ส่งคืนข้อมูลการตั้งค่าระบบ settings.json สำหรับ Sync หรือควบคุมระหว่าง Dashboard และ VPS"
+                        }
+                    },
+                    "/api/thereshold": {
+                        get: {
+                            summary: "อ่านเกณฑ์เงื่อนไขตัวกรอง Thresholds และตัวกรองสัญญาณรบกวน (thereshold.json)",
+                            description: "ดึงเงื่อนไขระดับเกณฑ์ราคาและ Filter Noise สำหรับพิจารณาเปิด/ปิดออเดอร์"
+                        }
+                    },
+                    "/api/case_codes": {
+                        get: {
+                            summary: "อ่านการตั้งค่าแมปปิ้ง 27 รูปแบบแท่งเทียน PK Trend (case_codes.json)",
+                            description: "ส่งคืนตาราง CodeNo 1-27 พร้อมสถานะ isSelectedToAction ว่ารูปแบบใดได้รับอนุญาตให้เปิดออเดอร์"
+                        }
+                    },
+                    "/api/history": {
+                        get: {
+                            summary: "ดึงประวัติการเทรดรวมของทุกสินทรัพย์ในวันที่ระบุ",
+                            description: "สแกนโฟลเดอร์ tradeData ตามวันที่เพื่อรวมรายการออเดอร์ทั้งหมด จัดเรียงตามเวลาล่าสุด",
+                            parameters: {
+                                "date": "วันที่ ค.ศ. รูปแบบ YYYY-MM-DD เช่น 2026-09-08"
+                            }
+                        }
+                    },
+                    "/api/getTradeHistory": {
+                        get: {
+                            summary: "ดึงประวัติการเทรดเฉพาะสินทรัพย์ที่ต้องการในวันที่ระบุ",
+                            description: "อ่านไฟล์ trades.json ของสินทรัพย์นั้นๆ จากโฟลเดอร์ tradeData/{เดือน-พ.ศ.}/{วัน-เดือน-พ.ศ.}/{สินทรัพย์}",
+                            parameters: {
+                                "asset": "รหัสสินทรัพย์ เช่น R_10",
+                                "dayTrade": "วันที่ ค.ศ. รูปแบบ YYYY-MM-DD เช่น 2026-09-08",
+                                "action": "ตัวกรองประเภทคำสั่งซื้อขาย (ไม่บังคับ)"
+                            }
+                        }
+                    },
+                    "/api/getStrategyComparison": {
+                        get: {
+                            summary: "ดึงข้อมูลเปรียบเทียบประสิทธิภาพของแต่ละกลยุทธ์ในวันที่ระบุ",
+                            description: "อ่านไฟล์ strategy_comparison.json เพื่อดู Win Rate และกำไรขาดทุนเปรียบเทียบแต่ละ Algorithm",
+                            parameters: {
+                                "dayTrade": "วันที่ ค.ศ. รูปแบบ YYYY-MM-DD เช่น 2026-09-08"
+                            }
+                        }
+                    },
+                    "/api/export_trade_data": {
+                        get: {
+                            summary: "ส่งออกข้อมูลการเทรดทั้งหมดของวันนั้นเป็นไฟล์ ZIP",
+                            description: "รวบรวมไฟล์ทั้งหมดในโฟลเดอร์ tradeData ของวันที่ระบุแล้วบีบอัดส่งให้ดาวน์โหลดทันที",
+                            parameters: {
+                                "startdatetime": "วันที่เป้าหมายในรูปแบบ YYYY-MM-DD เช่น 2026-09-08"
+                            }
+                        }
+                    },
+                    "/api/availableTradeData": {
+                        get: {
+                            summary: "แสดงรายการวันที่และสินทรัพย์ที่มีบันทึกการเทรดอยู่บนเครื่อง",
+                            description: "สแกนโฟลเดอร์ tradeData เพื่อส่งรายการ Month, Day, Asset ที่มีไฟล์ trades.json พร้อมใช้งาน"
+                        }
+                    },
+                    "/api/status": {
+                        get: {
+                            summary: "ตรวจสอบสถานะระบบ, สถานะบอท, ยอดเงินคงเหลือ และการเชื่อมต่อ WebSocket",
+                            description: "ส่งคืนข้อมูลสถานะการทำงานสด: การเทรดเปิดอยู่หรือไม่, ยอดเงินคงเหลือจาก Deriv, สถานะ WebSocket ของ Candle และ Private Stream"
+                        }
+                    },
+                    "/api/version": {
+                        get: {
+                            summary: "ตรวจสอบเวอร์ชันของ Backend และเวลาที่ Compile ล่าสุด",
+                            description: "ส่งคืน main_rs_version และ compiled_at ของ binary ปัจจุบัน"
+                        }
+                    }
+                }
+            }
+        };
+
+        let rawSpec = null;
+        let currentLang = localStorage.getItem('swagger_lang') || 'th';
+        let currentTheme = localStorage.getItem('swagger_theme') || 'dark';
+
+        function applyTranslation(spec, lang) {
+            if (lang !== 'th' || !TRANSLATIONS.th) return spec;
+            const dict = TRANSLATIONS.th;
+
+            // Info
+            if (dict.info) {
+                if (dict.info.title) spec.info.title = dict.info.title;
+                if (dict.info.description) spec.info.description = dict.info.description;
+            }
+
+            // Tags
+            if (spec.tags && dict.tags) {
+                spec.tags.forEach(tag => {
+                    if (dict.tags[tag.name]) {
+                        tag.description = dict.tags[tag.name].description;
+                        tag.name = dict.tags[tag.name].name;
+                    }
+                });
+            }
+
+            // Paths & Operations
+            if (spec.paths && dict.paths) {
+                for (const [pathKey, methods] of Object.entries(spec.paths)) {
+                    const pathTrans = dict.paths[pathKey];
+                    if (!pathTrans) continue;
+
+                    for (const [methodKey, op] of Object.entries(methods)) {
+                        const opTrans = pathTrans[methodKey];
+                        if (!opTrans) continue;
+
+                        if (opTrans.summary) op.summary = opTrans.summary;
+                        if (opTrans.description) op.description = opTrans.description;
+
+                        // Parameters
+                        if (op.parameters && opTrans.parameters) {
+                            op.parameters.forEach(param => {
+                                if (opTrans.parameters[param.name]) {
+                                    param.description = opTrans.parameters[param.name];
+                                }
+                            });
+                        }
+
+                        // Update tag references if tags were translated
+                        if (op.tags && dict.tags) {
+                            op.tags = op.tags.map(t => dict.tags[t] ? dict.tags[t].name : t);
+                        }
+                    }
+                }
+            }
+            return spec;
+        }
+
+        function renderSwagger(spec) {
+            window.ui = SwaggerUIBundle({
+                spec: spec,
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "BaseLayout",
+                defaultModelsExpandDepth: 1,
+                defaultModelExpandDepth: 1,
+                docExpansion: "list",
+                filter: true
+            });
+        }
+
+        function switchTheme(theme) {
+            currentTheme = theme;
+            localStorage.setItem('swagger_theme', theme);
+
+            document.body.classList.remove('theme-dark', 'theme-light');
+            document.body.classList.add(`theme-${theme}`);
+
+            // Update Theme Buttons
+            document.querySelectorAll('#theme-btn-dark, #theme-btn-light').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`theme-btn-${theme}`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('swagger_lang', lang);
+
+            // Update Language Buttons
+            document.querySelectorAll('#lang-btn-th, #lang-btn-en').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`lang-btn-${lang}`);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            // Deep clone original spec & apply translation
+            const specClone = JSON.parse(JSON.stringify(rawSpec));
+            const activeSpec = applyTranslation(specClone, lang);
+            renderSwagger(activeSpec);
+        }
+
+        window.onload = async function() {
+            // Apply initial theme
+            switchTheme(currentTheme);
+
+            try {
+                const res = await fetch('/api-docs/openapi.json');
+                rawSpec = await res.json();
+                switchLanguage(currentLang);
+            } catch (err) {
+                console.error("Failed to load openapi.json:", err);
+            }
+        };
+    </script>
+</body>
+</html>

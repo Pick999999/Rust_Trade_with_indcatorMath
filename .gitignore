@@ -1,0 +1,32 @@
+# Rust build artifacts
+target/
+**/target/
+*.rlib
+*.d
+*.exe
+*.pdb
+
+# Environment & Sensitive Credentials
+.env
+.env*
+*.env
+**/.env
+**/.env*
+**/*.env
+**/.env*.txt
+.env*.txt
+.env_*
+*.env*
+
+# Temporary files & binary builds
+tmp/build/
+
+# IDE and OS files
+.vscode/
+.idea/
+.cursor/
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log

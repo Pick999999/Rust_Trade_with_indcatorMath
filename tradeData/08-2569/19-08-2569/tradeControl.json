@@ -1,0 +1,12 @@
+{
+  "DayTrade": "19-08-2569",
+  "totalTrade": 24,
+  "TradeStatus": "ปิดเทรดอยู่",
+  "startTradeTime": "2026-08-19 18:48:00",
+  "stopTradeTime": "2026-08-19 19:48:00",
+  "durationTrade": "1h 9m 56s",
+  "actionStop": "เทรดสำเร็จ",
+  "actualStartTime": "2026-08-19 18:48:00",
+  "actualStopTime": "2026-08-19 19:57:56",
+  "useSchedule": false
+}

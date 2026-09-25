@@ -1,0 +1,133 @@
+[
+  {
+    "contract_id": 7789376419,
+    "asset": "vol75",
+    "buy_price": 1,
+    "contract_type": "PUT",
+    "date_expiry": 0,
+    "date_start": 1785719243,
+    "entry_signal": "CrossDown",
+    "entry_spot": 0,
+    "exit_strategy": "targetProfit",
+    "final_profit": 0.12,
+    "max_profit": 0.12,
+    "min_profit": -0.08,
+    "payout": 1.92,
+    "purchase_time": 1785719243,
+    "symbol": "1HZ75V",
+    "target_profit": 0.1,
+    "trade_code": "SM",
+    "ListOfTrack": [
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 0,
+        "profit": 0,
+        "spot_price": 0,
+        "tick": 1,
+        "time": "3/8/2569 08:07:23",
+        "timestamp": 1785719243870
+      },
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 7727.37,
+        "profit": -1,
+        "spot_price": 7727.37,
+        "tick": 2,
+        "time": "3/8/2569 08:07:24",
+        "timestamp": 1785719244210
+      },
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 7727.32,
+        "profit": -0.08,
+        "spot_price": 7727.32,
+        "tick": 3,
+        "time": "3/8/2569 08:07:24",
+        "timestamp": 1785719244604
+      },
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 7725.83,
+        "profit": -0.04,
+        "spot_price": 7725.83,
+        "tick": 4,
+        "time": "3/8/2569 08:07:25",
+        "timestamp": 1785719245613
+      },
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 7726.85,
+        "profit": -0.07,
+        "spot_price": 7726.85,
+        "tick": 5,
+        "time": "3/8/2569 08:07:26",
+        "timestamp": 1785719246669
+      },
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 7723.86,
+        "profit": 0.01,
+        "spot_price": 7723.86,
+        "tick": 6,
+        "time": "3/8/2569 08:07:27",
+        "timestamp": 1785719247504
+      },
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 7723.81,
+        "profit": 0.01,
+        "spot_price": 7723.81,
+        "tick": 7,
+        "time": "3/8/2569 08:07:28",
+        "timestamp": 1785719248680
+      },
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 7723.11,
+        "profit": 0.03,
+        "spot_price": 7723.11,
+        "tick": 8,
+        "time": "3/8/2569 08:07:29",
+        "timestamp": 1785719249567
+      },
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 7722.81,
+        "profit": 0.03,
+        "spot_price": 7722.81,
+        "tick": 9,
+        "time": "3/8/2569 08:07:30",
+        "timestamp": 1785719250623
+      },
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 7721.26,
+        "profit": 0.07,
+        "spot_price": 7721.26,
+        "tick": 10,
+        "time": "3/8/2569 08:07:32",
+        "timestamp": 1785719252581
+      },
+      {
+        "contract_id": 7789376419,
+        "bid_value": 1.92,
+        "diffSpot": 7719.36,
+        "profit": 0.12,
+        "spot_price": 7719.36,
+        "tick": 11,
+        "time": "3/8/2569 08:07:33",
+        "timestamp": 1785719253620
+      }
+    ]
+  }
+]

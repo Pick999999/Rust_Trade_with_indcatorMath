@@ -1,0 +1,14 @@
+คำสั่งที่ต้องการใช้ในการ compile
+tradeMultiplex คือไฟล์ service เช่น  tradeMultiplex.service
+upload ไปไว้ที่  /etc/systemd/system/
+
+หยุด service มี start,stop,reatart
+ 1.sudo systemctl stop  tradeMultiplex 
+folder ของ โปรแกรมที่ต้องการ compile
+ 2.cd indicators_Multiplex 
+
+cargo clean
+cargo build --release
+
+
+cd indicator_MultiplexWithNoiseFilter

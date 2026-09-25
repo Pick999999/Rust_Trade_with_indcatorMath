@@ -1,0 +1,277 @@
+{
+  "total": 27,
+  "version": "5.0",
+  "updated_at": "2026-08-31T01:31:04.217Z",
+  "cases": [
+    {
+      "codeNo": 1,
+      "caseCode": "UP-CONFIRM",
+      "caseDesc": "CONFIRMED_UP",
+      "group": "Up",
+      "trend": "UpTrend",
+      "category": "CORE",
+      "isSelectedToAction": "n",
+      "description": "ทำ Higher High ปิดสูงกว่าหรือเท่าแท่งก่อนหน้า และปิดในโซนบนของแท่งตัวเอง ยืนยันแรงซื้อยังควบคุมตลาด"
+    },
+    {
+      "codeNo": 2,
+      "caseCode": "DN-CONFIRM",
+      "caseDesc": "CONFIRMED_DOWN",
+      "group": "Down",
+      "trend": "DownTrend",
+      "category": "CORE",
+      "isSelectedToAction": "y",
+      "description": "ทำ Lower Low ปิดต่ำกว่าหรือเท่าแท่งก่อนหน้า และปิดในโซนล่างของแท่งตัวเอง ยืนยันแรงขายยังควบคุมตลาด"
+    },
+    {
+      "codeNo": 3,
+      "caseCode": "SPK-CONTINUE-UP",
+      "caseDesc": "SPIKE_CONTINUATION_UP",
+      "group": "Spike",
+      "trend": "UpTrend",
+      "category": "CORE",
+      "isSelectedToAction": "y",
+      "description": "แท่งนี้เป็น Spike ที่พุ่งขึ้นแรงและปิดยืนในโซนบนของแท่ง ไม่โดนกดกลับ มีโอกาสเป็นแรงส่งจริง (Breakout Momentum) ไม่ใช่แค่หลอก ควรติดตามแท่งถัดไปเพื่อยืนยันการไปต่อ"
+    },
+    {
+      "codeNo": 4,
+      "caseCode": "SPK-CONTINUE-DN",
+      "caseDesc": "SPIKE_CONTINUATION_DOWN",
+      "group": "Spike",
+      "trend": "DownTrend",
+      "category": "CORE",
+      "isSelectedToAction": "y",
+      "description": "แท่งนี้เป็น Spike ที่ทิ่มลงแรงและปิดยืนในโซนล่างของแท่ง ไม่โดนดันกลับ มีโอกาสเป็นแรงส่งจริง (Breakout Momentum) ฝั่งขาย ควรติดตามแท่งถัดไปเพื่อยืนยันการไปต่อ"
+    },
+    {
+      "codeNo": 5,
+      "caseCode": "SPK-BULLTRAP",
+      "caseDesc": "SPIKE_BULL_TRAP",
+      "group": "Spike",
+      "trend": "Rejected",
+      "category": "CORE",
+      "isSelectedToAction": "y",
+      "description": "แท่งนี้เป็น Spike ที่พุ่งขึ้นแรงทำ Higher High แต่ถูกกดลงมาปิดใกล้จุดต่ำสุดของแท่ง คล้ายการล่าสภาพคล่องฝั่งซื้อ (Stop Hunt / Liquidity Grab) ความเสี่ยงกลับตัวลงสูงมาก ต้องระวังเป็นพิเศษ"
+    },
+    {
+      "codeNo": 6,
+      "caseCode": "SPK-BEARTRAP",
+      "caseDesc": "SPIKE_BEAR_TRAP",
+      "group": "Spike",
+      "trend": "Rejected",
+      "category": "CORE",
+      "isSelectedToAction": "y",
+      "description": "แท่งนี้เป็น Spike ที่ทิ่มลงแรงทำ Lower Low แต่ถูกดันกลับขึ้นมาปิดใกล้จุดสูงสุดของแท่ง คล้ายการล่าสภาพคล่องฝั่งขาย (Stop Hunt / Liquidity Grab) ความเสี่ยงกลับตัวขึ้นสูงมาก ต้องระวังเป็นพิเศษ"
+    },
+    {
+      "codeNo": 7,
+      "caseCode": "SPK-NODIRECTION",
+      "caseDesc": "SPIKE_NO_CLEAR_DIRECTION",
+      "group": "Spike",
+      "trend": "Sideways",
+      "category": "CORE",
+      "isSelectedToAction": "n",
+      "description": "แท่งนี้เป็น Spike (range กว้างผิดปกติเกิน ATR) แต่ไม่ได้ทำ Higher High / Lower Low ชัดเจน และไม่ได้แกว่งครอบคลุมสองด้าน อาจเกิดจาก noise หรือข่าวกะทันหัน ไม่ควรใช้สัญญาณปกติตัดสินใจกับแท่งนี้ แนะนำรอแท่งถัดไปยืนยัน"
+    },
+    {
+      "codeNo": 8,
+      "caseCode": "SPK-HESITANT-UP",
+      "caseDesc": "SPIKE_HESITANT_UP",
+      "group": "Spike",
+      "trend": "Sideways",
+      "category": "CORE",
+      "isSelectedToAction": "n",
+      "description": "แท่งนี้เป็น Spike ฝั่ง Higher High แต่ปิดในโซนกลางของแท่ง หรือปิดไม่สูงกว่าแท่งก่อนหน้า มีแรงซื้อแต่ยังไม่ยืนยันชัดเจน ควรรอแท่งถัดไปเพื่อยืนยัน"
+    },
+    {
+      "codeNo": 9,
+      "caseCode": "EG-BULLISH",
+      "caseDesc": "BULLISH_ENGULFING",
+      "group": "Engulfing",
+      "trend": "UpTrend",
+      "category": "CORE",
+      "isSelectedToAction": "y",
+      "description": "Outside Bar ที่กลืนกรอบแท่งก่อนหน้า (high สูงกว่า + low ต่ำกว่า) และปิดในโซนบน สัญญาณกลับตัวขึ้นหรือแรงซื้อเข้ามาชัดเจน"
+    },
+    {
+      "codeNo": 10,
+      "caseCode": "EG-BEARISH",
+      "caseDesc": "BEARISH_ENGULFING",
+      "group": "Engulfing",
+      "trend": "DownTrend",
+      "category": "CORE",
+      "isSelectedToAction": "y",
+      "description": "Outside Bar ที่กลืนกรอบแท่งก่อนหน้า (high สูงกว่า + low ต่ำกว่า) และปิดในโซนล่าง สัญญาณกลับตัวลงหรือแรงขายเข้ามาชัดเจน"
+    },
+    {
+      "codeNo": 11,
+      "caseCode": "RJ-BULLTRAP-STRONG",
+      "caseDesc": "STRONG_BULL_TRAP",
+      "group": "Rejected",
+      "trend": "Rejected",
+      "category": "CORE",
+      "isSelectedToAction": "y",
+      "description": "ทำ Higher High แต่ถูกแรงขายกดลงมาปิดใกล้จุดต่ำสุดของแท่ง และปิดต่ำกว่าแท่งก่อนหน้าด้วย สัญญาณกลับตัวลงที่ชัดเจน (Bull Trap)"
+    },
+    {
+      "codeNo": 12,
+      "caseCode": "RJ-BEARTRAP-STRONG",
+      "caseDesc": "STRONG_BEAR_TRAP",
+      "group": "Rejected",
+      "trend": "Rejected",
+      "category": "CORE",
+      "isSelectedToAction": "y",
+      "description": "ทำ Lower Low แต่ถูกแรงซื้อดันขึ้นมาปิดใกล้จุดสูงสุดของแท่ง และปิดสูงกว่าแท่งก่อนหน้าด้วย สัญญาณกลับตัวขึ้นที่ชัดเจน (Bear Trap)"
+    },
+    {
+      "codeNo": 13,
+      "caseCode": "RJ-FOLLOWFAIL-UP",
+      "caseDesc": "FAILED_FOLLOWTHROUGH_UP",
+      "group": "Rejected",
+      "trend": "Rejected",
+      "category": "CORE",
+      "isSelectedToAction": "n",
+      "description": "ทำ Higher High แต่ปิดต่ำกว่าแท่งก่อนหน้า แม้ตำแหน่งปิดในแท่งตัวเองจะยังไม่แย่มาก แสดงว่าโมเมนตัมขาขึ้นเริ่มแผ่ว ควรจับตาแท่งถัดไป"
+    },
+    {
+      "codeNo": 14,
+      "caseCode": "RJ-FOLLOWFAIL-DN",
+      "caseDesc": "FAILED_FOLLOWTHROUGH_DOWN",
+      "group": "Rejected",
+      "trend": "Rejected",
+      "category": "CORE",
+      "isSelectedToAction": "n",
+      "description": "ทำ Lower Low แต่ปิดสูงกว่าแท่งก่อนหน้า แม้ตำแหน่งปิดในแท่งตัวเองจะยังไม่แย่มาก แสดงว่าโมเมนตัมขาลงเริ่มแผ่ว ควรจับตาแท่งถัดไป"
+    },
+    {
+      "codeNo": 15,
+      "caseCode": "RJ-UPWICK-WEAK",
+      "caseDesc": "WEAK_UPPER_WICK",
+      "group": "Rejected",
+      "trend": "Rejected",
+      "category": "CORE",
+      "isSelectedToAction": "n",
+      "description": "ทำ Higher High และยังปิดสูงกว่าแท่งก่อนหน้า แต่มีไส้บนยาวแสดงว่าเจอแรงขายกดในช่วงท้ายแท่ง ควรระวังแรงซื้อเริ่มอ่อนกำลัง"
+    },
+    {
+      "codeNo": 16,
+      "caseCode": "RJ-LOWWICK-WEAK",
+      "caseDesc": "WEAK_LOWER_WICK",
+      "group": "Rejected",
+      "trend": "Rejected",
+      "category": "CORE",
+      "isSelectedToAction": "n",
+      "description": "ทำ Lower Low และยังปิดต่ำกว่าแท่งก่อนหน้า แต่มีไส้ล่างยาวแสดงว่าเจอแรงซื้อดันกลับในช่วงท้ายแท่ง ควรระวังแรงขายเริ่มอ่อนกำลัง"
+    },
+    {
+      "codeNo": 17,
+      "caseCode": "SD-INSIDEBAR",
+      "caseDesc": "INSIDE_BAR",
+      "group": "Sideways",
+      "trend": "Sideways",
+      "category": "CORE",
+      "isSelectedToAction": "n",
+      "description": "แท่งปัจจุบันมี high/low อยู่ภายในกรอบของแท่งก่อนหน้าทั้งหมด (Inside Bar) ตลาดกำลังหดตัว/พักตัว รอการ breakout เพื่อยืนยันทิศทางถัดไป"
+    },
+    {
+      "codeNo": 18,
+      "caseCode": "SD-MIXEDSIGNAL",
+      "caseDesc": "MIXED_SIGNAL",
+      "group": "Sideways",
+      "trend": "Sideways",
+      "category": "CORE",
+      "isSelectedToAction": "n",
+      "description": "High สูงกว่าแท่งก่อนหน้าแค่ 1 ใน 2 แท่ง (สัญญาณขัดแย้งกันเอง) ประกอบกับ body เล็ก ตลาดกำลังสับสน ยังไม่มีทิศทางชัดเจนพอจะสรุป"
+    },
+    {
+      "codeNo": 19,
+      "caseCode": "SD-MIXEDSIGNAL-DN",
+      "caseDesc": "MIXED_SIGNAL_DOWN",
+      "group": "Sideways",
+      "trend": "Sideways",
+      "category": "CORE",
+      "isSelectedToAction": "n",
+      "description": "Low ต่ำกว่าแท่งก่อนหน้าแค่ 1 ใน 2 แท่ง (สัญญาณขัดแย้งกันเอง) ประกอบกับ body เล็ก ตลาดกำลังสับสนฝั่งขาลง ยังไม่มีทิศทางชัดเจนพอจะสรุป"
+    },
+    {
+      "codeNo": 20,
+      "caseCode": "SYS-NODATA",
+      "caseDesc": "INSUFFICIENT_DATA",
+      "group": "System",
+      "trend": null,
+      "category": "SYSTEM",
+      "isSelectedToAction": "n",
+      "description": "ข้อมูลไม่พอสำหรับเปรียบเทียบ ต้องมีอย่างน้อย 3 แท่ง (ปัจจุบัน + ก่อนหน้า 2 แท่ง)"
+    },
+    {
+      "codeNo": 21,
+      "caseCode": "SD-DOJI",
+      "caseDesc": "DOJI_INDECISION",
+      "group": "Sideways",
+      "trend": "Sideways",
+      "category": "EXTENDED",
+      "isSelectedToAction": "n",
+      "description": "Body ของแท่งเล็กมากเมื่อเทียบกับ range ทั้งหมด (เปิด-ปิดใกล้กัน) แรงซื้อแรงขายสูสีกัน ไม่มีฝ่ายใดชนะชัดเจนในแท่งนี้"
+    },
+    {
+      "codeNo": 22,
+      "caseCode": "SD-FLATRESISTANCE",
+      "caseDesc": "FLAT_RESISTANCE_TEST",
+      "group": "Sideways",
+      "trend": "Sideways",
+      "category": "EXTENDED",
+      "isSelectedToAction": "n",
+      "description": "High ของแท่งใกล้เคียงกับ high ของแท่งก่อนหน้ามาก แต่ไปต่อไม่ได้ เหมือนราคาชนแนวต้านเดิมซ้ำ (ทดสอบแนวต้าน) ยังไม่มีแรงมากพอจะทะลุ"
+    },
+    {
+      "codeNo": 23,
+      "caseCode": "SD-FLATSUPPORT",
+      "caseDesc": "FLAT_SUPPORT_TEST",
+      "group": "Sideways",
+      "trend": "Sideways",
+      "category": "EXTENDED",
+      "isSelectedToAction": "n",
+      "description": "Low ของแท่งใกล้เคียงกับ low ของแท่งก่อนหน้ามาก แต่ลงต่อไม่ได้ เหมือนราคาชนแนวรับเดิมซ้ำ (ทดสอบแนวรับ/Double Bottom) ยังไม่มีแรงมากพอจะทะลุ"
+    },
+    {
+      "codeNo": 24,
+      "caseCode": "SD-NOSTRUCTURE",
+      "caseDesc": "NO_CLEAR_STRUCTURE",
+      "group": "Sideways",
+      "trend": "Sideways",
+      "category": "EXTENDED",
+      "isSelectedToAction": "n",
+      "description": "ไม่ได้ทำ Higher High หรือ Lower Low ชัดเจนเมื่อเทียบกับ 2 แท่งก่อนหน้า ตลาดยังไม่มีโครงสร้างที่ชัดเจนพอจะสรุปทิศทาง"
+    },
+    {
+      "codeNo": 25,
+      "caseCode": "EG-INDECISION",
+      "caseDesc": "ENGULFING_INDECISION",
+      "group": "Engulfing",
+      "trend": "Sideways",
+      "category": "EXTENDED",
+      "isSelectedToAction": "n",
+      "description": "Outside Bar ที่กลืนกรอบแท่งก่อนหน้า แต่ปิดใกล้กลางแท่ง แรงซื้อแรงขายสู้กันไม่มีฝ่ายใดชนะ ความผันผวนสูงแต่ไม่มีทิศทางชัดเจน"
+    },
+    {
+      "codeNo": 26,
+      "caseCode": "SPK-HESITANT-DN",
+      "caseDesc": "SPIKE_HESITANT_DOWN",
+      "group": "Spike",
+      "trend": "Sideways",
+      "category": "EXTENDED",
+      "isSelectedToAction": "n",
+      "description": "แท่งนี้เป็น Spike ฝั่ง Lower Low แต่ปิดในโซนกลางของแท่ง หรือปิดไม่ต่ำกว่าแท่งก่อนหน้า มีแรงขายแต่ยังไม่ยืนยันชัดเจน ควรรอแท่งถัดไปเพื่อยืนยัน"
+    },
+    {
+      "codeNo": 27,
+      "caseCode": "SPK-WHIPSAW",
+      "caseDesc": "SPIKE_WHIPSAW",
+      "group": "Spike",
+      "trend": "Sideways",
+      "category": "EXTENDED",
+      "isSelectedToAction": "n",
+      "description": "แท่งนี้เป็น Spike ที่ range กว้างผิดปกติ (เกิน ATR) และแกว่งครอบคลุมทั้งจุดสูงและจุดต่ำของแท่งก่อนหน้า (Outside Bar) แต่ปิดใกล้กลางแท่ง แสดงถึงความผันผวนรุนแรงแบบไร้ทิศทาง อาจเป็นจุดพลิกผันของตลาด (Exhaustion) ควรรอสัญญาณยืนยันก่อนเข้าเทรด"
+    }
+  ]
+}

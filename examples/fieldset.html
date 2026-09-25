@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>div + legend CSS class</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f4; color: #1c1c1b; padding: 2rem 1rem; line-height: 1.6; }
+    h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.5rem; }
+    p.desc { font-size: 14px; color: #666; margin-bottom: 2rem; }
+    code { font-family: monospace; background: #e8e8e5; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    .fieldset { position: relative; border: 1.5px solid #c4c4c0; border-radius: 10px; padding: 1.5rem 1.25rem 1.25rem; margin: 1.25rem 0; background: #fff; }
+    .legend { position: absolute; top: -0.65em; left: 1rem; padding: 0 0.4rem; background: #fff; font-size: 16px; font-weight: 500; color: #666; line-height: 1; white-space: nowrap; }
+    .fieldset-info  { border-color: #378add; }
+    .fieldset-info .legend  { color: #185fa5; }
+    .fieldset-success { border-color: #639922; }
+    .fieldset-success .legend { color: #3b6d11; }
+    .fieldset-warning { border-color: #ba7517; }
+    .fieldset-warning .legend { color: #854f0b; }
+    .fieldset-danger  { border-color: #e24b4a; }
+    .fieldset-danger .legend  { color: #a32d2d; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .descLabel { color: red; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    label { font-size: 13px; color: #666; }
+    input, select, textarea { font-size: 14px; padding: 8px 10px; border: 1px solid #c4c4c0; border-radius: 6px; outline: none; width: 100%; background: #fff; color: #1c1c1b; transition: border-color 0.15s; }
+    input:focus, select:focus, textarea:focus { border-color: #378add; box-shadow: 0 0 0 3px rgba(55,138,221,0.15); }
+    button { margin-top: 0.5rem; padding: 9px 20px; font-size: 14px; font-weight: 500; border: 1px solid #c4c4c0; border-radius: 6px; background: #fff; cursor: pointer; transition: background 0.15s; }
+    button:hover { background: #f0f0ed; }
+    .check-group, .radio-group { display: flex; flex-direction: column; gap: 8px; }
+    .check-group.inline, .radio-group.inline { flex-direction: row; flex-wrap: wrap; gap: 8px 16px; }
+    .check-label, .radio-label { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: #1c1c1b; cursor: pointer; user-select: none; }
+    .check-label input[type="checkbox"], .radio-label input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .check-label .box, .radio-label .box { width: 18px; height: 18px; flex-shrink: 0; border: 1.5px solid #c4c4c0; background: #fff; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s, background 0.15s; }
+    .check-label .box  { border-radius: 5px; }
+    .radio-label .box  { border-radius: 50%; }
+    .check-label .box::after { content: ''; display: block; width: 10px; height: 6px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); opacity: 0; transition: opacity 0.1s; }
+    .radio-label .box::after { content: ''; display: block; width: 8px; height: 8px; border-radius: 50%; background: #fff; opacity: 0; transition: opacity 0.1s; }
+    .check-label input:checked ~ .box, .radio-label input:checked ~ .box { background: #378add; border-color: #378add; }
+    .check-label input:checked ~ .box::after, .radio-label input:checked ~ .box::after { opacity: 1; }
+    .check-label input:focus-visible ~ .box, .radio-label input:focus-visible ~ .box { outline: 2px solid #378add; outline-offset: 2px; }
+    .check-label:hover .box, .radio-label:hover .box { border-color: #378add; }
+    .check-label input:disabled ~ .box, .radio-label input:disabled ~ .box { opacity: 0.4; cursor: not-allowed; }
+    .check-label:has(input:disabled), .radio-label:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
+    @media (prefers-color-scheme: dark) {
+      body { background: #1a1a18; color: #e8e8e5; }
+      .fieldset { background: #242422; border-color: #444441; }
+      .legend   { background: #242422; color: #888; }
+      .fieldset-info  { border-color: #378add; }
+      .fieldset-info .legend  { color: #85b7eb; }
+      .fieldset-success { border-color: #639922; }
+      .fieldset-success .legend { color: #97c459; }
+      .fieldset-warning { border-color: #ba7517; }
+      .fieldset-warning .legend { color: #ef9f27; }
+      .fieldset-danger  { border-color: #e24b4a; }
+      .fieldset-danger .legend  { color: #f09595; }
+      input, select, textarea { background: #1a1a18; border-color: #444441; color: #e8e8e5; }
+      button { background: #242422; border-color: #444441; color: #e8e8e5; }
+      button:hover { background: #2e2e2c; }
+      code { background: #2e2e2c; color: #e8e8e5; }
+      .check-label, .radio-label { color: #e8e8e5; }
+      .check-label .box, .radio-label .box { background: #1a1a18; border-color: #555552; }
+      .check-label input:checked ~ .box, .radio-label input:checked ~ .box { background: #378add; border-color: #378add; }
+    }
+    @media (max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <h1>div + legend CSS class</h1>
+  <p class="desc">ใช้ <code>.fieldset</code> + <code>.legend</code> แทน <code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code></p>
+
+  <div class="fieldset fieldset-info">
+    <span class="legend">ตรวจเชค 🎯 Noise หรือไม่ </span>
+    <div class="check-group inline">
+      <label class="radio-label">
+        <input type="radio" name="isCheckNoise" value="no">
+        <span class="box"></span>
+        🚫 No ตรวจเชค
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="isCheckNoise" value="yes">
+        <span class="box"></span>
+        ✅ ตรวจเชค
+      </label>
+    </div>
+  </div>
+
+  <div class="fieldset fieldset-info">
+    <span class="legend">🎯 ประเภท การตรวจเชค Noise</span>
+    <div class="check-group inline">
+      <label class="check-label">
+        <input type="checkbox" id="checkAlternate" name="noiseTypeCheck" value="Alternate">
+        <span class="box"></span>
+        Alternate
+      </label>
+      <label class="check-label">
+        <input type="checkbox" id="checkFlat" name="noiseTypeCheck" value="Flat">
+        <span class="box"></span>
+        Flat
+      </label>
+      <label class="check-label">
+        <input type="checkbox" id="checkGap" name="noiseTypeCheck" value="Gap">
+        <span class="box"></span>
+        Gap
+      </label>
+    </div>
+  </div>
+
+  <div class="fieldset">
+    <span class="legend">Flat Condition (radio)</span>
+    <div style="display:flex; flex-direction:row">
+      <div class="radio-group">
+        <label class="radio-label">
+          <input type="radio" name="flatCondition" value="case1"
+            Desc="ตรวจสอบ emaShort ว่า Flat เส้นเดียว">
+          <span class="box"></span>
+          1.emaShort Only
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="flatCondition" value="case2"
+            Desc="ตรวจสอบ emaMedium ว่า Flat เส้นเดียว">
+          <span class="box"></span>
+          2.emaMedium Only
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="flatCondition" value="case3"
+            Desc="ตรวจสอบ emaLong ว่า Flat เส้นเดียว">
+          <span class="box"></span>
+          3.emaLong Only
+        </label>
+      </div>
+      <span style="padding:0 8px; color:#aaa">———&gt;</span>
+      <div class="radio-group" style="border-left:1px solid lightblue; padding:10px">
+        <label class="radio-label">
+          <input type="radio" name="flatCondition" value="case4"
+            Desc="ตรวจสอบ emaShort,emaMedium ว่า Flat ทั้ง 2 เส้น">
+          <span class="box"></span>
+          4.emaShort และ emaMedium <span style="color:red; font-weight:bold">(Flat ทั้ง 2 เส้น)</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="flatCondition" value="case5"
+            Desc="ตรวจสอบ emaShort,emaMedium ว่า มีเส้นใด Flat เพียงเส้นเดียวก็ Ok แล้ว">
+          <span class="box"></span>
+          5.emaShort หรือ emaMedium <span style="color:blue; font-weight:bold">(Flat เส้นใดเส้นหนึ่ง)</span>
+        </label>
+      </div>
+      <span style="padding:0 8px; color:#aaa">———&gt;</span>
+      <div class="radio-group" style="border-left:1px solid lightblue; padding:10px">
+        <label class="radio-label">
+          <input type="radio" name="flatCondition" value="case6"
+		  Desc="ตรวจสอบ emaShort,emaMedium,emaLong ว่า Flat ทั้ง  3 เส้น">
+		  >
+          <span class="box"></span>
+          6.emaShort และ emaMedium และ emaLong <span style="color:red; font-weight:bold">(Flat ทั้ง 3 เส้น)</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="flatCondition" value="case7"
+		  Desc="ตรวจสอบ emaShort,emaMedium,Long ว่า มีเส้นใด Flat เพียงเส้นเดียวก็ Ok แล้ว">
+		  >
+          <span class="box"></span>
+          7.emaShort หรือ emaMedium หรือ emaLong <span style="color:blue; font-weight:bold">(Flat เส้นใดเส้นหนึ่ง)</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" id="btnSave">บันทึกข้อมูล</button>
+  <textarea id="jsonCondition" rows="" cols="" style="width:100%; height:200px; padding:10px"></textarea>
+
+  <script>
+    document.getElementById('btnSave').addEventListener('click', function () {
+      const result = {};
+
+      // --- radio inputs ---
+      // สำหรับ radio ที่มี attribute Desc จะเก็บเป็น object { value, desc }
+      // radio ที่ไม่มี Desc จะเก็บแค่ value string ตามปกติ
+      const radioGroups = {};
+      const radioDescGroups = {}; // track ว่า group ไหนมี Desc บ้าง
+
+      document.querySelectorAll('input[type="radio"]').forEach(function (el) {
+        if (!el.name) return;
+        const hasDesc = el.hasAttribute('Desc');
+        if (hasDesc) radioDescGroups[el.name] = true;
+        if (!(el.name in radioGroups)) radioGroups[el.name] = null;
+        if (el.checked) {
+          radioGroups[el.name] = el.value;
+          if (hasDesc) {
+            // เก็บ desc ไว้ใน key ชื่อ "flatConditionDesc" (nameDesc)
+            radioGroups[el.name + 'Desc'] = el.getAttribute('Desc') || '';
+          }
+        }
+      });
+
+      // สำหรับ group ที่มี Desc แต่ยังไม่ได้เลือก ให้ตั้ง desc เป็น null ด้วย
+      Object.keys(radioDescGroups).forEach(function (name) {
+        if (!(name + 'Desc' in radioGroups)) {
+          radioGroups[name + 'Desc'] = null;
+        }
+      });
+
+      Object.assign(result, radioGroups);
+
+      // --- checkbox inputs ---
+      const checkboxGroups = {};
+      document.querySelectorAll('input[type="checkbox"]').forEach(function (el) {
+        const key = el.name || el.id;
+        if (!key) return;
+        if (el.name) {
+          if (!checkboxGroups[key]) checkboxGroups[key] = [];
+          if (el.checked) checkboxGroups[key].push(el.value);
+        } else {
+          checkboxGroups[key] = el.checked;
+        }
+      });
+      Object.assign(result, checkboxGroups);
+
+      // --- input text / number / date / etc. ---
+      document.querySelectorAll(
+        'input:not([type="radio"]):not([type="checkbox"]):not([type="button"]):not([type="submit"]):not([type="reset"])'
+      ).forEach(function (el) {
+        const key = el.name || el.id;
+        if (!key) return;
+        result[key] = el.value;
+      });
+
+      // --- select ---
+      document.querySelectorAll('select').forEach(function (el) {
+        const key = el.name || el.id;
+        if (!key) return;
+        result[key] = el.multiple
+          ? Array.from(el.selectedOptions).map(function (o) { return o.value; })
+          : el.value;
+      });
+
+      // --- textarea (ยกเว้น #jsonCondition) ---
+      document.querySelectorAll('textarea').forEach(function (el) {
+        if (el.id === 'jsonCondition') return;
+        const key = el.name || el.id;
+        if (!key) return;
+        result[key] = el.value;
+      });
+
+      document.getElementById('jsonCondition').value = JSON.stringify(result, null, 2);
+    });
+  </script>
+
+</body>
+</html>

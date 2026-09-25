@@ -1,0 +1,2558 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turbo Trade Analytics | Premium Dashboard</title>
+  <meta name="description" content="Multi-dimensional trade performance analytics dashboard with amCharts 5">
+
+  <!-- amCharts 5 CDN -->
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Dark.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ========================================
+       CSS DESIGN SYSTEM — Premium Dark Theme
+       ======================================== */
+    :root {
+      --bg-primary: #06090f;
+      --bg-secondary: #0c1220;
+      --bg-card: #111827;
+      --bg-card-hover: #1a2332;
+      --bg-sidebar: #0a0f1a;
+      --bg-input: #0f172a;
+
+      --border-default: rgba(255,255,255,0.06);
+      --border-active: rgba(16,185,129,0.4);
+      --border-hover: rgba(255,255,255,0.12);
+
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-accent: #10b981;
+
+      --green-500: #10b981;
+      --green-400: #34d399;
+      --green-glow: rgba(16,185,129,0.15);
+      --red-500: #ef4444;
+      --red-400: #f87171;
+      --red-glow: rgba(239,68,68,0.15);
+      --blue-500: #3b82f6;
+      --blue-400: #60a5fa;
+      --cyan-500: #06b6d4;
+      --cyan-400: #22d3ee;
+      --purple-500: #8b5cf6;
+      --purple-400: #a78bfa;
+      --amber-500: #f59e0b;
+      --amber-400: #fbbf24;
+      --indigo-500: #6366f1;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+
+      --sidebar-width: 260px;
+      --header-height: 60px;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 4px 20px rgba(0,0,0,0.2);
+      --shadow-glow-green: 0 0 20px rgba(16,185,129,0.1);
+      --shadow-glow-red: 0 0 20px rgba(239,68,68,0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ========================================
+       LAYOUT: Sidebar + Main
+       ======================================== */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .sidebar-brand {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--green-500), var(--cyan-500));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(16,185,129,0.3);
+    }
+
+    .sidebar-brand-text {
+      font-size: 15px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--green-400), var(--cyan-400));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .sidebar-brand-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+
+    /* SIDEBAR NAV */
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 10px;
+      overflow-y: auto;
+    }
+
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      padding: 12px 14px 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      margin: 2px 0;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.04);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.06));
+      color: var(--green-400);
+      border-color: rgba(16,185,129,0.2);
+      box-shadow: var(--shadow-glow-green);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 20%;
+      bottom: 20%;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: linear-gradient(180deg, var(--green-400), var(--cyan-400));
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    .nav-item.active .nav-icon { opacity: 1; }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 99px;
+      background: rgba(16,185,129,0.15);
+      color: var(--green-400);
+      font-weight: 600;
+    }
+
+    /* SIDEBAR PARAMS */
+    .sidebar-params {
+      padding: 16px 14px;
+      border-top: 1px solid var(--border-default);
+    }
+
+    .param-group {
+      margin-bottom: 12px;
+    }
+
+    .param-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .param-select, .param-input {
+      width: 100%;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-family: var(--font-sans);
+      background: var(--bg-input);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .param-select:focus, .param-input:focus {
+      border-color: var(--border-active);
+    }
+
+    .param-select option {
+      background: var(--bg-card);
+    }
+
+    .btn-apply {
+      width: 100%;
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      background: linear-gradient(135deg, var(--green-500), #0d9488);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+      margin-top: 4px;
+    }
+
+    .btn-apply:hover {
+      filter: brightness(1.15);
+      box-shadow: 0 0 16px rgba(16,185,129,0.3);
+    }
+
+    /* MAIN */
+    .main-area {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    /* TOP HEADER BAR */
+    .top-bar {
+      height: var(--header-height);
+      border-bottom: 1px solid var(--border-default);
+      background: rgba(12,18,32,0.85);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .page-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .page-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(16,185,129,0.08);
+      color: var(--green-400);
+      border: 1px solid rgba(16,185,129,0.2);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green-400);
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* CONTENT PAGES */
+    .page-content {
+      padding: 24px 28px 60px;
+    }
+
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+      animation: fadeInPage 0.35s ease;
+    }
+
+    @keyframes fadeInPage {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========================================
+       CARD SYSTEM
+       ======================================== */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .card-header {
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .card-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 99px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .card-tag-green { background: rgba(16,185,129,0.1); color: var(--green-400); border: 1px solid rgba(16,185,129,0.2); }
+    .card-tag-blue { background: rgba(59,130,246,0.1); color: var(--blue-400); border: 1px solid rgba(59,130,246,0.2); }
+    .card-tag-purple { background: rgba(139,92,246,0.1); color: var(--purple-400); border: 1px solid rgba(139,92,246,0.2); }
+    .card-tag-red { background: rgba(239,68,68,0.1); color: var(--red-400); border: 1px solid rgba(239,68,68,0.2); }
+    .card-tag-cyan { background: rgba(6,182,212,0.1); color: var(--cyan-400); border: 1px solid rgba(6,182,212,0.2); }
+    .card-tag-amber { background: rgba(245,158,11,0.1); color: var(--amber-400); border: 1px solid rgba(245,158,11,0.2); }
+    .card-tag-indigo { background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); }
+
+    .card-body {
+      padding: 18px 22px 22px;
+    }
+
+    .chart-box {
+      width: 100%;
+      height: 340px;
+    }
+
+    .chart-box-sm { height: 280px; }
+    .chart-box-lg { height: 400px; }
+
+    /* KPI STAT CARDS */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 14px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .kpi-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+    }
+
+    .kpi-card.kpi-green::before { background: linear-gradient(90deg, var(--green-500), var(--cyan-500)); }
+    .kpi-card.kpi-red::before { background: linear-gradient(90deg, var(--red-500), var(--amber-500)); }
+    .kpi-card.kpi-blue::before { background: linear-gradient(90deg, var(--blue-500), var(--purple-500)); }
+    .kpi-card.kpi-cyan::before { background: linear-gradient(90deg, var(--cyan-500), var(--blue-500)); }
+    .kpi-card.kpi-purple::before { background: linear-gradient(90deg, var(--purple-500), var(--indigo-500)); }
+    .kpi-card.kpi-amber::before { background: linear-gradient(90deg, var(--amber-500), var(--red-500)); }
+
+    .kpi-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      line-height: 1.1;
+    }
+
+    .kpi-value.v-green { color: var(--green-400); }
+    .kpi-value.v-red { color: var(--red-400); }
+    .kpi-value.v-blue { color: var(--blue-400); }
+    .kpi-value.v-cyan { color: var(--cyan-400); }
+    .kpi-value.v-purple { color: var(--purple-400); }
+    .kpi-value.v-amber { color: var(--amber-400); }
+    .kpi-value.v-white { color: var(--text-primary); }
+
+    .kpi-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* GRID LAYOUTS */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 18px; }
+    .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; }
+    .mt-18 { margin-top: 18px; }
+    .mt-24 { margin-top: 24px; }
+
+    /* INSIGHT BOX */
+    .insight-box {
+      background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04));
+      border: 1px solid rgba(16,185,129,0.15);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-top: 14px;
+    }
+
+    .insight-box.insight-warn {
+      background: linear-gradient(135deg, rgba(245,158,11,0.06), rgba(239,68,68,0.04));
+      border-color: rgba(245,158,11,0.15);
+    }
+
+    .insight-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green-400);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .insight-box.insight-warn .insight-title { color: var(--amber-400); }
+
+    .insight-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* DATA TABLE */
+    .data-table-wrap {
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .data-table th {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      background: rgba(15,23,42,0.6);
+      border-bottom: 1px solid var(--border-default);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border-default);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .data-table .mono {
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .badge-call { background: rgba(16,185,129,0.12); color: var(--green-400); }
+    .badge-put { background: rgba(239,68,68,0.12); color: var(--red-400); }
+    .badge-win { background: rgba(16,185,129,0.1); color: var(--green-400); border: 1px solid rgba(16,185,129,0.25); }
+    .badge-loss { background: rgba(239,68,68,0.1); color: var(--red-400); border: 1px solid rgba(239,68,68,0.25); }
+
+    .text-green { color: var(--green-400); }
+    .text-red { color: var(--red-400); }
+    .text-muted { color: var(--text-muted); }
+    .text-cyan { color: var(--cyan-400); }
+    .fw-600 { font-weight: 600; }
+
+    /* MOBILE SIDEBAR TOGGLE */
+    .mobile-toggle {
+      display: none;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      color: var(--text-secondary);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-area {
+        margin-left: 0;
+      }
+      .mobile-toggle {
+        display: flex;
+      }
+      .grid-2, .grid-3, .grid-1-2, .grid-2-1 {
+        grid-template-columns: 1fr;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+  </style>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ============================
+       SIDEBAR NAVIGATION
+       ============================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-logo">
+        <div class="sidebar-brand-icon">T</div>
+        <div>
+          <div class="sidebar-brand-text">Turbo Analytics</div>
+          <div class="sidebar-brand-sub">Trade Performance Dashboard</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Analytics</div>
+
+      <div class="nav-item active" data-page="overview" onclick="switchPage('overview', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span>Overview Dashboard</span>
+        <span class="nav-badge" id="navBadgeTotal">0</span>
+      </div>
+
+      <div class="nav-item" data-page="equity" onclick="switchPage('equity', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+        <span>Equity & Drawdown</span>
+      </div>
+
+      <div class="nav-item" data-page="direction" onclick="switchPage('direction', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+        <span>Direction & Signals</span>
+      </div>
+
+      <div class="nav-item" data-page="duration" onclick="switchPage('duration', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Duration & Speed</span>
+      </div>
+
+      <div class="nav-item" data-page="excursion" onclick="switchPage('excursion', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        <span>MAE / MFE Analysis</span>
+      </div>
+
+      <div class="nav-item" data-page="risk" onclick="switchPage('risk', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <span>Risk & Loss Streaks</span>
+      </div>
+
+      <div class="nav-item" data-page="exit" onclick="switchPage('exit', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <span>Exit Strategy</span>
+      </div>
+
+      <div class="nav-item" data-page="hourly" onclick="switchPage('hourly', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <span>Time Distribution</span>
+      </div>
+
+      <div class="nav-section-label">Income Reports</div>
+
+      <div class="nav-item" data-page="dailysummary" onclick="switchPage('dailysummary', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        <span>📊 Daily Income Summary</span>
+      </div>
+
+      <div class="nav-item" data-page="multiday" onclick="switchPage('multiday', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span>📅 Multi-Day Summary</span>
+      </div>
+
+      <div class="nav-section-label">Data</div>
+
+      <div class="nav-item" data-page="datatable" onclick="switchPage('datatable', this)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        <span>Trade Data Explorer</span>
+      </div>
+    </nav>
+
+    <!-- PARAMETERS PANEL -->
+    <div class="sidebar-params">
+      <div class="nav-section-label" style="padding-left:0;margin-bottom:8px;">Parameters</div>
+
+      <div class="param-group">
+        <div class="param-label">Data Source Select</div>
+        <select id="paramJsonSelect" class="param-select" onchange="onSelectTradeFile(this.value)">
+          <option value="/tradeData/08-2569/04-08-2569/1HZ50V/trades.json">⚡ Auto Detecting...</option>
+        </select>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Custom JSON Path</div>
+        <input id="paramJsonPath" class="param-input" type="text" value="/tradeData/08-2569/04-08-2569/1HZ50V/trades.json" placeholder="path to trades.json" />
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Strategy Filter</div>
+        <select id="paramStrategy" class="param-select">
+          <option value="ALL">All Strategies</option>
+          <option value="LONGTERM">LONGTERM</option>
+          <option value="SHORTTERM">SHORTTERM</option>
+        </select>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Direction Filter</div>
+        <select id="paramAction" class="param-select">
+          <option value="ALL">CALL + PUT</option>
+          <option value="CALL">CALL Only</option>
+          <option value="PUT">PUT Only</option>
+        </select>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Signal Filter</div>
+        <select id="paramSignal" class="param-select">
+          <option value="ALL">All Signals</option>
+          <option value="CrossUp">CrossUp</option>
+          <option value="CrossDown">CrossDown</option>
+        </select>
+      </div>
+
+      <div class="param-group">
+        <div class="param-label">Exit Strategy</div>
+        <select id="paramExit" class="param-select">
+          <option value="ALL">All Exit Types</option>
+          <option value="targetProfit">targetProfit</option>
+          <option value="expiryTime">expiryTime</option>
+        </select>
+      </div>
+
+      <button class="btn-apply" onclick="applyFilters()">⚡ Apply Filters & Reload</button>
+    </div>
+  </aside>
+
+  <!-- ============================
+       MAIN CONTENT AREA
+       ============================ -->
+  <div class="main-area">
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <button class="mobile-toggle" onclick="toggleSidebar()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div>
+          <div class="page-title" id="pageTitle">Overview Dashboard</div>
+          <div class="page-subtitle" id="pageSubtitle">สรุปภาพรวม KPI, สัดส่วนชนะ/แพ้ และ Equity Curve</div>
+        </div>
+      </div>
+      <div class="top-bar-right">
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          <span id="statusAsset">1HZ50V</span>
+        </div>
+        <div class="status-badge" style="background:rgba(59,130,246,0.08);color:var(--blue-400);border-color:rgba(59,130,246,0.2);">
+          <span id="statusDate">04/08/2569</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ============================================================
+           PAGE 1: OVERVIEW DASHBOARD
+           ============================================================ -->
+      <div class="page-section active" id="page-overview">
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid" id="kpiGrid">
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">Total Trades</div>
+            <div class="kpi-value v-white" id="kpiTotal">0</div>
+            <div class="kpi-sub">Completed Orders</div>
+          </div>
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">Win Rate</div>
+            <div class="kpi-value v-green" id="kpiWinRate">0%</div>
+            <div class="kpi-sub" id="kpiWinLoss">0 Win / 0 Loss</div>
+          </div>
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">Net Profit</div>
+            <div class="kpi-value v-green" id="kpiNetProfit">$0.00</div>
+            <div class="kpi-sub" id="kpiRoi">ROI: 0%</div>
+          </div>
+          <div class="kpi-card kpi-blue">
+            <div class="kpi-label">Profit Factor</div>
+            <div class="kpi-value v-cyan" id="kpiPF">—</div>
+            <div class="kpi-sub">Gross Win / Gross Loss</div>
+          </div>
+          <div class="kpi-card kpi-purple">
+            <div class="kpi-label">Expectancy</div>
+            <div class="kpi-value v-purple" id="kpiExpect">$0.00</div>
+            <div class="kpi-sub">Expected $ / Trade</div>
+          </div>
+          <div class="kpi-card kpi-cyan">
+            <div class="kpi-label">Avg R:R Ratio</div>
+            <div class="kpi-value v-blue" id="kpiRR">—</div>
+            <div class="kpi-sub">Avg Win / Avg Loss</div>
+          </div>
+          <div class="kpi-card kpi-cyan">
+            <div class="kpi-label">Avg Duration</div>
+            <div class="kpi-value v-cyan" id="kpiDuration">0s</div>
+            <div class="kpi-sub">Holding Time / Trade</div>
+          </div>
+          <div class="kpi-card kpi-amber">
+            <div class="kpi-label">Worst MAE</div>
+            <div class="kpi-value v-red" id="kpiMAE">$0.00</div>
+            <div class="kpi-sub">Max Adverse Excursion</div>
+          </div>
+          <div class="kpi-card kpi-amber">
+            <div class="kpi-label">Max Loss Streak</div>
+            <div class="kpi-value v-amber" id="kpiMaxStreak">0</div>
+            <div class="kpi-sub">Consecutive Losses</div>
+          </div>
+        </div>
+
+        <!-- Overview Charts -->
+        <div class="grid-2-1 mt-24">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Cumulative Equity Curve</div>
+                <div class="card-desc">เส้นโค้งสะสมกำไร ($) รายออเดอร์ — ภาพรวมประสิทธิภาพบอท</div>
+              </div>
+              <div class="card-tag card-tag-green">Equity</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartOverviewEquity"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Win vs Loss Breakdown</div>
+                <div class="card-desc">สัดส่วนชัยชนะและพ่ายแพ้</div>
+              </div>
+              <div class="card-tag card-tag-cyan">Win Ratio</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartOverviewDonut"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Smart Insight -->
+        <div class="insight-box mt-18" id="insightOverview">
+          <div class="insight-title">💡 AI Insight</div>
+          <div class="insight-text" id="insightOverviewText">กำลังวิเคราะห์ข้อมูล...</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 2: EQUITY & DRAWDOWN
+           ============================================================ -->
+      <div class="page-section" id="page-equity">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Cumulative Equity Curve with Drawdown Analysis</div>
+              <div class="card-desc">เส้นโค้งสะสมกำไร ($) พร้อมเส้นถดถอย Peak-to-Trough Drawdown</div>
+            </div>
+            <div class="card-tag card-tag-green">Full Equity</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box chart-box-lg" id="chartEquityFull"></div>
+          </div>
+        </div>
+
+        <div class="grid-2 mt-18">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Profit per Trade (Waterfall)</div>
+                <div class="card-desc">กำไร/ขาดทุนของแต่ละออเดอร์ — มองเห็นรูปแบบการสร้างรายได้</div>
+              </div>
+              <div class="card-tag card-tag-blue">Per-Trade P&L</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartProfitPerTrade"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Rolling Win Rate (N Trades Window)</div>
+                <div class="card-desc">อัตราชนะเฉลี่ยเคลื่อนที่ (Window 5 ไม้) — ดูแนวโน้มเฟสบอท</div>
+              </div>
+              <div class="card-tag card-tag-purple">Rolling WR</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartRollingWR"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-box mt-18" id="insightEquity">
+          <div class="insight-title">💡 Equity Insight</div>
+          <div class="insight-text" id="insightEquityText">กำลังวิเคราะห์...</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 3: DIRECTION & SIGNALS
+           ============================================================ -->
+      <div class="page-section" id="page-direction">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">CALL vs PUT Performance</div>
+                <div class="card-desc">เปรียบเทียบกำไรสุทธิ, Win Rate %, จำนวนเทรดของแต่ละทิศทาง</div>
+              </div>
+              <div class="card-tag card-tag-green">Direction</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartCallPut"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Entry Signal Effectiveness</div>
+                <div class="card-desc">ประสิทธิภาพสัญญาณ CrossUp vs CrossDown แยกตามกำไร/ขาดทุน</div>
+              </div>
+              <div class="card-tag card-tag-cyan">Signals</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartSignals"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-18">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Candle Color vs Win/Loss Correlation</div>
+              <div class="card-desc">ความสัมพันธ์ของสีแท่งเทียนขณะเข้า (green/red) กับผลการเทรด</div>
+            </div>
+            <div class="card-tag card-tag-amber">Color Correlation</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box chart-box-sm" id="chartCandleColor"></div>
+          </div>
+        </div>
+
+        <div class="insight-box mt-18" id="insightDirection">
+          <div class="insight-title">💡 Direction Insight</div>
+          <div class="insight-text" id="insightDirectionText">กำลังวิเคราะห์...</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 4: DURATION & SPEED
+           ============================================================ -->
+      <div class="page-section" id="page-duration">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Trade Duration per Order (Win vs Loss)</div>
+                <div class="card-desc">ระยะเวลาถือครองจริง (วินาที) แยกสีตาม Win (Cyan) / Loss (Red)</div>
+              </div>
+              <div class="card-tag card-tag-cyan">Hold Time</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartDuration"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Duration vs Profit Scatter</div>
+                <div class="card-desc">ดูความสัมพันธ์ระหว่างระยะเวลาถือออเดอร์ กับกำไร/ขาดทุนจริง</div>
+              </div>
+              <div class="card-tag card-tag-indigo">Scatter Analysis</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartDurationScatter"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-box mt-18" id="insightDuration">
+          <div class="insight-title">💡 Duration Insight</div>
+          <div class="insight-text" id="insightDurationText">กำลังวิเคราะห์...</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 5: MAE / MFE EXCURSION
+           ============================================================ -->
+      <div class="page-section" id="page-excursion">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">MAE (Min Profit) to MFE (Max Profit) Excursion Range</div>
+              <div class="card-desc">ช่วงที่ราคาแกว่งตัวระหว่างถือออเดอร์ — ประเมินความเสี่ยงและโอกาสทำกำไร</div>
+            </div>
+            <div class="card-tag card-tag-indigo">Range Bar</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box chart-box-lg" id="chartMaeMfe"></div>
+          </div>
+        </div>
+
+        <div class="grid-2 mt-18">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Target Profit vs MFE (Max Profit)</div>
+                <div class="card-desc">เปรียบเทียบ targetProfit ที่ตั้งไว้ กับ MFE จริง — เพื่อปรับเป้ากำไร</div>
+              </div>
+              <div class="card-tag card-tag-green">Target Optimization</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartTargetVsMfe"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">MAE Depth Distribution</div>
+                <div class="card-desc">กระจายความถี่ของ MAE (minProfit) — วัดว่าถูกลากลงลึกบ่อยขนาดไหน</div>
+              </div>
+              <div class="card-tag card-tag-red">MAE Depth</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartMaeDepth"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-box insight-warn mt-18" id="insightExcursion">
+          <div class="insight-title">⚠️ Excursion Insight</div>
+          <div class="insight-text" id="insightExcursionText">กำลังวิเคราะห์...</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 6: RISK & LOSS STREAKS
+           ============================================================ -->
+      <div class="page-section" id="page-risk">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Consecutive Loss Streak Frequency</div>
+                <div class="card-desc">กระจายความถี่ของจำนวนครั้งแพ้ติดต่อกัน (lossCon)</div>
+              </div>
+              <div class="card-tag card-tag-red">Loss Streaks</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartLossStreak"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Stake Size (MoneyTrade) per Order</div>
+                <div class="card-desc">ขนาดเงินเดิมพันแต่ละไม้ — ติดตามการเบิ้ลไม้ (Martingale)</div>
+              </div>
+              <div class="card-tag card-tag-amber">Money Mgmt</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartStakeSize"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-box insight-warn mt-18" id="insightRisk">
+          <div class="insight-title">⚠️ Risk Insight</div>
+          <div class="insight-text" id="insightRiskText">กำลังวิเคราะห์...</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 7: EXIT STRATEGY
+           ============================================================ -->
+      <div class="page-section" id="page-exit">
+        <div class="grid-1-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Exit Strategy Breakdown</div>
+                <div class="card-desc">สัดส่วนเหตุผลปิดดีล</div>
+              </div>
+              <div class="card-tag card-tag-purple">Exit Methods</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartExitPie"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Profit by Exit Strategy</div>
+                <div class="card-desc">กำไรสุทธิแยกตามวิธีปิดดีล — ดูว่า exitStrategy ไหนให้ผลตอบแทนสูงสุด</div>
+              </div>
+              <div class="card-tag card-tag-green">Exit Profit</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartExitProfit"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-box mt-18" id="insightExit">
+          <div class="insight-title">💡 Exit Strategy Insight</div>
+          <div class="insight-text" id="insightExitText">กำลังวิเคราะห์...</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 8: TIME DISTRIBUTION
+           ============================================================ -->
+      <div class="page-section" id="page-hourly">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Hourly Profit & Trade Count Distribution</div>
+              <div class="card-desc">กำไรสุทธิ ($) และจำนวนเทรดแบ่งตามชั่วโมงของวัน — หาช่วง Golden Session</div>
+            </div>
+            <div class="card-tag card-tag-blue">Hourly Heatmap</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box chart-box-lg" id="chartHourly"></div>
+          </div>
+        </div>
+
+        <div class="card mt-18">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Win Rate by Hour</div>
+              <div class="card-desc">อัตราชนะ (%) แยกตามชั่วโมงของวัน — ระบุช่วงเวลาที่ให้ Win Rate สูงสุด</div>
+            </div>
+            <div class="card-tag card-tag-cyan">Hourly WR</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box" id="chartHourlyWR"></div>
+          </div>
+        </div>
+
+        <div class="insight-box mt-18" id="insightHourly">
+          <div class="insight-title">💡 Time Session Insight</div>
+          <div class="insight-text" id="insightHourlyText">กำลังวิเคราะห์...</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 9: DATA TABLE EXPLORER
+           ============================================================ -->
+      <div class="page-section" id="page-datatable">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Trade Data Explorer — Full Detail View</div>
+              <div class="card-desc">ข้อมูลดิบจาก trades.json ครอบคลุมทุกฟิลด์ พร้อมกรองและเรียงลำดับ</div>
+            </div>
+            <div class="card-tag card-tag-blue">Data Table</div>
+          </div>
+          <div class="card-body">
+            <div class="data-table-wrap">
+              <table class="data-table" id="dataTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Time</th>
+                    <th>Action</th>
+                    <th>Signal</th>
+                    <th>Strategy</th>
+                    <th>Entry Spot</th>
+                    <th>Exit Spot</th>
+                    <th>DiffSpot</th>
+                    <th>Duration</th>
+                    <th>Stake ($)</th>
+                    <th>MAE (min)</th>
+                    <th>MFE (max)</th>
+                    <th>Target</th>
+                    <th>Profit ($)</th>
+                    <th>Exit</th>
+                    <th>LossCon</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 10: DAILY INCOME SUMMARY
+           ============================================================ -->
+      <div class="page-section" id="page-dailysummary">
+
+        <!-- Daily KPI row -->
+        <div class="kpi-grid" id="dailyKpiGrid" style="grid-template-columns:repeat(auto-fill,minmax(175px,1fr));">
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">📅 Trading Date</div>
+            <div class="kpi-value v-white" id="dkpiDate" style="font-size:18px;">—</div>
+            <div class="kpi-sub" id="dkpiAssets">—</div>
+          </div>
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">Total Trades (All Assets)</div>
+            <div class="kpi-value v-white" id="dkpiTotalTrades">0</div>
+            <div class="kpi-sub" id="dkpiWinLoss">0 Win / 0 Loss</div>
+          </div>
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">Win Rate</div>
+            <div class="kpi-value v-green" id="dkpiWR">0%</div>
+            <div class="kpi-sub">Overall Win Rate</div>
+          </div>
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">💰 Net Income</div>
+            <div class="kpi-value v-green" id="dkpiIncome">$0.00</div>
+            <div class="kpi-sub" id="dkpiROI">ROI: 0%</div>
+          </div>
+          <div class="kpi-card kpi-blue">
+            <div class="kpi-label">Total Invested</div>
+            <div class="kpi-value v-blue" id="dkpiInvested">$0.00</div>
+            <div class="kpi-sub">Gross Stake</div>
+          </div>
+          <div class="kpi-card kpi-amber">
+            <div class="kpi-label">Best Asset</div>
+            <div class="kpi-value v-green" id="dkpiBestAsset" style="font-size:16px;">—</div>
+            <div class="kpi-sub" id="dkpiBestAssetProfit">$0.00</div>
+          </div>
+          <div class="kpi-card kpi-red">
+            <div class="kpi-label">Worst Asset</div>
+            <div class="kpi-value v-red" id="dkpiWorstAsset" style="font-size:16px;">—</div>
+            <div class="kpi-sub" id="dkpiWorstAssetProfit">$0.00</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid-2 mt-24">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">💰 Income per Asset</div>
+                <div class="card-desc">กำไร/ขาดทุนสุทธิแยกตามสินทรัพย์ในวันนี้</div>
+              </div>
+              <div class="card-tag card-tag-green">Per-Asset P&L</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartDailyAssetProfit"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">📊 Trade Count per Asset</div>
+                <div class="card-desc">จำนวนเทรดและ Win Rate แยกตาม Asset</div>
+              </div>
+              <div class="card-tag card-tag-blue">Trade Distribution</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box" id="chartDailyAssetCount"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Detail Table -->
+        <div class="card mt-18">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📋 Daily Income Breakdown Table</div>
+              <div class="card-desc">สรุปยอดกำไรขาดทุนรายละเอียดแยกตาม Asset — ข้อมูลสำคัญสำหรับสรุปรายได้ประจำวัน</div>
+            </div>
+            <div class="card-tag card-tag-green">Income Report</div>
+          </div>
+          <div class="card-body">
+            <div class="data-table-wrap">
+              <table class="data-table" id="dailySummaryTable">
+                <thead>
+                  <tr>
+                    <th>Asset</th>
+                    <th>Trades</th>
+                    <th>Win</th>
+                    <th>Loss</th>
+                    <th>Win Rate</th>
+                    <th>Gross Win ($)</th>
+                    <th>Gross Loss ($)</th>
+                    <th>Net Profit ($)</th>
+                    <th>Invested ($)</th>
+                    <th>ROI (%)</th>
+                    <th>Profit Factor</th>
+                    <th>Avg Duration</th>
+                    <th>Worst MAE</th>
+                  </tr>
+                </thead>
+                <tbody id="dailySummaryBody"></tbody>
+                <tfoot id="dailySummaryFoot"></tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-box mt-18">
+          <div class="insight-title">💡 Daily Income Insight</div>
+          <div class="insight-text" id="insightDailyText">กำลังรวบรวมข้อมูล...</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           PAGE 11: MULTI-DAY SUMMARY
+           ============================================================ -->
+      <div class="page-section" id="page-multiday">
+
+        <!-- Multi-Day Config -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📅 Multi-Day Data Configuration</div>
+              <div class="card-desc">ระบุเดือน (MM-YYYY), วัน (DD-MM-YYYY) และ Assets ที่ต้องการดึงข้อมูล</div>
+            </div>
+            <div class="card-tag card-tag-blue">Data Sources</div>
+          </div>
+          <div class="card-body">
+            <div style="display:grid; grid-template-columns:1fr 2fr 1fr; gap:14px; align-items:end;">
+              <div class="param-group" style="margin:0;">
+                <div class="param-label">Month (MM-YYYY)</div>
+                <input id="multiMonth" class="param-input" type="text" value="08-2569" />
+              </div>
+              <div class="param-group" style="margin:0;">
+                <div class="param-label">Days (comma separated DD-MM-YYYY)</div>
+                <input id="multiDays" class="param-input" type="text" value="03-08-2569,04-08-2569" />
+              </div>
+              <div class="param-group" style="margin:0;">
+                <div class="param-label">Assets (comma separated)</div>
+                <input id="multiAssets" class="param-input" type="text" value="1HZ10V,1HZ50V,1HZ75V" />
+              </div>
+            </div>
+            <button class="btn-apply" style="max-width:280px;margin-top:12px;" onclick="loadMultiDayData()">📅 Load Multi-Day Data</button>
+          </div>
+        </div>
+
+        <!-- Multi-Day KPIs -->
+        <div class="kpi-grid mt-18" style="grid-template-columns:repeat(auto-fill,minmax(175px,1fr));">
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">Total Days Loaded</div>
+            <div class="kpi-value v-white" id="mkpiDays">0</div>
+            <div class="kpi-sub" id="mkpiDaysSub">—</div>
+          </div>
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">Total Trades</div>
+            <div class="kpi-value v-white" id="mkpiTrades">0</div>
+            <div class="kpi-sub">All Days + Assets</div>
+          </div>
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">💰 Total Net Income</div>
+            <div class="kpi-value v-green" id="mkpiIncome">$0.00</div>
+            <div class="kpi-sub" id="mkpiAvgDay">Avg/Day: $0.00</div>
+          </div>
+          <div class="kpi-card kpi-blue">
+            <div class="kpi-label">Overall Win Rate</div>
+            <div class="kpi-value v-cyan" id="mkpiWR">0%</div>
+            <div class="kpi-sub" id="mkpiWL">0W / 0L</div>
+          </div>
+          <div class="kpi-card kpi-green">
+            <div class="kpi-label">Best Day</div>
+            <div class="kpi-value v-green" id="mkpiBestDay" style="font-size:14px;">—</div>
+            <div class="kpi-sub" id="mkpiBestDayProfit">$0.00</div>
+          </div>
+          <div class="kpi-card kpi-red">
+            <div class="kpi-label">Worst Day</div>
+            <div class="kpi-value v-red" id="mkpiWorstDay" style="font-size:14px;">—</div>
+            <div class="kpi-sub" id="mkpiWorstDayProfit">$0.00</div>
+          </div>
+        </div>
+
+        <!-- Multi-Day Charts -->
+        <div class="grid-2 mt-18">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">💰 Daily Net Income Comparison</div>
+                <div class="card-desc">กำไรสุทธิเปรียบเทียบรายวัน — ดูแนวโน้มรายได้</div>
+              </div>
+              <div class="card-tag card-tag-green">Daily P&L</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box chart-box-lg" id="chartMultiDayProfit"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">📈 Cumulative Multi-Day Income</div>
+                <div class="card-desc">กำไรสะสมข้ามวัน — ดูว่าเดือนนี้กำไรเท่าไหร่แล้ว</div>
+              </div>
+              <div class="card-tag card-tag-cyan">Cumulative</div>
+            </div>
+            <div class="card-body">
+              <div class="chart-box chart-box-lg" id="chartMultiDayCum"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-18">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📊 Asset Performance Across Days</div>
+              <div class="card-desc">กำไรของแต่ละ Asset ข้ามวัน — ดูว่า Asset ไหนทำรายได้ให้มากที่สุดในช่วงเวลาที่เลือก</div>
+            </div>
+            <div class="card-tag card-tag-purple">Cross-Asset</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-box chart-box-lg" id="chartMultiDayAsset"></div>
+          </div>
+        </div>
+
+        <!-- Multi-Day Table -->
+        <div class="card mt-18">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📋 Multi-Day Income Summary Table</div>
+              <div class="card-desc">สรุปยอดรายได้แยกตามวัน — ใช้สำหรับบันทึกกำไรประจำเดือน</div>
+            </div>
+            <div class="card-tag card-tag-green">Income Report</div>
+          </div>
+          <div class="card-body">
+            <div class="data-table-wrap">
+              <table class="data-table" id="multiDayTable">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Assets Traded</th>
+                    <th>Total Trades</th>
+                    <th>Win</th>
+                    <th>Loss</th>
+                    <th>Win Rate</th>
+                    <th>Gross Win ($)</th>
+                    <th>Gross Loss ($)</th>
+                    <th>Net Income ($)</th>
+                    <th>Invested ($)</th>
+                    <th>ROI (%)</th>
+                    <th>Profit Factor</th>
+                  </tr>
+                </thead>
+                <tbody id="multiDayBody"></tbody>
+                <tfoot id="multiDayFoot"></tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-box mt-18">
+          <div class="insight-title">💡 Multi-Day Insight</div>
+          <div class="insight-text" id="insightMultiDayText">กด "Load Multi-Day Data" เพื่อดึงข้อมูลหลายวัน...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================
+     JAVASCRIPT ENGINE
+     ============================ -->
+<script>
+// ─── STATE ──────────────────────────────────────────
+let rawTrades = [];
+let filteredTrades = [];
+let chartRoots = {};
+
+let multiDayData = {}; // { 'DD-MM-YYYY': { 'ASSET': [trades...] } }
+
+const pageTitles = {
+  overview:  { title: 'Overview Dashboard',       sub: 'สรุปภาพรวม KPI, สัดส่วน Win/Loss และ Equity Curve' },
+  equity:    { title: 'Equity & Drawdown',         sub: 'มิติที่ 2 — เส้นโค้งผลตอบแทนสะสม, กำไรรายไม้ และ Rolling Win Rate' },
+  direction: { title: 'Direction & Signal Analysis',sub: 'มิติที่ 3 — เปรียบเทียบ CALL vs PUT, สัญญาณ CrossUp/CrossDown และสีแท่งเทียน' },
+  duration:  { title: 'Duration & Speed Analysis', sub: 'มิติที่ 4 — ระยะเวลาถือออเดอร์จริง และความสัมพันธ์กับกำไร' },
+  excursion: { title: 'MAE / MFE Excursion Analysis',sub: 'มิติที่ 5 — วิเคราะห์สภาวะแกว่งตัว (MAE/MFE) ระหว่างถือออเดอร์' },
+  risk:      { title: 'Risk & Loss Streaks',        sub: 'มิติที่ 6 — สถิติแพ้ติดต่อกัน, ขนาด Stake และ Money Management' },
+  exit:      { title: 'Exit Strategy Analysis',     sub: 'มิติที่ 7 — สัดส่วนเหตุผลปิดดีล และกำไรแยกตาม Exit Strategy' },
+  hourly:    { title: 'Time of Day Distribution',   sub: 'มิติที่ 8 — สถิติกำไร, จำนวนเทรด และ Win Rate รายชั่วโมง' },
+  dailysummary: { title: '📊 Daily Income Summary', sub: 'สรุปยอดรายได้ประจำวัน — กำไรสุทธิ, Win Rate, ROI แยกตาม Asset' },
+  multiday:  { title: '📅 Multi-Day Income Report', sub: 'สรุปรายได้ข้ามวัน — เปรียบเทียบผลประกอบการรายวันและรายเดือน' },
+  datatable: { title: 'Trade Data Explorer',        sub: 'ตารางข้อมูลการเทรดฉบับสมบูรณ์พร้อมทุกฟิลด์สำคัญ' },
+};
+
+// ─── NAVIGATION ─────────────────────────────────────
+function switchPage(pageId, navEl) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  document.getElementById('page-' + pageId).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+
+  const info = pageTitles[pageId];
+  if (info) {
+    document.getElementById('pageTitle').textContent = info.title;
+    document.getElementById('pageSubtitle').textContent = info.sub;
+  }
+
+  renderPageCharts(pageId);
+  closeSidebarMobile();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function closeSidebarMobile() {
+  if (window.innerWidth <= 1024) {
+    document.getElementById('sidebar').classList.remove('open');
+  }
+}
+
+// ─── DATA LOADING ───────────────────────────────────
+const defaultTrades = [
+  {"contractId":7893097879,"assetCode":"1HZ50V","entrySpot":256277.56,"exitSpot":256432.3,"DiffSpot":154.74,"purchaseTimeDisplay":"4/8/2569 04:50:54","tradeNo":1,"actualDuration":104,"thisColor":"green","thisAction":"CALL","MoneyTrade":1,"WinStatus":"Win","ThisProfit":0.11,"lossCon":0,"maxLossCon":0,"minProfit":-0.34,"maxProfit":0.11,"targetProfit":0.1,"exitStrategy":"targetProfit","entrySignal":"CrossUp","tradeStrategy":"LONGTERM","codeStrategy":"LT","emaPeriods":"3-5-10"},
+  {"contractId":7893401999,"assetCode":"1HZ50V","entrySpot":256195.29,"exitSpot":256040,"DiffSpot":-155.29,"purchaseTimeDisplay":"4/8/2569 04:54:11","tradeNo":2,"actualDuration":22,"thisColor":"red","thisAction":"PUT","MoneyTrade":1,"WinStatus":"Win","ThisProfit":0.1,"lossCon":0,"maxLossCon":0,"minProfit":-0.08,"maxProfit":0.1,"targetProfit":0.1,"exitStrategy":"targetProfit","entrySignal":"CrossDown","tradeStrategy":"LONGTERM","codeStrategy":"LT","emaPeriods":"3-5-10"}
+];
+
+async function loadTradeData() {
+  const path = document.getElementById('paramJsonPath').value;
+  try {
+    const res = await fetch(path);
+    if (res.ok) rawTrades = await res.json();
+    else rawTrades = defaultTrades;
+  } catch(e) {
+    console.warn('Fallback to embedded data:', e);
+    rawTrades = defaultTrades;
+  }
+  applyFilters();
+}
+
+function applyFilters() {
+  const strat = document.getElementById('paramStrategy').value;
+  const action = document.getElementById('paramAction').value;
+  const signal = document.getElementById('paramSignal').value;
+  const exit = document.getElementById('paramExit').value;
+
+  filteredTrades = rawTrades.filter(t => {
+    if (strat !== 'ALL' && t.tradeStrategy !== strat) return false;
+    if (action !== 'ALL' && t.thisAction !== action) return false;
+    if (signal !== 'ALL' && t.entrySignal !== signal) return false;
+    if (exit !== 'ALL' && t.exitStrategy !== exit) return false;
+    return true;
+  });
+
+  renderKPIs(filteredTrades);
+  renderTable(filteredTrades);
+  document.getElementById('navBadgeTotal').textContent = filteredTrades.length;
+
+  if (filteredTrades.length > 0) {
+    document.getElementById('statusAsset').textContent = filteredTrades[0].assetCode || '—';
+  }
+
+  // Re-render current page charts
+  const activePage = document.querySelector('.page-section.active');
+  if (activePage) {
+    const pageId = activePage.id.replace('page-', '');
+    renderPageCharts(pageId);
+  }
+}
+
+// ─── KPI CALCULATION ────────────────────────────────
+function renderKPIs(data) {
+  const n = data.length;
+  const wins = data.filter(d => d.WinStatus === 'Win').length;
+  const losses = n - wins;
+  const wr = n > 0 ? ((wins/n)*100).toFixed(1) : 0;
+
+  const grossWin = data.filter(d => d.ThisProfit > 0).reduce((a,d) => a + d.ThisProfit, 0);
+  const grossLoss = Math.abs(data.filter(d => d.ThisProfit < 0).reduce((a,d) => a + d.ThisProfit, 0));
+  const net = data.reduce((a,d) => a + (d.ThisProfit||0), 0);
+  const invested = data.reduce((a,d) => a + (d.MoneyTrade||1), 0);
+
+  const pf = grossLoss > 0 ? (grossWin/grossLoss).toFixed(2) : (grossWin > 0 ? '∞' : '—');
+  const expect = n > 0 ? (net/n).toFixed(3) : '0.000';
+
+  const avgWin = wins > 0 ? grossWin / wins : 0;
+  const avgLoss = losses > 0 ? grossLoss / losses : 0;
+  const rr = avgLoss > 0 ? (avgWin / avgLoss).toFixed(2) : (avgWin > 0 ? '∞' : '—');
+
+  const avgDur = n > 0 ? (data.reduce((a,d) => a + (d.actualDuration||0), 0) / n).toFixed(0) : 0;
+  const worstMae = n > 0 ? Math.min(...data.map(d => d.minProfit || 0)) : 0;
+  const maxStreak = n > 0 ? Math.max(...data.map(d => d.maxLossCon || d.lossCon || 0)) : 0;
+
+  document.getElementById('kpiTotal').textContent = n;
+  document.getElementById('kpiWinRate').textContent = `${wr}%`;
+  document.getElementById('kpiWinLoss').textContent = `${wins} Win / ${losses} Loss`;
+  document.getElementById('kpiNetProfit').textContent = `$${net.toFixed(2)}`;
+  const netEl = document.getElementById('kpiNetProfit');
+  netEl.className = 'kpi-value ' + (net >= 0 ? 'v-green' : 'v-red');
+  document.getElementById('kpiRoi').textContent = `ROI: ${invested > 0 ? ((net/invested)*100).toFixed(1) : 0}%`;
+  document.getElementById('kpiPF').textContent = pf;
+  document.getElementById('kpiExpect').textContent = `$${expect}`;
+  document.getElementById('kpiRR').textContent = rr;
+  document.getElementById('kpiDuration').textContent = `${avgDur}s`;
+  document.getElementById('kpiMAE').textContent = `$${worstMae.toFixed(2)}`;
+  document.getElementById('kpiMaxStreak').textContent = maxStreak;
+}
+
+// ─── TABLE ──────────────────────────────────────────
+function renderTable(data) {
+  const tb = document.getElementById('tableBody');
+  tb.innerHTML = data.map((t, i) => {
+    const ab = t.thisAction === 'CALL'
+      ? '<span class="badge badge-call">CALL</span>'
+      : '<span class="badge badge-put">PUT</span>';
+    const sb = t.WinStatus === 'Win'
+      ? '<span class="badge badge-win">Win</span>'
+      : '<span class="badge badge-loss">Loss</span>';
+    const dc = (t.DiffSpot||0) >= 0 ? 'text-green' : 'text-red';
+    const pc = (t.ThisProfit||0) >= 0 ? 'text-green fw-600' : 'text-red fw-600';
+    return `<tr>
+      <td class="mono text-muted">#${t.tradeNo||i+1}</td>
+      <td>${t.purchaseTimeDisplay||'-'}</td>
+      <td>${ab}</td>
+      <td class="text-muted">${t.entrySignal||'-'}</td>
+      <td class="text-muted">${t.tradeStrategy||t.codeStrategy||'-'}</td>
+      <td class="mono">${t.entrySpot}</td>
+      <td class="mono">${t.exitSpot}</td>
+      <td class="mono ${dc}">${(t.DiffSpot||0) > 0 ? '+' : ''}${(t.DiffSpot||0).toFixed(2)}</td>
+      <td class="text-muted">${t.actualDuration}s</td>
+      <td class="mono">$${t.MoneyTrade||1}</td>
+      <td class="mono text-red">$${t.minProfit}</td>
+      <td class="mono text-green">$${t.maxProfit}</td>
+      <td class="mono text-cyan">$${t.targetProfit}</td>
+      <td class="mono ${pc}">${(t.ThisProfit||0) >= 0 ? '+' : ''}$${t.ThisProfit}</td>
+      <td class="text-muted">${t.exitStrategy||'-'}</td>
+      <td class="mono text-muted">${t.lossCon||0}</td>
+      <td>${sb}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── CHART ENGINE ───────────────────────────────────
+function disposeChart(key) {
+  if (chartRoots[key]) { chartRoots[key].dispose(); delete chartRoots[key]; }
+}
+
+function makeRoot(divId, key) {
+  disposeChart(key);
+  const root = am5.Root.new(divId);
+  root.setThemes([am5themes_Animated.new(root), am5themes_Dark.new(root)]);
+  chartRoots[key] = root;
+  return root;
+}
+
+function renderPageCharts(pageId) {
+  const data = filteredTrades;
+
+  // Daily summary uses filteredTrades but groups by asset
+  if (pageId === 'dailysummary') {
+    if (data.length) {
+      am5.ready(function() { renderDailySummaryCharts(data); });
+    }
+    return;
+  }
+
+  // Multi-day page uses its own data loader, just trigger if data exists
+  if (pageId === 'multiday') {
+    if (Object.keys(multiDayData).length > 0) {
+      renderMultiDayPage();
+    }
+    return;
+  }
+
+  if (!data.length) return;
+
+  am5.ready(function() {
+    if (pageId === 'overview') renderOverviewCharts(data);
+    if (pageId === 'equity') renderEquityCharts(data);
+    if (pageId === 'direction') renderDirectionCharts(data);
+    if (pageId === 'duration') renderDurationCharts(data);
+    if (pageId === 'excursion') renderExcursionCharts(data);
+    if (pageId === 'risk') renderRiskCharts(data);
+    if (pageId === 'exit') renderExitCharts(data);
+    if (pageId === 'hourly') renderHourlyCharts(data);
+  });
+}
+
+// ── OVERVIEW CHARTS ─────────────────────────────────
+function renderOverviewCharts(data) {
+  // Equity mini
+  (function() {
+    const root = makeRoot('chartOverviewEquity', 'ov_eq');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {panX:true, panY:true, wheelX:"panX", wheelY:"zoomX"}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"l", renderer:am5xy.AxisRendererX.new(root,{minGridDistance:40})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.LineSeries.new(root, {name:"Cum Profit",xAxis:xA,yAxis:yA,valueYField:"v",categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"Trade {categoryX}\nProfit: ${p}\nCumulative: ${valueY}"})}));
+    s.strokes.template.setAll({strokeWidth:3, stroke:am5.color(0x10b981)});
+    s.fills.template.setAll({fillOpacity:0.12, visible:true, fill:am5.color(0x10b981)});
+    let cum=0;
+    const cd = data.map((d,i) => { cum += d.ThisProfit||0; return {l:`#${d.tradeNo||i+1}`, v:+cum.toFixed(2), p:d.ThisProfit}; });
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800); chart.appear(800);
+  })();
+
+  // Win/Loss donut
+  (function() {
+    const root = makeRoot('chartOverviewDonut', 'ov_wl');
+    const chart = root.container.children.push(am5percent.PieChart.new(root, {innerRadius:am5.percent(60)}));
+    const s = chart.series.push(am5percent.PieSeries.new(root, {valueField:"c", categoryField:"s"}));
+    s.slices.template.setAll({cornerRadius:6});
+    s.slices.template.adapters.add("fill",(f,t)=> t.dataItem?.dataContext.s==="Win" ? am5.color(0x10b981) : am5.color(0xef4444));
+    const w = data.filter(d=>d.WinStatus==='Win').length;
+    s.data.setAll([{s:"Win",c:w},{s:"Loss",c:data.length-w}]);
+    const leg = chart.children.push(am5.Legend.new(root,{centerX:am5.percent(50),x:am5.percent(50),marginTop:10}));
+    leg.data.setAll(s.dataItems); s.appear(800);
+  })();
+
+  // Overview Insight
+  generateInsight('insightOverviewText', data, 'overview');
+}
+
+// ── EQUITY PAGE CHARTS ──────────────────────────────
+function renderEquityCharts(data) {
+  // Full equity + drawdown
+  (function() {
+    const root = makeRoot('chartEquityFull', 'eq_full');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {panX:true, panY:true, wheelX:"panX", wheelY:"zoomX", layout:root.verticalLayout}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"l", renderer:am5xy.AxisRendererX.new(root,{minGridDistance:40})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+
+    const s1 = chart.series.push(am5xy.LineSeries.new(root, {name:"Cum Profit ($)", xAxis:xA, yAxis:yA, valueYField:"cum", categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"Trade {categoryX}\nCumulative: ${valueY}\nDrawdown: ${dd}"})}));
+    s1.strokes.template.setAll({strokeWidth:3, stroke:am5.color(0x10b981)});
+    s1.fills.template.setAll({fillOpacity:0.1, visible:true, fill:am5.color(0x10b981)});
+
+    const s2 = chart.series.push(am5xy.LineSeries.new(root, {name:"Drawdown ($)", xAxis:xA, yAxis:yA, valueYField:"dd", categoryXField:"l"}));
+    s2.strokes.template.setAll({strokeWidth:2, stroke:am5.color(0xef4444), strokeDasharray:[4,4]});
+    s2.fills.template.setAll({fillOpacity:0.08, visible:true, fill:am5.color(0xef4444)});
+
+    let cum=0, peak=0;
+    const cd = data.map((d,i) => {
+      cum += d.ThisProfit||0;
+      if (cum > peak) peak = cum;
+      const dd = cum - peak;
+      return {l:`#${d.tradeNo||i+1}`, cum:+cum.toFixed(2), dd:+dd.toFixed(2)};
+    });
+    xA.data.setAll(cd); s1.data.setAll(cd); s2.data.setAll(cd);
+    const leg = chart.children.push(am5.Legend.new(root,{centerX:am5.percent(50),x:am5.percent(50)}));
+    leg.data.setAll(chart.series.values);
+    s1.appear(800); s2.appear(800); chart.appear(800);
+  })();
+
+  // Profit per trade waterfall
+  (function() {
+    const root = makeRoot('chartProfitPerTrade', 'eq_ppt');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"l", renderer:am5xy.AxisRendererX.new(root,{minGridDistance:30})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"P&L", xAxis:xA, yAxis:yA, valueYField:"v", categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"Trade {categoryX}: ${valueY}"})}));
+    s.columns.template.setAll({cornerRadiusTL:4, cornerRadiusTR:4, width:am5.percent(50)});
+    s.columns.template.adapters.add("fill",(f,t)=> (t.dataItem?.dataContext.v||0)>=0 ? am5.color(0x10b981) : am5.color(0xef4444));
+    const cd = data.map((d,i)=>({l:`#${d.tradeNo||i+1}`, v:d.ThisProfit||0}));
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  // Rolling win rate
+  (function() {
+    const root = makeRoot('chartRollingWR', 'eq_rwr');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"l", renderer:am5xy.AxisRendererX.new(root,{minGridDistance:40})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {min:0, max:100, renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.LineSeries.new(root, {name:"Rolling WR%", xAxis:xA, yAxis:yA, valueYField:"wr", categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"Trade {categoryX}: {valueY}%"})}));
+    s.strokes.template.setAll({strokeWidth:3, stroke:am5.color(0x8b5cf6)});
+    s.fills.template.setAll({fillOpacity:0.1, visible:true, fill:am5.color(0x8b5cf6)});
+
+    const W = Math.min(5, data.length);
+    const cd = data.map((d,i)=>{
+      const start = Math.max(0, i-W+1);
+      const window = data.slice(start, i+1);
+      const wr = (window.filter(x=>x.WinStatus==='Win').length / window.length * 100).toFixed(0);
+      return {l:`#${d.tradeNo||i+1}`, wr:+wr};
+    });
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  generateInsight('insightEquityText', data, 'equity');
+}
+
+// ── DIRECTION PAGE CHARTS ───────────────────────────
+function renderDirectionCharts(data) {
+  // CALL vs PUT columns
+  (function() {
+    const root = makeRoot('chartCallPut', 'dir_cp');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"a", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Net Profit ($)", xAxis:xA, yAxis:yA, valueYField:"p", categoryXField:"a",
+      tooltip:am5.Tooltip.new(root,{labelText:"{a}: ${valueY}\nWin Rate: {wr}%\n({w}/{t} trades)"})}));
+    s.columns.template.setAll({cornerRadiusTL:6, cornerRadiusTR:6, width:am5.percent(40)});
+    s.columns.template.adapters.add("fill",(f,t)=> t.dataItem?.dataContext.a==='CALL' ? am5.color(0x10b981) : am5.color(0xf43f5e));
+
+    ['CALL','PUT'].forEach(a => {
+      const sub = data.filter(d=>d.thisAction===a);
+      const w = sub.filter(d=>d.WinStatus==='Win').length;
+      const cd = [{a, p:+sub.reduce((x,d)=>x+(d.ThisProfit||0),0).toFixed(2), wr:sub.length?(w/sub.length*100).toFixed(0):0, w, t:sub.length}];
+      xA.data.push(...cd); s.data.push(...cd);
+    });
+    s.appear(800);
+  })();
+
+  // Signal effectiveness
+  (function() {
+    const root = makeRoot('chartSignals', 'dir_sig');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"sig", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Net Profit ($)", xAxis:xA, yAxis:yA, valueYField:"p", categoryXField:"sig",
+      tooltip:am5.Tooltip.new(root,{labelText:"{sig}: ${valueY}\nWin Rate: {wr}%"})}));
+    s.columns.template.setAll({cornerRadiusTL:6, cornerRadiusTR:6, width:am5.percent(40)});
+    s.columns.template.adapters.add("fill",(f,t)=> t.dataItem?.dataContext.sig?.includes('Up') ? am5.color(0x06b6d4) : am5.color(0xa78bfa));
+
+    const groups = {};
+    data.forEach(d => {
+      const k = d.entrySignal || 'Other';
+      if (!groups[k]) groups[k] = {p:0,w:0,t:0};
+      groups[k].p += d.ThisProfit||0; groups[k].t++; if(d.WinStatus==='Win') groups[k].w++;
+    });
+    const cd = Object.keys(groups).map(k=>({sig:k, p:+groups[k].p.toFixed(2), wr:groups[k].t?(groups[k].w/groups[k].t*100).toFixed(0):0}));
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  // Candle color correlation
+  (function() {
+    const root = makeRoot('chartCandleColor', 'dir_cc');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"c", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Profit", xAxis:xA, yAxis:yA, valueYField:"p", categoryXField:"c",
+      tooltip:am5.Tooltip.new(root,{labelText:"{c} Candle: ${valueY} ({t} trades, WR: {wr}%)"})}));
+    s.columns.template.setAll({cornerRadiusTL:6, cornerRadiusTR:6, width:am5.percent(40)});
+    s.columns.template.adapters.add("fill",(f,t)=> t.dataItem?.dataContext.c==='green' ? am5.color(0x10b981) : am5.color(0xef4444));
+
+    const groups = {};
+    data.forEach(d => {
+      const k = d.thisColor || 'unknown';
+      if (!groups[k]) groups[k] = {p:0,w:0,t:0};
+      groups[k].p += d.ThisProfit||0; groups[k].t++; if(d.WinStatus==='Win') groups[k].w++;
+    });
+    const cd = Object.keys(groups).map(k=>({c:k, p:+groups[k].p.toFixed(2), t:groups[k].t, wr:groups[k].t?(groups[k].w/groups[k].t*100).toFixed(0):0}));
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  generateInsight('insightDirectionText', data, 'direction');
+}
+
+// ── DURATION PAGE CHARTS ────────────────────────────
+function renderDurationCharts(data) {
+  // Duration bars
+  (function() {
+    const root = makeRoot('chartDuration', 'dur_bar');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"l", renderer:am5xy.AxisRendererX.new(root,{minGridDistance:30})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Duration (sec)", xAxis:xA, yAxis:yA, valueYField:"d", categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"Trade {categoryX}: {valueY}s ({st})"})}));
+    s.columns.template.setAll({cornerRadiusTL:4, cornerRadiusTR:4, width:am5.percent(40)});
+    s.columns.template.adapters.add("fill",(f,t)=> t.dataItem?.dataContext.st==='Win' ? am5.color(0x06b6d4) : am5.color(0xf43f5e));
+    const cd = data.map((d,i)=>({l:`#${d.tradeNo||i+1}`, d:d.actualDuration, st:d.WinStatus}));
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  // Duration vs Profit scatter
+  (function() {
+    const root = makeRoot('chartDurationScatter', 'dur_scat');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {}));
+    const xA = chart.xAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererX.new(root,{})}));
+    xA.set("title", am5.Label.new(root, {text:"Duration (sec)", fill:am5.color(0x94a3b8), fontSize:11}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    yA.set("title", am5.Label.new(root, {text:"Profit ($)", fill:am5.color(0x94a3b8), fontSize:11}));
+
+    const s = chart.series.push(am5xy.LineSeries.new(root, {name:"Trade", xAxis:xA, yAxis:yA, valueYField:"p", valueXField:"d",
+      tooltip:am5.Tooltip.new(root,{labelText:"Duration: {valueX}s\nProfit: ${valueY}"})}));
+    s.strokes.template.set("visible", false);
+    s.bullets.push(function() {
+      return am5.Bullet.new(root, {
+        sprite: am5.Circle.new(root, {radius:6, fill:am5.color(0x6366f1), fillOpacity:0.7, stroke:am5.color(0x818cf8), strokeWidth:1})
+      });
+    });
+    const cd = data.map(d=>({d:d.actualDuration, p:d.ThisProfit||0}));
+    s.data.setAll(cd); s.appear(800);
+  })();
+
+  generateInsight('insightDurationText', data, 'duration');
+}
+
+// ── EXCURSION PAGE CHARTS ───────────────────────────
+function renderExcursionCharts(data) {
+  // MAE/MFE range
+  (function() {
+    const root = makeRoot('chartMaeMfe', 'exc_range');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {panX:true,panY:true}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"l", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Excursion Range", xAxis:xA, yAxis:yA, valueYField:"mx", openValueYField:"mn", categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"{categoryX}\nMAE: ${openValueY}\nMFE: ${valueY}\nActual: ${ap}"})}));
+    s.columns.template.setAll({width:am5.percent(35), cornerRadiusTL:4, cornerRadiusTR:4, fill:am5.color(0x6366f1), stroke:am5.color(0x4338ca)});
+    const cd = data.map((d,i)=>({l:`#${d.tradeNo||i+1} (${d.thisAction})`, mn:d.minProfit, mx:d.maxProfit, ap:d.ThisProfit}));
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  // Target vs MFE
+  (function() {
+    const root = makeRoot('chartTargetVsMfe', 'exc_tvmfe');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"l", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+
+    const s1 = chart.series.push(am5xy.ColumnSeries.new(root, {name:"MFE (maxProfit)", xAxis:xA, yAxis:yA, valueYField:"mfe", categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"{categoryX}\nMFE: ${valueY}"})}));
+    s1.columns.template.setAll({cornerRadiusTL:4, cornerRadiusTR:4, width:am5.percent(30), fill:am5.color(0x10b981)});
+
+    const s2 = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Target Profit", xAxis:xA, yAxis:yA, valueYField:"tp", categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"{categoryX}\nTarget: ${valueY}"})}));
+    s2.columns.template.setAll({cornerRadiusTL:4, cornerRadiusTR:4, width:am5.percent(30), fill:am5.color(0xf59e0b)});
+
+    const cd = data.map((d,i)=>({l:`#${d.tradeNo||i+1}`, mfe:d.maxProfit, tp:d.targetProfit}));
+    xA.data.setAll(cd); s1.data.setAll(cd); s2.data.setAll(cd);
+    const leg = chart.children.push(am5.Legend.new(root,{centerX:am5.percent(50),x:am5.percent(50)}));
+    leg.data.setAll(chart.series.values); s1.appear(800); s2.appear(800);
+  })();
+
+  // MAE depth histogram
+  (function() {
+    const root = makeRoot('chartMaeDepth', 'exc_maed');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"l", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"MAE", xAxis:xA, yAxis:yA, valueYField:"v", categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"Trade {categoryX}: MAE ${valueY}"})}));
+    s.columns.template.setAll({cornerRadiusTL:4, cornerRadiusTR:4, width:am5.percent(40), fill:am5.color(0xef4444)});
+    const cd = data.map((d,i)=>({l:`#${d.tradeNo||i+1}`, v:d.minProfit||0}));
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  generateInsight('insightExcursionText', data, 'excursion');
+}
+
+// ── RISK PAGE CHARTS ────────────────────────────────
+function renderRiskCharts(data) {
+  // Loss streak freq
+  (function() {
+    const root = makeRoot('chartLossStreak', 'rsk_ls');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"l", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Frequency", xAxis:xA, yAxis:yA, valueYField:"c", categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"{categoryX}: {valueY} times"})}));
+    s.columns.template.setAll({cornerRadiusTL:4, cornerRadiusTR:4, width:am5.percent(40), fill:am5.color(0xf43f5e)});
+
+    const freq = {};
+    data.forEach(d => {
+      const k = `${d.lossCon||0} Streak`;
+      freq[k] = (freq[k]||0) + 1;
+    });
+    const cd = Object.keys(freq).map(k=>({l:k, c:freq[k]}));
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  // Stake size
+  (function() {
+    const root = makeRoot('chartStakeSize', 'rsk_stk');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"l", renderer:am5xy.AxisRendererX.new(root,{minGridDistance:30})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Stake ($)", xAxis:xA, yAxis:yA, valueYField:"v", categoryXField:"l",
+      tooltip:am5.Tooltip.new(root,{labelText:"Trade {categoryX}: ${valueY}"})}));
+    s.columns.template.setAll({cornerRadiusTL:4, cornerRadiusTR:4, width:am5.percent(35), fill:am5.color(0xf59e0b)});
+    const cd = data.map((d,i)=>({l:`#${d.tradeNo||i+1}`, v:d.MoneyTrade||1}));
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  generateInsight('insightRiskText', data, 'risk');
+}
+
+// ── EXIT PAGE CHARTS ────────────────────────────────
+function renderExitCharts(data) {
+  // Exit pie
+  (function() {
+    const root = makeRoot('chartExitPie', 'ext_pie');
+    const chart = root.container.children.push(am5percent.PieChart.new(root, {innerRadius:am5.percent(50)}));
+    const s = chart.series.push(am5percent.PieSeries.new(root, {valueField:"c", categoryField:"s"}));
+    s.slices.template.setAll({cornerRadius:5});
+    const counts = {};
+    data.forEach(d => { const k = d.exitStrategy||'Other'; counts[k]=(counts[k]||0)+1; });
+    s.data.setAll(Object.keys(counts).map(k=>({s:k, c:counts[k]})));
+    const leg = chart.children.push(am5.Legend.new(root,{centerX:am5.percent(50),x:am5.percent(50),marginTop:10}));
+    leg.data.setAll(s.dataItems); s.appear(800);
+  })();
+
+  // Exit profit bar
+  (function() {
+    const root = makeRoot('chartExitProfit', 'ext_prof');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"s", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+
+    const s1 = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Net Profit ($)", xAxis:xA, yAxis:yA, valueYField:"p", categoryXField:"s",
+      tooltip:am5.Tooltip.new(root,{labelText:"{s}: ${valueY} ({t} trades, WR: {wr}%)"})}));
+    s1.columns.template.setAll({cornerRadiusTL:6, cornerRadiusTR:6, width:am5.percent(40), fill:am5.color(0x8b5cf6)});
+
+    const groups = {};
+    data.forEach(d => {
+      const k = d.exitStrategy||'Other';
+      if (!groups[k]) groups[k]={p:0,w:0,t:0};
+      groups[k].p += d.ThisProfit||0; groups[k].t++; if(d.WinStatus==='Win') groups[k].w++;
+    });
+    const cd = Object.keys(groups).map(k=>({s:k, p:+groups[k].p.toFixed(2), t:groups[k].t, wr:groups[k].t?(groups[k].w/groups[k].t*100).toFixed(0):0}));
+    xA.data.setAll(cd); s1.data.setAll(cd); s1.appear(800);
+  })();
+
+  generateInsight('insightExitText', data, 'exit');
+}
+
+// ── HOURLY PAGE CHARTS ──────────────────────────────
+function renderHourlyCharts(data) {
+  function extractHour(t) {
+    if (!t || !t.purchaseTimeDisplay) return '00';
+    const parts = t.purchaseTimeDisplay.split(' ');
+    if (parts.length > 1) {
+      const tp = parts[1].split(':');
+      return tp[0].padStart(2,'0');
+    }
+    return '00';
+  }
+
+  // Hourly profit + count
+  (function() {
+    const root = makeRoot('chartHourly', 'hr_main');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"h", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA1 = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const yA2 = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{opposite:true})}));
+
+    const s1 = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Profit ($)", xAxis:xA, yAxis:yA1, valueYField:"p", categoryXField:"h",
+      tooltip:am5.Tooltip.new(root,{labelText:"Hour {categoryX}:00\nProfit: ${valueY}"})}));
+    s1.columns.template.setAll({cornerRadiusTL:4, cornerRadiusTR:4, width:am5.percent(35), fill:am5.color(0x3b82f6)});
+
+    const s2 = chart.series.push(am5xy.LineSeries.new(root, {name:"Trade Count", xAxis:xA, yAxis:yA2, valueYField:"c", categoryXField:"h",
+      tooltip:am5.Tooltip.new(root,{labelText:"{valueY} trades"})}));
+    s2.strokes.template.setAll({strokeWidth:2, stroke:am5.color(0xf59e0b)});
+    s2.bullets.push(()=> am5.Bullet.new(root,{sprite:am5.Circle.new(root,{radius:4, fill:am5.color(0xf59e0b)})}));
+
+    const hours = {};
+    data.forEach(d => {
+      const h = extractHour(d) + ':00';
+      if (!hours[h]) hours[h] = {p:0,c:0};
+      hours[h].p += d.ThisProfit||0; hours[h].c++;
+    });
+    const cd = Object.keys(hours).sort().map(h=>({h, p:+hours[h].p.toFixed(2), c:hours[h].c}));
+    xA.data.setAll(cd); s1.data.setAll(cd); s2.data.setAll(cd);
+    const leg = chart.children.push(am5.Legend.new(root,{centerX:am5.percent(50),x:am5.percent(50)}));
+    leg.data.setAll(chart.series.values); s1.appear(800); s2.appear(800);
+  })();
+
+  // Win rate by hour
+  (function() {
+    const root = makeRoot('chartHourlyWR', 'hr_wr');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"h", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {min:0, max:100, renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Win Rate %", xAxis:xA, yAxis:yA, valueYField:"wr", categoryXField:"h",
+      tooltip:am5.Tooltip.new(root,{labelText:"Hour {categoryX}:00\nWin Rate: {valueY}%"})}));
+    s.columns.template.setAll({cornerRadiusTL:4, cornerRadiusTR:4, width:am5.percent(35)});
+    s.columns.template.adapters.add("fill",(f,t)=> (t.dataItem?.dataContext.wr||0)>=60 ? am5.color(0x10b981) : am5.color(0xef4444));
+
+    const hours = {};
+    data.forEach(d => {
+      const h = extractHour(d) + ':00';
+      if (!hours[h]) hours[h] = {w:0,t:0};
+      hours[h].t++; if(d.WinStatus==='Win') hours[h].w++;
+    });
+    const cd = Object.keys(hours).sort().map(h=>({h, wr:+(hours[h].w/hours[h].t*100).toFixed(0)}));
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  generateInsight('insightHourlyText', data, 'hourly');
+}
+
+// ─── AI INSIGHT GENERATOR ───────────────────────────
+function generateInsight(elId, data, type) {
+  const el = document.getElementById(elId);
+  if (!el || !data.length) return;
+
+  const n = data.length;
+  const wins = data.filter(d=>d.WinStatus==='Win').length;
+  const wr = ((wins/n)*100).toFixed(1);
+  const net = data.reduce((a,d)=>a+(d.ThisProfit||0),0);
+  const worstMae = Math.min(...data.map(d=>d.minProfit||0));
+  const bestMfe = Math.max(...data.map(d=>d.maxProfit||0));
+  const avgDur = (data.reduce((a,d)=>a+(d.actualDuration||0),0)/n).toFixed(0);
+
+  const msgs = {
+    overview: `จากข้อมูลทั้งหมด ${n} ไม้: Win Rate ${wr}% | กำไรสุทธิ $${net.toFixed(2)} | ค่าเฉลี่ยเวลาถือ ${avgDur} วินาที | MAE ที่แย่ที่สุด $${worstMae.toFixed(2)} — ${wr>=60 ? 'ระบบอยู่ในเกณฑ์ดี ควรรักษาเงื่อนไขนี้ไว้' : 'ควรพิจารณาปรับปรุงเงื่อนไข Entry หรือ Exit เพื่อเพิ่ม Win Rate'}`,
+    equity: `Equity curve ${net >= 0 ? 'เป็นบวก แสดงว่าระบบสร้างรายได้สม่ำเสมอ' : 'เป็นลบ ควรตรวจสอบเงื่อนไขเทรด'} — ดูจาก Rolling Win Rate เพื่อตรวจจับว่าบอทกำลังเข้าสู่ช่วง Drawdown หรือไม่`,
+    direction: `เปรียบเทียบ CALL vs PUT: ดูว่าฝั่งไหนมี Win Rate สูงกว่า — หากฝั่งใดฝั่งหนึ่งมี WR < 50% อาจพิจารณาปิดการเทรดฝั่งนั้นชั่วคราว`,
+    duration: `ระยะเวลาถือครองเฉลี่ย ${avgDur} วินาที — หากไม้ที่ถือนาน (>60s) มักจะแพ้ อาจพิจารณาตั้ง Time-Based Exit ที่เร็วขึ้น`,
+    excursion: `MAE ที่แย่ที่สุด = $${worstMae.toFixed(2)} | MFE สูงสุด = $${bestMfe.toFixed(2)} — ${bestMfe > data[0]?.targetProfit*1.5 ? 'MFE สูงกว่า Target มาก อาจพิจารณาขยับเป้ากำไรให้สูงขึ้น' : 'Target Profit สอดคล้องกับ MFE'} ${Math.abs(worstMae) > 0.3 ? '⚠️ MAE ลึกมาก ควรพิจารณา Trailing Stop' : ''}`,
+    risk: `การแพ้ติดต่อกันสูงสุด = ${Math.max(...data.map(d=>d.maxLossCon||d.lossCon||0))} ไม้ — ${Math.max(...data.map(d=>d.maxLossCon||d.lossCon||0)) >= 3 ? '⚠️ ควรระวังและตั้ง Daily Loss Limit' : 'อยู่ในเกณฑ์ปกติ'}`,
+    exit: `ดูว่า exitStrategy ไหนให้ผลตอบแทนดีที่สุด — หาก targetProfit ปิดดีลได้ส่วนใหญ่ ถือว่าระบบทำงานตามแผน`,
+    hourly: `วิเคราะห์ช่วงเวลาที่ให้ Win Rate สูงสุด — ช่วง Golden Session จะช่วยเพิ่มโอกาสทำกำไรหากจำกัดการเทรดเฉพาะช่วงนั้น`,
+  };
+
+  el.textContent = msgs[type] || 'ไม่มีข้อมูลเพียงพอสำหรับการวิเคราะห์';
+}
+
+// ─── DAILY SUMMARY (Page 10) ────────────────────────
+function renderDailySummaryCharts(data) {
+  // Group by asset
+  const byAsset = {};
+  data.forEach(d => {
+    const a = d.assetCode || 'Unknown';
+    if (!byAsset[a]) byAsset[a] = [];
+    byAsset[a].push(d);
+  });
+
+  // Extract date from first trade
+  const dateStr = data.length > 0 ? (data[0].purchaseTimeDisplay || '').split(' ')[0] : '—';
+  const assetNames = Object.keys(byAsset);
+
+  // KPIs
+  const n = data.length;
+  const wins = data.filter(d => d.WinStatus === 'Win').length;
+  const losses = n - wins;
+  const wr = n > 0 ? ((wins/n)*100).toFixed(1) : 0;
+  const net = data.reduce((a,d) => a + (d.ThisProfit||0), 0);
+  const invested = data.reduce((a,d) => a + (d.MoneyTrade||1), 0);
+
+  document.getElementById('dkpiDate').textContent = dateStr;
+  document.getElementById('dkpiAssets').textContent = assetNames.join(', ');
+  document.getElementById('dkpiTotalTrades').textContent = n;
+  document.getElementById('dkpiWinLoss').textContent = `${wins} Win / ${losses} Loss`;
+  document.getElementById('dkpiWR').textContent = `${wr}%`;
+  document.getElementById('dkpiIncome').textContent = `$${net.toFixed(2)}`;
+  document.getElementById('dkpiIncome').className = 'kpi-value ' + (net >= 0 ? 'v-green' : 'v-red');
+  document.getElementById('dkpiROI').textContent = `ROI: ${invested > 0 ? ((net/invested)*100).toFixed(1) : 0}%`;
+  document.getElementById('dkpiInvested').textContent = `$${invested.toFixed(2)}`;
+
+  // Best & worst asset
+  const assetPnL = assetNames.map(a => ({
+    asset: a,
+    profit: byAsset[a].reduce((x,d) => x + (d.ThisProfit||0), 0)
+  })).sort((a,b) => b.profit - a.profit);
+
+  if (assetPnL.length > 0) {
+    document.getElementById('dkpiBestAsset').textContent = assetPnL[0].asset;
+    document.getElementById('dkpiBestAssetProfit').textContent = `$${assetPnL[0].profit.toFixed(2)}`;
+    const worst = assetPnL[assetPnL.length - 1];
+    document.getElementById('dkpiWorstAsset').textContent = worst.asset;
+    document.getElementById('dkpiWorstAssetProfit').textContent = `$${worst.profit.toFixed(2)}`;
+  }
+
+  // Daily summary table
+  const tbody = document.getElementById('dailySummaryBody');
+  const tfoot = document.getElementById('dailySummaryFoot');
+  let totalGW = 0, totalGL = 0, totalInv = 0, totalNet = 0, totalTrades = 0, totalWins = 0;
+
+  tbody.innerHTML = assetNames.map(asset => {
+    const trades = byAsset[asset];
+    const t = trades.length;
+    const w = trades.filter(d => d.WinStatus === 'Win').length;
+    const l = t - w;
+    const gw = trades.filter(d => d.ThisProfit > 0).reduce((a,d) => a + d.ThisProfit, 0);
+    const gl = Math.abs(trades.filter(d => d.ThisProfit < 0).reduce((a,d) => a + d.ThisProfit, 0));
+    const np = trades.reduce((a,d) => a + (d.ThisProfit||0), 0);
+    const inv = trades.reduce((a,d) => a + (d.MoneyTrade||1), 0);
+    const roi = inv > 0 ? ((np/inv)*100).toFixed(1) : 0;
+    const pf = gl > 0 ? (gw/gl).toFixed(2) : (gw > 0 ? '∞' : '—');
+    const avgDur = t > 0 ? (trades.reduce((a,d) => a + (d.actualDuration||0), 0)/t).toFixed(0) : 0;
+    const mae = t > 0 ? Math.min(...trades.map(d => d.minProfit||0)) : 0;
+
+    totalGW += gw; totalGL += gl; totalInv += inv; totalNet += np; totalTrades += t; totalWins += w;
+
+    const nc = np >= 0 ? 'text-green fw-600' : 'text-red fw-600';
+    return `<tr>
+      <td class="fw-600">${asset}</td>
+      <td class="mono">${t}</td>
+      <td class="mono text-green">${w}</td>
+      <td class="mono text-red">${l}</td>
+      <td class="mono ${(w/t*100) >= 60 ? 'text-green' : 'text-red'}">${(w/t*100).toFixed(1)}%</td>
+      <td class="mono text-green">$${gw.toFixed(2)}</td>
+      <td class="mono text-red">$${gl.toFixed(2)}</td>
+      <td class="mono ${nc}">$${np.toFixed(2)}</td>
+      <td class="mono">$${inv.toFixed(2)}</td>
+      <td class="mono">${roi}%</td>
+      <td class="mono">${pf}</td>
+      <td class="mono">${avgDur}s</td>
+      <td class="mono text-red">$${mae.toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+
+  const totalLosses = totalTrades - totalWins;
+  const totalWR = totalTrades > 0 ? ((totalWins/totalTrades)*100).toFixed(1) : 0;
+  const totalROI = totalInv > 0 ? ((totalNet/totalInv)*100).toFixed(1) : 0;
+  const totalPF = totalGL > 0 ? (totalGW/totalGL).toFixed(2) : (totalGW > 0 ? '∞' : '—');
+  const tnc = totalNet >= 0 ? 'text-green fw-600' : 'text-red fw-600';
+
+  tfoot.innerHTML = `<tr style="border-top:2px solid var(--border-hover);background:rgba(16,185,129,0.04);">
+    <td class="fw-600">📊 TOTAL</td>
+    <td class="mono fw-600">${totalTrades}</td>
+    <td class="mono text-green fw-600">${totalWins}</td>
+    <td class="mono text-red fw-600">${totalLosses}</td>
+    <td class="mono fw-600">${totalWR}%</td>
+    <td class="mono text-green fw-600">$${totalGW.toFixed(2)}</td>
+    <td class="mono text-red fw-600">$${totalGL.toFixed(2)}</td>
+    <td class="mono ${tnc}" style="font-size:14px;">$${totalNet.toFixed(2)}</td>
+    <td class="mono fw-600">$${totalInv.toFixed(2)}</td>
+    <td class="mono fw-600">${totalROI}%</td>
+    <td class="mono fw-600">${totalPF}</td>
+    <td class="mono">—</td>
+    <td class="mono">—</td>
+  </tr>`;
+
+  // Income per asset chart
+  (function() {
+    const root = makeRoot('chartDailyAssetProfit', 'da_profit');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"a", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+    const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Net Profit", xAxis:xA, yAxis:yA, valueYField:"p", categoryXField:"a",
+      tooltip:am5.Tooltip.new(root,{labelText:"{a}: ${valueY}\nWin Rate: {wr}%"})}));
+    s.columns.template.setAll({cornerRadiusTL:6, cornerRadiusTR:6, width:am5.percent(40)});
+    s.columns.template.adapters.add("fill",(f,t)=> (t.dataItem?.dataContext.p||0)>=0 ? am5.color(0x10b981) : am5.color(0xef4444));
+    const cd = assetPnL.map(a => {
+      const trades = byAsset[a.asset];
+      const w = trades.filter(d => d.WinStatus==='Win').length;
+      return {a:a.asset, p:+a.profit.toFixed(2), wr:trades.length?(w/trades.length*100).toFixed(0):0};
+    });
+    xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+  })();
+
+  // Trade count chart
+  (function() {
+    const root = makeRoot('chartDailyAssetCount', 'da_count');
+    const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+    const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"a", renderer:am5xy.AxisRendererX.new(root,{})}));
+    const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+
+    const s1 = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Win", xAxis:xA, yAxis:yA, valueYField:"w", categoryXField:"a",
+      tooltip:am5.Tooltip.new(root,{labelText:"{a}: {valueY} Wins"}), stacked:true}));
+    s1.columns.template.setAll({cornerRadiusTL:0, cornerRadiusTR:0, fill:am5.color(0x10b981)});
+
+    const s2 = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Loss", xAxis:xA, yAxis:yA, valueYField:"l", categoryXField:"a",
+      tooltip:am5.Tooltip.new(root,{labelText:"{a}: {valueY} Losses"}), stacked:true}));
+    s2.columns.template.setAll({cornerRadiusTL:4, cornerRadiusTR:4, fill:am5.color(0xef4444)});
+
+    const cd = assetNames.map(a => {
+      const w = byAsset[a].filter(d => d.WinStatus==='Win').length;
+      return {a, w, l:byAsset[a].length - w};
+    });
+    xA.data.setAll(cd); s1.data.setAll(cd); s2.data.setAll(cd);
+    const leg = chart.children.push(am5.Legend.new(root,{centerX:am5.percent(50),x:am5.percent(50)}));
+    leg.data.setAll(chart.series.values); s1.appear(800); s2.appear(800);
+  })();
+
+  // Insight
+  const profitDays = assetPnL.filter(a => a.profit > 0).length;
+  document.getElementById('insightDailyText').textContent =
+    `วันนี้ (${dateStr}) เทรดทั้งหมด ${n} ไม้ จาก ${assetNames.length} สินทรัพย์ | กำไรสุทธิ $${net.toFixed(2)} | Win Rate ${wr}% | ${profitDays}/${assetNames.length} Assets ทำกำไรได้ — ${net >= 0 ? '✅ วันนี้ทำกำไรได้' : '⚠️ วันนี้ขาดทุน ควรทบทวนเงื่อนไข'}`;
+}
+
+// ─── MULTI-DAY DATA LOADER ──────────────────────────
+async function loadMultiDayData() {
+  const month = document.getElementById('multiMonth').value.trim();
+  const days = document.getElementById('multiDays').value.split(',').map(s => s.trim()).filter(Boolean);
+  const assets = document.getElementById('multiAssets').value.split(',').map(s => s.trim()).filter(Boolean);
+
+  multiDayData = {};
+  const basePath = `/tradeData/${month}`;
+
+  for (const day of days) {
+    multiDayData[day] = {};
+    for (const asset of assets) {
+      try {
+        const url = `${basePath}/${day}/${asset}/trades.json`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const trades = await res.json();
+          if (trades.length > 0) {
+            multiDayData[day][asset] = trades;
+          }
+        }
+      } catch(e) {
+        // Skip missing files
+      }
+    }
+  }
+
+  renderMultiDayPage();
+}
+
+function renderMultiDayPage() {
+  const days = Object.keys(multiDayData);
+  if (!days.length) {
+    document.getElementById('insightMultiDayText').textContent = 'ไม่พบข้อมูล — ตรวจสอบ Month, Days และ Assets';
+    return;
+  }
+
+  // Build per-day stats
+  const dayStats = days.map(day => {
+    const assets = Object.keys(multiDayData[day]);
+    const allTrades = assets.flatMap(a => multiDayData[day][a]);
+    const n = allTrades.length;
+    const w = allTrades.filter(d => d.WinStatus === 'Win').length;
+    const gw = allTrades.filter(d => d.ThisProfit > 0).reduce((a,d) => a + d.ThisProfit, 0);
+    const gl = Math.abs(allTrades.filter(d => d.ThisProfit < 0).reduce((a,d) => a + d.ThisProfit, 0));
+    const net = allTrades.reduce((a,d) => a + (d.ThisProfit||0), 0);
+    const inv = allTrades.reduce((a,d) => a + (d.MoneyTrade||1), 0);
+    return { day, assets, n, w, l: n-w, gw, gl, net, inv };
+  });
+
+  // Multi-Day KPIs
+  const totalTrades = dayStats.reduce((a,d) => a + d.n, 0);
+  const totalWins = dayStats.reduce((a,d) => a + d.w, 0);
+  const totalNet = dayStats.reduce((a,d) => a + d.net, 0);
+  const avgPerDay = days.length > 0 ? totalNet / days.length : 0;
+  const wr = totalTrades > 0 ? ((totalWins/totalTrades)*100).toFixed(1) : 0;
+
+  document.getElementById('mkpiDays').textContent = days.length;
+  document.getElementById('mkpiDaysSub').textContent = days.join(', ');
+  document.getElementById('mkpiTrades').textContent = totalTrades;
+  document.getElementById('mkpiIncome').textContent = `$${totalNet.toFixed(2)}`;
+  document.getElementById('mkpiIncome').className = 'kpi-value ' + (totalNet >= 0 ? 'v-green' : 'v-red');
+  document.getElementById('mkpiAvgDay').textContent = `Avg/Day: $${avgPerDay.toFixed(2)}`;
+  document.getElementById('mkpiWR').textContent = `${wr}%`;
+  document.getElementById('mkpiWL').textContent = `${totalWins}W / ${totalTrades - totalWins}L`;
+
+  const best = dayStats.sort((a,b) => b.net - a.net)[0];
+  const worst = dayStats.sort((a,b) => a.net - b.net)[0];
+  document.getElementById('mkpiBestDay').textContent = best ? best.day : '—';
+  document.getElementById('mkpiBestDayProfit').textContent = best ? `$${best.net.toFixed(2)}` : '$0';
+  document.getElementById('mkpiWorstDay').textContent = worst ? worst.day : '—';
+  document.getElementById('mkpiWorstDayProfit').textContent = worst ? `$${worst.net.toFixed(2)}` : '$0';
+
+  // Sort by date for charts
+  dayStats.sort((a,b) => a.day.localeCompare(b.day));
+
+  // Multi-Day Table
+  const tbody = document.getElementById('multiDayBody');
+  const tfoot = document.getElementById('multiDayFoot');
+  let tGW=0, tGL=0, tInv=0, tNet=0, tN=0, tW=0;
+
+  tbody.innerHTML = dayStats.map(ds => {
+    const roi = ds.inv > 0 ? ((ds.net/ds.inv)*100).toFixed(1) : 0;
+    const pf = ds.gl > 0 ? (ds.gw/ds.gl).toFixed(2) : (ds.gw > 0 ? '∞' : '—');
+    const nc = ds.net >= 0 ? 'text-green fw-600' : 'text-red fw-600';
+    tGW += ds.gw; tGL += ds.gl; tInv += ds.inv; tNet += ds.net; tN += ds.n; tW += ds.w;
+    return `<tr>
+      <td class="fw-600">${ds.day}</td>
+      <td class="text-muted">${ds.assets.join(', ')}</td>
+      <td class="mono">${ds.n}</td>
+      <td class="mono text-green">${ds.w}</td>
+      <td class="mono text-red">${ds.l}</td>
+      <td class="mono">${ds.n > 0 ? ((ds.w/ds.n)*100).toFixed(1) : 0}%</td>
+      <td class="mono text-green">$${ds.gw.toFixed(2)}</td>
+      <td class="mono text-red">$${ds.gl.toFixed(2)}</td>
+      <td class="mono ${nc}" style="font-size:13px;">$${ds.net.toFixed(2)}</td>
+      <td class="mono">$${ds.inv.toFixed(2)}</td>
+      <td class="mono">${roi}%</td>
+      <td class="mono">${pf}</td>
+    </tr>`;
+  }).join('');
+
+  const fWR = tN > 0 ? ((tW/tN)*100).toFixed(1) : 0;
+  const fROI = tInv > 0 ? ((tNet/tInv)*100).toFixed(1) : 0;
+  const fPF = tGL > 0 ? (tGW/tGL).toFixed(2) : (tGW > 0 ? '∞' : '—');
+  const fnc = tNet >= 0 ? 'text-green fw-600' : 'text-red fw-600';
+
+  tfoot.innerHTML = `<tr style="border-top:2px solid var(--border-hover);background:rgba(16,185,129,0.04);">
+    <td class="fw-600">📊 GRAND TOTAL</td>
+    <td class="text-muted">${days.length} days</td>
+    <td class="mono fw-600">${tN}</td>
+    <td class="mono text-green fw-600">${tW}</td>
+    <td class="mono text-red fw-600">${tN - tW}</td>
+    <td class="mono fw-600">${fWR}%</td>
+    <td class="mono text-green fw-600">$${tGW.toFixed(2)}</td>
+    <td class="mono text-red fw-600">$${tGL.toFixed(2)}</td>
+    <td class="mono ${fnc}" style="font-size:14px;">$${tNet.toFixed(2)}</td>
+    <td class="mono fw-600">$${tInv.toFixed(2)}</td>
+    <td class="mono fw-600">${fROI}%</td>
+    <td class="mono fw-600">${fPF}</td>
+  </tr>`;
+
+  // Chart: Daily Net Income bars
+  am5.ready(function() {
+    (function() {
+      const root = makeRoot('chartMultiDayProfit', 'md_profit');
+      const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+      const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"d", renderer:am5xy.AxisRendererX.new(root,{})}));
+      const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+      const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Daily Net Income ($)", xAxis:xA, yAxis:yA, valueYField:"p", categoryXField:"d",
+        tooltip:am5.Tooltip.new(root,{labelText:"{d}: ${valueY}\n{t} trades, WR: {wr}%"})}));
+      s.columns.template.setAll({cornerRadiusTL:6, cornerRadiusTR:6, width:am5.percent(40)});
+      s.columns.template.adapters.add("fill",(f,t)=> (t.dataItem?.dataContext.p||0)>=0 ? am5.color(0x10b981) : am5.color(0xef4444));
+      const cd = dayStats.map(ds => ({d:ds.day, p:+ds.net.toFixed(2), t:ds.n, wr:ds.n?(ds.w/ds.n*100).toFixed(0):0}));
+      xA.data.setAll(cd); s.data.setAll(cd); s.appear(800); chart.appear(800);
+    })();
+
+    // Cumulative multi-day
+    (function() {
+      const root = makeRoot('chartMultiDayCum', 'md_cum');
+      const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+      const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"d", renderer:am5xy.AxisRendererX.new(root,{})}));
+      const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+      const s = chart.series.push(am5xy.LineSeries.new(root, {name:"Cumulative ($)", xAxis:xA, yAxis:yA, valueYField:"cum", categoryXField:"d",
+        tooltip:am5.Tooltip.new(root,{labelText:"{d}: Cumulative ${valueY}"})}));
+      s.strokes.template.setAll({strokeWidth:3, stroke:am5.color(0x06b6d4)});
+      s.fills.template.setAll({fillOpacity:0.12, visible:true, fill:am5.color(0x06b6d4)});
+      let cum = 0;
+      const cd = dayStats.map(ds => { cum += ds.net; return {d:ds.day, cum:+cum.toFixed(2)}; });
+      xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+    })();
+
+    // Cross-asset performance
+    (function() {
+      const root = makeRoot('chartMultiDayAsset', 'md_asset');
+      const chart = root.container.children.push(am5xy.XYChart.new(root, {layout:root.verticalLayout}));
+      const xA = chart.xAxes.push(am5xy.CategoryAxis.new(root, {categoryField:"a", renderer:am5xy.AxisRendererX.new(root,{})}));
+      const yA = chart.yAxes.push(am5xy.ValueAxis.new(root, {renderer:am5xy.AxisRendererY.new(root,{})}));
+      const s = chart.series.push(am5xy.ColumnSeries.new(root, {name:"Total Profit ($)", xAxis:xA, yAxis:yA, valueYField:"p", categoryXField:"a",
+        tooltip:am5.Tooltip.new(root,{labelText:"{a}: ${valueY}\n{t} trades across {days} days"})}));
+      s.columns.template.setAll({cornerRadiusTL:6, cornerRadiusTR:6, width:am5.percent(40)});
+      s.columns.template.adapters.add("fill",(f,t)=> (t.dataItem?.dataContext.p||0)>=0 ? am5.color(0x8b5cf6) : am5.color(0xef4444));
+
+      const assetTotals = {};
+      days.forEach(day => {
+        Object.keys(multiDayData[day] || {}).forEach(asset => {
+          if (!assetTotals[asset]) assetTotals[asset] = {p:0, t:0, days:0};
+          const trades = multiDayData[day][asset];
+          assetTotals[asset].p += trades.reduce((a,d) => a + (d.ThisProfit||0), 0);
+          assetTotals[asset].t += trades.length;
+          assetTotals[asset].days++;
+        });
+      });
+      const cd = Object.keys(assetTotals).map(a => ({a, p:+assetTotals[a].p.toFixed(2), t:assetTotals[a].t, days:assetTotals[a].days}));
+      xA.data.setAll(cd); s.data.setAll(cd); s.appear(800);
+    })();
+  });
+
+  // Insight
+  const profitDays = dayStats.filter(d => d.net > 0).length;
+  document.getElementById('insightMultiDayText').textContent =
+    `รวม ${days.length} วัน: กำไรสุทธิ $${totalNet.toFixed(2)} | เฉลี่ย/วัน $${avgPerDay.toFixed(2)} | ${profitDays}/${days.length} วันทำกำไรได้ | Win Rate รวม ${wr}% — ${totalNet >= 0 ? '✅ ช่วงเวลานี้ทำกำไรได้ ระบบทำงานดี' : '⚠️ ช่วงเวลานี้ขาดทุนสุทธิ ควรทบทวนเงื่อนไข'}`;
+}
+
+// ─── AUTO DISCOVERY & SELECT ────────────────────────
+async function initAvailableTradeFiles() {
+  const sel = document.getElementById('paramJsonSelect');
+  if (!sel) return;
+
+  try {
+    const res = await fetch('/api/availableTradeData');
+    if (res.ok) {
+      const json = await res.json();
+      if (json.status === 'success' && json.files && json.files.length > 0) {
+        sel.innerHTML = json.files.map(f =>
+          `<option value="${f.path}">${f.day} — ${f.asset} (${f.month})</option>`
+        ).join('');
+
+        // Pre-select first file
+        const first = json.files[0].path;
+        document.getElementById('paramJsonPath').value = first;
+
+        // Auto populate Multi-Day defaults from discovered files
+        const months = [...new Set(json.files.map(f => f.month))];
+        const days = [...new Set(json.files.map(f => f.day))];
+        const assets = [...new Set(json.files.map(f => f.asset))];
+
+        if (months.length) document.getElementById('multiMonth').value = months[0];
+        if (days.length) document.getElementById('multiDays').value = days.join(',');
+        if (assets.length) document.getElementById('multiAssets').value = assets.join(',');
+      }
+    }
+  } catch(e) {
+    console.warn('Available trade data API not reached, using default path:', e);
+  }
+
+  loadTradeData();
+}
+
+function onSelectTradeFile(val) {
+  document.getElementById('paramJsonPath').value = val;
+  loadTradeData();
+}
+
+// ─── INIT ───────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', initAvailableTradeFiles);
+</script>
+</body>
+</html>

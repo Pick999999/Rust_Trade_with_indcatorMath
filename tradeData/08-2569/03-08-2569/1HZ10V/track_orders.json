@@ -1,0 +1,43 @@
+[
+  {
+    "contract_id": 7788661079,
+    "asset": "vol10",
+    "buy_price": 1,
+    "contract_type": "PUT",
+    "date_expiry": 1785719289,
+    "date_start": 1785718389,
+    "entry_signal": "AllCrossDown",
+    "entry_spot": 0,
+    "exit_strategy": "targetProfit",
+    "final_profit": 0.63,
+    "max_profit": 0.63,
+    "min_profit": 0.63,
+    "payout": 1.92,
+    "purchase_time": 1785718389,
+    "symbol": "1HZ10V",
+    "target_profit": 0.1,
+    "trade_code": "SML",
+    "ListOfTrack": [
+      {
+        "contract_id": 7788661079,
+        "bid_value": 1.92,
+        "diffSpot": 0,
+        "profit": 0,
+        "spot_price": 0,
+        "tick": 1,
+        "time": "3/8/2569 08:07:02",
+        "timestamp": 1785719222606
+      },
+      {
+        "contract_id": 7788661079,
+        "bid_value": 1.92,
+        "diffSpot": 9824.58,
+        "profit": 0.63,
+        "spot_price": 9824.58,
+        "tick": 2,
+        "time": "3/8/2569 08:07:02",
+        "timestamp": 1785719222977
+      }
+    ]
+  }
+]

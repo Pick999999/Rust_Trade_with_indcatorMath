@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "generatedAt": "2026-09-20T08:50:54.093Z",
+    "theme": "midnight"
+  },
+  "granularity": 60,
+  "granularitySettings": 55,
+  "chart": {
+    "rightOffset": 5
+  },
+  "assets": [
+    "vol10",
+    "vol50",
+    "vol75"
+  ],
+  "indicators": {
+    "atrPeriod": 7,
+    "atrMulti": 1.3,
+    "altCandleAtrMultiplier": 0.5,
+    "ciPeriod": 20,
+    "adxPeriod": 14,
+    "bbPeriod": 20,
+    "smcPeriod": 50
+  },
+  "ema": {
+    "short": {
+      "enabled": true,
+      "period": 3,
+      "type": "ema",
+      "color": "#06d6a0"
+    },
+    "medium": {
+      "enabled": true,
+      "period": 5,
+      "type": "ema",
+      "color": "#f5a623"
+    },
+    "long": {
+      "enabled": true,
+      "period": 10,
+      "type": "ema",
+      "color": "#e8304a"
+    }
+  },
+  "trade": {
+    "conditionStopTrade": "stopDate",
+    "targetMoney": 1,
+    "targetLot": 1,
+    "notifyTelegram": false,
+    "playSound": true,
+    "playEmaCutSound": true,
+    "autoSellTimeout": false,
+    "autoSellTimeoutSeconds": 90,
+    "autoSellProfit": false,
+    "autoSellProfitTarget": 0.1,
+    "buyMethod": "proposal",
+    "suggestStrategy": "V2",
+    "borrowSignal": true,
+    "whipsawZone": true,
+    "saveTrackOrder": false,
+    "thbRate": 33.36,
+    "maxLossCon": 9,
+    "martingale": {
+      "type": "martingale",
+      "list": []
+    }
+  }
+}

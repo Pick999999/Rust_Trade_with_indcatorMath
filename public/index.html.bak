@@ -1,0 +1,2670 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deriv Chart Analysis</title>
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    
+
+
+
+    <style>
+        /* ── CSS Variables / Themes ───────────────────────────── */
+        :root {
+            --font: 'Sarabun', sans-serif;
+            --radius: 8px;
+            --radius-lg: 12px;
+        }
+
+        [data-theme="lightblue"] {
+            --bg: #f0f4f8;
+            --bg2: #ffffff;
+            --bg3: #e2eaf3;
+            --surface: #ffffff;
+            --surface2: #f0f4f8;
+            --border: #c8d8eb;
+            --border2: #a8bedb;
+            --text: #1a2535;
+            --text2: #4a5f78;
+            --text3: #7a93b0;
+            --accent: #1a6fc4;
+            --accent2: #0d4f96;
+            --accent-bg: #ddeeff;
+            --green: #06D6A0;
+            --orange: #F5A623;
+            --red: #E8304A;
+            --header-bg: #1a3a6b;
+            --header-text: #ffffff;
+            --chip-bg: #e6eef8;
+            --chip-text: #2a4a7a;
+            --tab-active: #1a6fc4;
+            --tab-active-text: #fff;
+            --btn-bg: #1a6fc4;
+            --btn-text: #fff;
+            --status-bg: #e8f0fa;
+            --status-border: #b8d0f0;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f1923;
+            --bg2: #172130;
+            --bg3: #1e2d3e;
+            --surface: #1e2d3e;
+            --surface2: #253445;
+            --border: #2e4055;
+            --border2: #3e5570;
+            --text: #e0eaf8;
+            --text2: #8aaac8;
+            --text3: #5a7a9a;
+            --accent: #4a9eff;
+            --accent2: #2a7edf;
+            --accent-bg: #1a3050;
+            --green: #06D6A0;
+            --orange: #F5A623;
+            --red: #E8304A;
+            --header-bg: #0a1525;
+            --header-text: #e0eaf8;
+            --chip-bg: #1e3048;
+            --chip-text: #8aaac8;
+            --tab-active: #4a9eff;
+            --tab-active-text: #fff;
+            --btn-bg: #2a6ecf;
+            --btn-text: #fff;
+            --status-bg: #1a2a3a;
+            --status-border: #2e4055;
+        }
+
+        [data-theme="midnight"] {
+            --bg: #07090f;
+            --bg2: #0e1218;
+            --bg3: #131820;
+            --surface: #0e1218;
+            --surface2: #131820;
+            --border: #1e2530;
+            --border2: #2a3545;
+            --text: #c8d8f0;
+            --text2: #6878a0;
+            --text3: #3a4868;
+            --accent: #7c6dfa;
+            --accent2: #5a50d8;
+            --accent-bg: #1a1530;
+            --green: #06D6A0;
+            --orange: #F5A623;
+            --red: #E8304A;
+            --header-bg: #05060b;
+            --header-text: #c8d8f0;
+            --chip-bg: #131820;
+            --chip-text: #6878a0;
+            --tab-active: #7c6dfa;
+            --tab-active-text: #fff;
+            --btn-bg: #5a50d8;
+            --btn-text: #fff;
+            --status-bg: #0e1218;
+            --status-border: #1e2530;
+        }
+
+        /* ── Reset & Base ─────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            min-height: 100vh;
+            transition: background .3s, color .3s;
+        }
+
+        /* ── Digital Clock ────────────────────────────────────── */
+        .digital-clock {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: #0a0a09;
+            border: 1px solid #06D6A0;
+            color: #06D6A0;
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(6, 214, 160, 0.4), inset 0 0 8px rgba(6, 214, 160, 0.4);
+            text-shadow: 0 0 5px rgba(6, 214, 160, 0.8), 0 0 10px rgba(6, 214, 160, 0.4);
+            z-index: 9999;
+            pointer-events: none;
+            letter-spacing: 1px;
+        }
+
+        /* ── Header ───────────────────────────────────────────── */
+        .header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 0 20px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--header-text);
+        }
+
+        .header-title span {
+            color: var(--accent);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 4px;
+        }
+
+        .theme-btn {
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, .2);
+            background: transparent;
+            color: rgba(255, 255, 255, .7);
+            font-size: 12px;
+            cursor: pointer;
+            font-family: var(--font);
+            transition: all .2s;
+        }
+
+        .theme-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .theme-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, .1);
+        }
+
+        .settings-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, .25);
+            background: rgba(255, 255, 255, .08);
+            color: var(--header-text);
+            font-size: 13px;
+            cursor: pointer;
+            font-family: var(--font);
+            transition: all .2s;
+        }
+
+        .settings-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, .15);
+        }
+
+        /* ── Container ────────────────────────────────────────── */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* ── Status Bar ───────────────────────────────────────── */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            background: var(--status-bg);
+            border: 1px solid var(--status-border);
+            border-radius: var(--radius);
+            padding: 8px 14px;
+            margin-bottom: 14px;
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #06D6A0;
+            flex-shrink: 0;
+        }
+
+        .conn-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .03em;
+            transition: all .3s ease;
+        }
+
+        .conn-badge.connected {
+            background: rgba(6, 214, 160, .15);
+            color: #06D6A0;
+            border: 1px solid rgba(6, 214, 160, .3);
+        }
+
+        .conn-badge.disconnected {
+            background: rgba(232, 48, 74, .15);
+            color: #E8304A;
+            border: 1px solid rgba(232, 48, 74, .3);
+        }
+
+        .conn-badge .conn-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .conn-badge.connected .conn-dot {
+            background: #06D6A0;
+            animation: pulse-green 2s infinite;
+        }
+
+        .conn-badge.disconnected .conn-dot {
+            background: #E8304A;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(6, 214, 160, .5); }
+            50% { box-shadow: 0 0 0 4px rgba(6, 214, 160, 0); }
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(232, 48, 74, .5); }
+            50% { box-shadow: 0 0 0 4px rgba(232, 48, 74, 0); }
+        }
+
+        .sep {
+            width: 1px;
+            height: 14px;
+            background: var(--border);
+        }
+
+        .chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: var(--chip-bg);
+            color: var(--chip-text);
+            font-size: 11px;
+        }
+
+        .chip-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ── Section Card ─────────────────────────────────────── */
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+
+        .section-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 12px;
+        }
+
+        /* ── Date Range Section ───────────────────────────────── */
+        .date-range-section {
+            display: flex;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 160px;
+        }
+
+        .date-range-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        input[type="datetime-local"],
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 13px;
+            padding: 6px 10px;
+            outline: none;
+            transition: border-color .2s;
+            width: 100%;
+        }
+
+        input[type="datetime-local"]:focus,
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        input[type="datetime-local"].error,
+        input[type="text"].error {
+            border-color: var(--red) !important;
+        }
+
+        /* ── Inline radio items ──────────────────────────────── */
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 3px 0;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .radio-item input[type="radio"] {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .radio-item input[type="text"] {
+            width: 140px;
+            display: inline-block;
+        }
+
+        /* ── Buttons ──────────────────────────────────────────── */
+        .fetch-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            border-radius: var(--radius);
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            align-self: flex-end;
+            white-space: nowrap;
+        }
+
+        .fetch-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .fetch-btn.stop {
+            background: var(--red);
+        }
+
+        .fetch-btn svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        /* ── Tabs ─────────────────────────────────────────────── */
+        .tabs-row {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 14px;
+            padding-bottom: 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text2);
+            font-family: var(--font);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all .2s;
+            margin-bottom: -1px;
+        }
+
+        .tab-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            color: var(--tab-active);
+            border-bottom-color: var(--tab-active);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ── Chart Area ───────────────────────────────────────── */
+        .chart-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .chart-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+            flex-wrap: wrap;
+        }
+
+        .chart-toolbar-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text3);
+            margin-right: 4px;
+        }
+
+        .gran-btn {
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text2);
+            font-family: var(--font);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .gran-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .gran-btn:hover:not(.active) {
+            background: var(--bg3);
+        }
+
+        #chart {
+            height: 420px;
+            background: var(--bg2);
+        }
+
+        /* ── Table ────────────────────────────────────────────── */
+        .table-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .table-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        /* ── Track Orders ─────────────────────────────────────── */
+        .sell-btn {
+            padding: 4px 10px;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sell-btn:hover {
+            filter: brightness(1.2);
+        }
+        .sell-btn:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+        }
+        .target-profit-input {
+            width: 60px;
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: var(--bg3);
+            color: var(--text);
+            font-size: 12px;
+            text-align: center;
+        }
+        .set-btn {
+            padding: 4px 8px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table th {
+            padding: 6px 6px;
+            text-align: left;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: .02em;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+        }
+
+        .data-table td {
+            padding: 4px 6px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+            font-size: 12px;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:hover td {
+            background: var(--bg3);
+        }
+
+        .empty-row td {
+            text-align: center;
+            color: var(--text3);
+            padding: 32px;
+        }
+
+        /* ── JSON Setting Tab ─────────────────────────────────── */
+        .json-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .json-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+        }
+
+        .json-toolbar-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .json-toolbar-sub {
+            font-size: 11px;
+            color: var(--text3);
+            margin-top: 2px;
+        }
+
+        .copy-btn {
+            padding: 5px 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        #jsonSettingTextarea {
+            width: 100%;
+            height: 460px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background: var(--bg2);
+            color: var(--text);
+            border: none;
+            border-radius: 0;
+            padding: 14px;
+            resize: vertical;
+            outline: none;
+            line-height: 1.6;
+        }
+
+        /* ── Modal ────────────────────────────────────────────── */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(0, 0, 0, .55);
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 740px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .modal-title-icon {
+            font-size: 16px;
+        }
+
+        .modal-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s;
+        }
+
+        .modal-close:hover {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 18px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 12px 18px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 7px 16px;
+            border-radius: var(--radius);
+            font-family: var(--font);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all .2s;
+        }
+
+        .btn-primary {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+        }
+
+        .btn-secondary {
+            background: var(--bg3);
+            color: var(--text2);
+            border: 1px solid var(--border);
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        /* ── Settings Sections ────────────────────────────────── */
+        .settings-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .settings-section {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .settings-section-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-icon {
+            font-size: 14px;
+        }
+
+        .settings-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .settings-section-body {
+            padding: 12px 14px;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 6px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .gran-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .gran-setting-btn {
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text2);
+            font-family: var(--font);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .gran-setting-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .gran-setting-btn:hover:not(.active) {
+            background: var(--border);
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text3);
+        }
+
+        .form-group input[type="number"] {
+            width: 100%;
+        }
+
+        .color-picker {
+            height: 32px;
+            padding: 2px 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .ema-item {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ema-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .ema-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .ema-name {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .ema-badge {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            border-radius: 22px;
+            background: var(--border2);
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            left: 3px;
+            top: 3px;
+            transition: .3s;
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background: var(--accent);
+        }
+
+        .toggle-switch input:checked+.toggle-slider::before {
+            transform: translateX(18px);
+        }
+
+        /* ── Validation error ─────────────────────────────────── */
+        .validation-msg {
+            font-size: 12px;
+            color: var(--red);
+            margin-top: 4px;
+            display: none;
+        }
+
+        .validation-msg.show {
+            display: block;
+        }
+
+        /* ── Bot Log Area ───────────────────────────────────── */
+        .bot-log-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .bot-log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+        }
+
+        .bot-log-header span {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .bot-log-body {
+            height: 460px;
+            overflow-y: auto;
+            padding: 10px 14px;
+            font-family: 'Share Tech Mono', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            background: var(--bg2);
+        }
+
+        .bot-log-body .log-line {
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            word-break: break-all;
+            border-left: 3px solid transparent;
+        }
+
+        .bot-log-body .log-line.log-spike {
+            color: var(--green);
+            border-left-color: var(--green);
+            background: rgba(6, 214, 160, 0.05);
+        }
+
+        .bot-log-body .log-line.log-wait {
+            color: var(--text3);
+            border-left-color: var(--border);
+        }
+
+        .bot-log-body .log-line.log-trade {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background: rgba(74, 158, 255, 0.05);
+            font-weight: bold;
+        }
+
+        .bot-log-body .log-line.log-win {
+            color: var(--green);
+            border-left-color: var(--green);
+            background: rgba(6, 214, 160, 0.1);
+            font-weight: bold;
+        }
+
+        .bot-log-body .log-line.log-loss {
+            color: var(--red);
+            border-left-color: var(--red);
+            background: rgba(232, 48, 74, 0.1);
+            font-weight: bold;
+        }
+
+        .bot-log-body .log-line.log-system {
+            color: var(--orange);
+            border-left-color: var(--orange);
+            background: rgba(245, 166, 35, 0.08);
+            font-weight: bold;
+        }
+
+        .clear-log-btn {
+            padding: 4px 10px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text2);
+            font-family: var(--font);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .clear-log-btn:hover {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+
+        /* ── Fieldset Styles ─────────────────────────────────── */
+        .fieldset { position: relative; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem 1.25rem 1.25rem; margin: 1.25rem 0; background: transparent; }
+        .legend { position: absolute; top: -0.65em; left: 1rem; padding: 0 0.4rem; background: var(--surface); font-size: 14px; font-weight: 600; color: var(--text2); line-height: 1; white-space: nowrap; }
+        .fieldset-info  { border-color: var(--accent); }
+        .fieldset-info .legend  { color: var(--accent); }
+        .fieldset-success { border-color: var(--green); }
+        .fieldset-success .legend { color: var(--green); }
+        .fieldset-warning { border-color: var(--orange); }
+        .fieldset-warning .legend { color: var(--orange); }
+        .fieldset-danger  { border-color: var(--red); }
+        .fieldset-danger .legend  { color: var(--red); }
+        
+        .check-group, .radio-group { display: flex; flex-direction: column; gap: 8px; }
+        .check-group.inline, .radio-group.inline { flex-direction: row; flex-wrap: wrap; gap: 8px 16px; }
+        .check-label, .radio-label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); cursor: pointer; user-select: none; }
+        .check-label input[type="checkbox"], .radio-label input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+        
+        .check-label .box, .radio-label .box { width: 16px; height: 16px; flex-shrink: 0; border: 1.5px solid var(--border2); background: var(--bg2); display: flex; align-items: center; justify-content: center; transition: border-color 0.15s, background 0.15s; }
+        .check-label .box  { border-radius: 4px; }
+        .radio-label .box  { border-radius: 50%; }
+        
+        .check-label .box::after { content: ''; display: block; width: 8px; height: 4px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); opacity: 0; transition: opacity 0.1s; }
+        .radio-label .box::after { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: #fff; opacity: 0; transition: opacity 0.1s; }
+        
+        .check-label input:checked ~ .box, .radio-label input:checked ~ .box { background: var(--accent); border-color: var(--accent); }
+        .check-label input:checked ~ .box::after, .radio-label input:checked ~ .box::after { opacity: 1; }
+        .check-label input:focus-visible ~ .box, .radio-label input:focus-visible ~ .box { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .check-label:hover .box, .radio-label:hover .box { border-color: var(--accent); }
+        
+        .flat-condition-container { display:flex; flex-direction:row; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        @media (max-width: 600px) {
+            .flat-condition-container { flex-direction: column; }
+            .flat-condition-container > span { display: none; }
+            .flat-condition-container > div { border-left: none !important; border-top: 1px solid var(--border); padding-top: 10px; padding-left: 0 !important; }
+        }
+
+        /* --- TOAST NOTIFICATION --- */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast-popup {
+            background: #28a745; /* Green background */
+            border-left: 4px solid #1e7e34;
+            border-radius: var(--radius);
+            padding: 12px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            color: #ffffff; /* White text */
+            font-family: var(--font);
+            font-size: 14px;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 250px;
+        }
+        .toast-popup.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    </style>
+    <script src="https://unpkg.com/lightweight-charts@4.2.1/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+
+<body data-theme="lightblue">
+
+    <!-- ─── INITIAL LOADING SCREEN ───────────────────────────── -->
+    <div id="initLoadingScreen" style="position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s;">
+        <img src="images/mylogo.png" alt="PK Logo" style="width: 80px; height: 80px; border-radius: 16px; object-fit: cover; margin-bottom: 24px; animation: pulse-logo 2s infinite;">
+        <div style="font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 12px; letter-spacing: 1px;">PK Deriv Trade</div>
+        <div style="font-size: 14px; color: var(--text2); display: flex; align-items: center; gap: 8px;">
+            <div style="width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin-loader 1s linear infinite;"></div>
+            กำลังโหลดตั้งค่าจากระบบ...
+        </div>
+        <style>
+            @keyframes spin-loader { to { transform: rotate(360deg); } }
+            @keyframes pulse-logo {
+                0% { box-shadow: 0 0 0 0 rgba(26, 111, 196, 0.4); transform: scale(1); }
+                50% { box-shadow: 0 0 0 15px rgba(26, 111, 196, 0); transform: scale(1.05); }
+                100% { box-shadow: 0 0 0 0 rgba(26, 111, 196, 0); transform: scale(1); }
+            }
+        </style>
+    </div>
+
+    <!-- ─── HEADER ─────────────────────────────────────────── -->
+    <header class="header">
+        <div class="header-left" style="gap: 12px; display: flex; align-items: center;">
+            <img src="images/mylogo.png" alt="PK Logo" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+            <h1 class="header-title">PK Deriv Trade</h1>
+        </div>
+        <div class="header-controls">
+            <div class="theme-selector">
+                <button class="theme-btn active" data-theme="lightblue">☀ Light</button>
+                <button class="theme-btn" data-theme="dark">🌙 Dark</button>
+                <button class="theme-btn" data-theme="midnight">✦ Midnight</button>
+            </div>
+            <button class="settings-btn" id="openSettingsBtn">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                        clip-rule="evenodd" />
+                </svg>
+                ตั้งค่า
+            </button>
+			<button class="settings-btn" id="openSettingsTheresholdBtn">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                        clip-rule="evenodd" />
+                </svg>
+                ตั้งค่า Thereshold
+            </button>
+        </div>
+    </header>
+
+    <!-- ─── MAIN ────────────────────────────────────────────── -->
+    <main class="container">
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="conn-badge disconnected" id="connBadge">
+                <span class="conn-dot"></span>
+                <span id="connText">กำลังเชื่อมต่อ...</span>
+            </div>
+            <div class="sep"></div>
+            <span id="status-balance" style="font-weight:bold; color:var(--accent); cursor:pointer;" title="คลิกเพื่อ Sync Balance">Balance: $0.00 🔄</span>
+            <div class="sep"></div>
+            <span id="schedule-status" style="font-size:12px; display:inline-flex; align-items:center; gap:4px;">⏳ กำลังตรวจสอบ...</span>
+            <div class="sep"></div>
+            <span id="status-asset">Asset: —</span>
+            <div class="sep"></div>
+            <span id="status-gran">Granularity: 1M</span>
+            <div class="sep"></div>
+            <span id="status-count">Candles: 0</span>
+            <div class="sep"></div>
+            <span id="status-spike">Spikes: <span id="spike-green-count" style="color:#06D6A0; font-weight:bold;">0</span> 🟢 | <span id="spike-red-count" style="color:#E8304A; font-weight:bold;">0</span> 🔴</span>
+            <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
+                <div class="chip"><span class="chip-dot" style="background:#06D6A0;"></span>EMA Short</div>
+                <div class="chip"><span class="chip-dot" style="background:#F5A623;"></span>EMA Medium</div>
+                <div class="chip"><span class="chip-dot" style="background:#E8304A;"></span>EMA Long</div>
+            </div>
+        </div>
+
+        <!-- ── Balance Summary Section ─────────────────────────── -->
+        <div class="section-card" id="balance-summary-card">
+            <div class="section-card-title">
+                💰 สรุปยอด Balance
+            </div>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <div style="background: var(--bg3); padding: 12px; border-radius: var(--radius); flex: 1; min-width: 180px; border: 1px solid var(--border);">
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">Balance ณ ปัจจุบัน</div>
+                    <div id="summary-initial-balance" style="font-size: 18px; font-weight: 700; color: var(--text);">--</div>
+                </div>
+                <div style="background: var(--bg3); padding: 12px; border-radius: var(--radius); flex: 1; min-width: 180px; border: 1px solid var(--accent); border-left: 3px solid var(--accent);">
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">กำไรรอบนี้ ($) <span id="summary-schedule-label" style="color:var(--accent);font-weight:700;"></span></div>
+                    <div id="summary-current-balance" style="font-size: 18px; font-weight: 700; color: var(--accent);">--</div>
+                </div>
+                <div style="background: var(--bg3); padding: 12px; border-radius: var(--radius); flex: 1; min-width: 180px; border: 1px solid var(--accent); border-left: 3px solid var(--accent);">
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">กำไรรอบนี้ (฿) <span id="summary-schedule-label-thb" style="color:var(--accent);font-weight:700;"></span></div>
+                    <div id="summary-schedule-thb" style="font-size: 18px; font-weight: 700; color: var(--text);">--</div>
+                </div>
+                <div style="background: var(--bg3); padding: 12px; border-radius: var(--radius); flex: 1; min-width: 180px; border: 1px solid var(--border);">
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">กำไรวันนี้ ($)</div>
+                    <div id="summary-profit-usd" style="font-size: 18px; font-weight: 700; color: var(--text);">--</div>
+                </div>
+                <div style="background: var(--bg3); padding: 12px; border-radius: var(--radius); flex: 1; min-width: 180px; border: 1px solid var(--border);">
+                    <div style="font-size: 11px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">กำไรวันนี้ (฿)</div>
+                    <div id="summary-profit-thb" style="font-size: 18px; font-weight: 700; color: var(--text);">--</div>
+                    <div style="font-size: 10px; color: var(--text3); margin-top: 4px;">(เรท <input type="number" id="thb-rate" value="35" style="width: 50px; padding: 2px; font-size: 10px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; text-align: center;"> ฿/$)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Section 1: Date Range ─────────────────────────── -->
+        <div class="section-card" id="scheduleSectionCard" style="transition: background 0.3s, border 0.3s;">
+            <div class="section-card-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 10px;">
+                <span>📅 ช่วงวันที่</span>
+                <div id="trading-duration-container" style="display: none; flex-direction: column; gap: 4px; align-items: flex-end;">
+                    <div style="display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: normal; background: var(--bg2); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <span id="trading-time-elapsed" style="color: var(--text2); white-space: nowrap; font-family: 'Share Tech Mono', monospace;">ระยะเวลา: 0 นาที</span>
+                        <div style="width: 120px; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; border: 1px solid var(--border); position: relative;">
+                            <div id="trading-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--green), #00d2ff); transition: width 0.5s ease;"></div>
+                        </div>
+                        <span id="trading-progress-percent" style="color: var(--green); font-weight: bold; min-width: 35px; text-align: right;">0%</span>
+                    </div>
+                    <div id="trading-time-remaining" style="font-size: 11px; color: var(--red); background: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-family: 'Share Tech Mono', monospace; margin-right: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">เหลือเวลา: -- นาที -- วินาที</div>
+                </div>
+            </div>
+            <div class="date-range-section">
+                <div class="date-input-group">
+                    <div class="date-range-label">ใช้ตารางเวลา (Schedule)</div>
+                    <label class="toggle-switch" style="margin-top: 4px;">
+                        <input type="checkbox" id="useSchedule" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="date-input-group" style="width: 70px; min-width: 70px;">
+                    <div class="date-range-label">รอบที่</div>
+                    <input type="number" id="scheduleTradeNo" value="1" min="1" readonly style="background:var(--bg3); cursor:not-allowed;">
+                </div>
+                <div class="date-input-group">
+                    <div class="date-range-label">เริ่มต้น</div>
+                    <input type="datetime-local" id="startDate" value="2026-04-20T04:00">
+                    <div class="validation-msg" id="startDateMsg"></div>
+                </div>
+                <div class="date-input-group" style="width: 100px; min-width: 100px;">
+                    <div class="date-range-label">บวกเพิ่ม (นาที)</div>
+                    <input type="number" id="addMinutes" value="60" min="1">
+                </div>
+                <div class="date-input-group">
+                    <div class="date-range-label">สิ้นสุด</div>
+                    <input type="datetime-local" id="stopDate" value="2026-04-20T05:00">
+                    <div class="validation-msg" id="stopDateMsg"></div>
+                </div>
+                <div id="inlineClock" style="font-family:'Share Tech Mono', monospace; font-size:18px; color:var(--orange); font-weight:bold; padding:4px 10px; border:1px solid var(--orange); border-radius:var(--radius); background:rgba(245, 166, 35, 0.1); display:flex; align-items:center; justify-content:center; min-width:100px; height:34px; align-self:flex-end; margin-right: 4px; box-shadow: inset 0 0 5px rgba(245, 166, 35, 0.2);">00:00:00</div>
+                <button type="button" class="fetch-btn" id="setDerivTimeBtn" style="background:var(--orange); color:#fff; border:none; padding:8px 12px; margin-right: 10px;">⏱ ดึงเวลาจาก Deriv</button>
+                <button type="button" class="fetch-btn" id="saveTradeTimeBtn" style="background:var(--green); color:#fff; border:none; padding:8px 12px; margin-right: 10px; border-radius:8px; cursor:pointer;">💾 บันทึกเวลาเทรด</button>
+                <button class="fetch-btn" id="fetchBtn">
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    โหลดข้อมูล
+                </button>
+            </div>
+        </div>
+
+        <!-- ── Section 2: Trade Settings ─────────────────────── -->
+        <div class="section-card">
+            <div class="section-card-title">💰 ตั้งค่าการเทรด</div>
+            <div class="date-range-section">
+
+                <!-- Martingale -->
+                <div class="date-input-group" style="min-width:200px;">
+                    <div class="date-range-label">การเดินเงิน</div>
+                    <label class="radio-item">
+                        <input type="radio" name="useMartingale" value="fixed" checked> Fixed Money
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="useMartingale" value="martingale"> Martingale Money
+                    </label>
+                    <input type="text" id="martingaleList" value="1,2,4,8,17,32" placeholder="เช่น 1,2,4,8,17,32"
+                        style="margin-top:4px;" disabled>
+                    <div class="date-range-label" style="margin-top: 8px; color: yellow;">🆘 สู้กี่ไม้ (Max Loss Streak)</div>
+                    <select id="maxLossCon" style="margin-top: 4px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); font-size: 12px; cursor: pointer;">
+                        <option value="0">ไม่จำกัด</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                    </select>
+                </div>
+
+                <!-- Condition Stop -->
+                <div class="date-input-group" style="min-width:220px;">
+                    <div class="date-range-label">เงื่อนไขสิ้นสุดการเทรด</div>
+                    <select id="conditionStopTrade">
+                        <option value="targetMoney">เมื่อได้ตามเป้า (TargetMoney)</option>
+                        <option value="targetLot">เมื่อได้ตามเป้าของ Lot Trade (TargetLot)</option>
+                        <option value="stopDate">เมื่อถึง StopDate</option>
+                    </select>
+                </div>
+
+                <!-- Target Values -->
+                <div class="date-input-group" style="min-width:140px;">
+                    <div class="date-range-label">Target Money</div>
+                    <input type="text" id="targetMoney" value="1">
+                </div>
+                <div class="date-input-group" style="min-width:140px;">
+                    <div class="date-range-label">Target Lot</div>
+                    <input type="text" id="targetLot" value="1">
+                </div>
+
+                <div class="date-input-group" style="min-width:140px;">
+                     <div class="date-range-label">แจ้งเตือน Telegram (เฉพาะชนะ)</div>
+                     <label class="toggle-switch" style="margin-top: 4px;">
+                         <input type="checkbox" id="telegramToggle" checked>
+                         <span class="toggle-slider"></span>
+                     </label>
+                </div>
+                <div class="date-input-group" style="min-width:140px;">
+                     <div class="date-range-label">เปิดเสียงตอนเข้าเทรด</div>
+                     <label class="toggle-switch" style="margin-top: 4px;">
+                         <input type="checkbox" id="playSoundToggle" checked>
+                         <span class="toggle-slider"></span>
+                     </label>
+                </div>
+
+                <!-- Auto Sale When Timeout -->
+                <div class="date-input-group" style="min-width:260px; background:var(--bg3); padding:10px; border-radius:var(--radius); border:1px solid var(--border);">
+                    <div class="date-range-label" style="display:flex; align-items:center; gap:6px;">
+                        ⏰ Auto Sale When Timeout
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoSellTimeoutToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="font-size:12px; color:var(--text2);">เปิดใช้งาน</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-top:8px;">
+                        <span style="font-size:12px; color:var(--text2); white-space:nowrap;">ขายเมื่อเกิน</span>
+                        <input type="number" id="autoSellTimeoutSeconds" value="90" min="10" max="600" step="5" style="width:70px; text-align:center; font-weight:bold;">
+                        <span style="font-size:12px; color:var(--text2);">วินาที</span>
+                    </div>
+                    <div style="font-size:10px; color:var(--text3); margin-top:4px;">💡 เมื่อ is_trading=true นานเกินกำหนด จะขายอัตโนมัติโดยไม่ต้อง confirm</div>
+                </div>
+
+                <!-- Auto Sale When Profit Target -->
+                <div class="date-input-group" style="min-width:260px; background:var(--bg3); padding:10px; border-radius:var(--radius); border:1px solid var(--border);">
+                    <div class="date-range-label" style="display:flex; align-items:center; gap:6px;">
+                        🎯 Auto Sale When Profit Target
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoSellProfitToggle" onchange="updateJSON()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="font-size:12px; color:var(--text2);">เปิดใช้งาน</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-top:8px;">
+                        <span style="font-size:12px; color:var(--text2); white-space:nowrap;">ขายเมื่อกำไรถึง</span>
+                        <select id="autoSellProfitTarget" onchange="updateJSON()" style="width:70px; text-align:center; font-weight:bold; padding:4px; border-radius:6px; border:1px solid var(--border); background:var(--bg2); color:var(--text); cursor:pointer;">
+                            <option value="0.05">5%</option>
+                            <option value="0.10" selected>10%</option>
+                            <option value="0.15">15%</option>
+                            <option value="0.20">20%</option>
+                            <option value="0.25">25%</option>
+                            <option value="0.30">30%</option>
+                            <option value="0.35">35%</option>
+                            <option value="0.40">40%</option>
+                            <option value="0.45">45%</option>
+                            <option value="0.50">50%</option>
+                            <option value="0.55">55%</option>
+                            <option value="0.60">60%</option>
+                            <option value="0.65">65%</option>
+                            <option value="0.70">70%</option>
+                            <option value="0.75">75%</option>
+                            <option value="0.80">80%</option>
+                            <option value="0.85">85%</option>
+                            <option value="0.90">90%</option>
+                            <option value="0.95">95%</option>
+                            <option value="1.00">100%</option>
+                        </select>
+                    </div>
+                    <div style="font-size:10px; color:var(--text3); margin-top:4px;">💡 เมื่อเปิด Order ใหม่ ระบบจะนำค่านี้ไปกำหนดเป็น Target Profit ให้อัตโนมัติ</div>
+                </div>
+
+                <!-- Buy Method Selector -->
+                <div class="date-input-group" style="min-width:260px; background:var(--bg3); padding:10px; border-radius:var(--radius); border:1px solid var(--border);">
+                    <div class="date-range-label" style="display:flex; align-items:center; gap:6px;">
+                        🛒 Buy Method
+                    </div>
+                    <select id="buyMethodSelect" style="margin-top:6px; width:100%; padding:6px 10px; border-radius:8px; border:1px solid var(--border); background:var(--bg2); color:var(--text); font-family:var(--font); font-size:12px; cursor:pointer;">
+                        <option value="direct">Method 1: Direct Buy (วิธีเดิม)</option>
+                        <option value="proposal" selected>Method 2: Proposal → Buy (แนะนำ)</option>
+                    </select>
+                    <div style="font-size:10px; color:var(--text3); margin-top:6px;">💡 Method 2: ส่ง proposal ก่อนเพื่อขอ proposal_id แล้วจึง buy — ลดปัญหา Delay การตอบกลับ</div>
+                </div>
+
+                <!-- Strategy Selector -->
+                <div class="date-input-group" style="min-width:260px; background:var(--bg3); padding:10px; border-radius:var(--radius); border:1px solid var(--border);" id="strategyCardWrapper">
+                    <div class="date-range-label" style="display:flex; align-items:center; gap:6px;">
+                        🎯 Trading Strategy
+                    </div>
+                    <select id="suggestStrategySelect" style="margin-top:6px; width:100%; padding:6px 10px; border-radius:8px; border:1px solid var(--border); background:var(--bg2); color:var(--text); font-family:var(--font); font-size:12px; cursor:pointer;">
+                        <option value="MANUAL">🖐️ Manual Trade (กด Call/Put เอง)</option>
+                        <option value="V1" selected>V1: Follow Color (Default)</option>
+                        <option value="V2">V2: Early React (Loss=1)</option>
+                        <option value="V3A">V3A: 3 EMA Consensus</option>
+                        <option value="V3B">V3B: EMA Short + CutType Override</option>
+                        <option value="V3C">V3C: EMA Medium Direction Only</option>
+                        <option value="FTA">FTA: Follow Trend A (2 EMA Direction)</option>
+                        <option value="FTB">FTB: Follow Trend B (3 EMA Direction)</option>
+                    </select>
+                    <div id="strategyHintText" style="font-size:10px; color:var(--text3); margin-top:6px;">💡 เลือกกลยุทธ์ที่ใช้ตัดสินใจเมื่อเกิด ATR Spike</div>
+                </div>
+
+                <!-- Borrow Signal Toggle -->
+                <div class="date-input-group" style="min-width:260px; background:var(--bg3); padding:10px; border-radius:var(--radius); border:1px solid var(--border);">
+                    <div class="date-range-label" style="display:flex; align-items:center; gap:6px;">
+                        🔄 Borrow Signal (Whipsaw)
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="borrowSignalToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="font-size:12px; color:var(--text2);">อนุญาตให้ยืม Signal เทรดสวน</span>
+                    </div>
+                    <div style="font-size:10px; color:var(--text3); margin-top:6px;">💡 หากแพ้ติดกัน 3 ครั้งใน V2 จะยืมสัญญาณเทรดสวน (Whipsaw) มาใช้งาน</div>
+                </div>
+
+                <!-- Whipsaw Zone Toggle -->
+                <div class="date-input-group" style="min-width:260px; background:var(--bg3); padding:10px; border-radius:var(--radius); border:1px solid var(--border);">
+                    <div class="date-range-label" style="display:flex; align-items:center; gap:6px;">
+                        🎯 Whipsaw Zone Detection
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="whipsawZoneToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="font-size:12px; color:var(--text2);">เปิดใช้งาน Whipsaw Zone Detection</span>
+                    </div>
+                    <div style="font-size:10px; color:var(--text3); margin-top:6px;">💡 เมื่อ lossCon ≥ 4 และสีแท่งเทียนสลับกัน (G-R-G-R) บอทจะหยุดเทรดชั่วคราว (IDLE)</div>
+                </div>
+
+                <!-- Save Track Order Toggle -->
+                <div class="date-input-group" style="min-width:260px; background:var(--bg3); padding:10px; border-radius:var(--radius); border:1px solid var(--border);">
+                    <div class="date-range-label" style="display:flex; align-items:center; gap:6px;">
+                        📊 Save Track Order
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="saveTrackOrderToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="font-size:12px; color:var(--text2);">เก็บข้อมูลรายการ trackOrder ของการเทรด</span>
+                    </div>
+                    <div style="font-size:10px; color:var(--text3); margin-top:6px;">💡 นำไปเพิ่มเป็น Field trackOrderList ใน trades.json</div>
+                </div>
+
+                <div style="display:flex;gap:8px;align-self:flex-end;flex-wrap:wrap;">
+                    <button class="fetch-btn" id="goTradeBtn">💰 Go Trade</button>
+                    <button class="fetch-btn stop" id="stopTradeBtn">⛔ Stop Trade</button>
+                    <button class="fetch-btn" id="terminateBtn" style="background:var(--orange);border-color:var(--orange);color:#1a2535;font-weight:700;border:1px solid #c98516;box-shadow:0 2px 4px rgba(0,0,0,0.1);">⚠️ Stop Server & Exit</button>
+                </div>
+                <div class="conn-badge disconnected" id="connBadgeBig" style="width:100%; height:40px; margin-top:12px; justify-content:center; border-radius:20px;">
+                    <span class="conn-dot"></span>
+                    <span id="connTextBig" style="font-size:14px; font-weight:600;">กำลังเชื่อมต่อ...</span>
+                </div>
+                <div id="active-assets-container" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; width:100%;">
+                    <!-- Asset trading state buttons will appear here -->
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── Tabs ───────────────────────────────────────────── -->
+        <div class="tabs-row" id="tabsRow">
+            <button class="tab-btn active" data-tab="chart">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                        d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                </svg>
+                กราฟ
+            </button>
+            <button class="tab-btn" data-tab="table">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z"
+                        clip-rule="evenodd" />
+                </svg>
+                ข้อมูลดิบ
+            </button>
+            <button class="tab-btn" data-tab="jsonsetting">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z"
+                        clip-rule="evenodd" />
+                </svg>
+                JSON Setting
+            </button>
+            <button class="tab-btn" data-tab="history">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM9 5a1 1 0 012 0v4h2a1 1 0 110 2h-3a1 1 0 01-1-1V5z" clip-rule="evenodd"/>
+                </svg>
+                Trade History
+            </button>
+            <button class="tab-btn" data-tab="schedulesummary">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                </svg>
+                สรุปตามรอบ
+            </button>
+            <button class="tab-btn" data-tab="trackorders">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                </svg>
+                Track Orders
+            </button>
+            <button class="tab-btn" data-tab="botlog">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                </svg>
+                Bot Log <span id="botLogCount" style="font-size:10px;color:var(--text3);margin-left:4px;">(0)</span>
+            </button>
+            <button class="tab-btn" data-tab="tradecontrol">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/>
+                </svg>
+                🎯 Trade Control
+            </button>
+            <button class="tab-btn" data-tab="analysisdata">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                </svg>
+                Analysis Data
+            </button>
+            <button class="tab-btn" data-tab="strategycomparison">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm-3.5 8.5a.5.5 0 010-1h7a.5.5 0 010 1h-7z" clip-rule="evenodd"/>
+                </svg>
+                Strategy Comparison
+            </button>
+        </div>
+
+        <div class="tab-content active" id="chart-tab">
+            <div class="chart-wrapper">
+                <div class="chart-toolbar">
+
+                    <span class="chart-toolbar-label">Granularity</span>
+                    <button class="gran-btn" data-value="55">55s</button>
+                    <button class="gran-btn active" data-value="60">1M</button>
+                    <button class="gran-btn" data-value="180">3M</button>
+                    <button class="gran-btn" data-value="300">5M</button>
+                    <button class="gran-btn" data-value="900">15M</button>
+                    <button class="gran-btn" data-value="1800">30M</button>
+                    <div class="sep" style="height:16px;"></div>
+                    <label class="toggle-switch" style="margin-left: 8px;">
+                        <input type="checkbox" id="showTradeMarkersToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="chart-toolbar-label" style="margin-left: 6px;">Show Maker Trade</span>
+                    
+                    <div class="sep" style="height:16px; margin-left:8px;"></div>
+                    <label class="toggle-switch" style="margin-left: 8px;">
+                        <input type="checkbox" id="showStrategyTooltipToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="chart-toolbar-label" style="margin-left: 6px;">Strategy Tooltip</span>
+                    
+                    <div class="sep" style="height:16px; margin-left:8px;"></div>
+                    <label class="toggle-switch" style="margin-left: 8px;">
+                        <input type="checkbox" id="shadeAdxChoppyToggle" onchange="if(window.allAnalysisData && window.allAnalysisData.length > 0) renderChart(window.allAnalysisData)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="chart-toolbar-label" style="margin-left: 6px;">Shade ADX/Choppy</span>
+                    <span class="chart-toolbar-label" style="margin-left: 8px;">ADX &gt;</span>
+                    <input type="number" id="shadeAdxVal" value="25" style="width:50px; padding:2px; font-size:11px; background:var(--bg2); color:var(--text); border:1px solid var(--border); border-radius:4px; text-align:center;" title="ADX Threshold" oninput="if(window.allAnalysisData && window.allAnalysisData.length > 0) renderChart(window.allAnalysisData)">
+                    <span class="chart-toolbar-label" style="margin-left: 8px;">Choppy &lt;</span>
+                    <input type="number" id="shadeChoppyVal" value="38" style="width:50px; padding:2px; font-size:11px; background:var(--bg2); color:var(--text); border:1px solid var(--border); border-radius:4px; text-align:center;" title="Choppy Threshold" oninput="if(window.allAnalysisData && window.allAnalysisData.length > 0) renderChart(window.allAnalysisData)">
+                    
+                    <div class="sep" style="height:16px; margin-left:8px;"></div>
+                    <label class="toggle-switch" style="margin-left: 8px;">
+                        <input type="checkbox" id="emaShortToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="chart-toolbar-label" style="margin-left: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                        EMA Short
+                        <input type="color" id="emaShortColor" value="#06D6A0" style="width: 24px; height: 18px; border: 1px solid var(--border); padding: 0; background: transparent; cursor: pointer; border-radius: 4px; vertical-align: middle;">
+                    </span>
+
+                    <label class="toggle-switch" style="margin-left: 8px;">
+                        <input type="checkbox" id="emaMediumToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="chart-toolbar-label" style="margin-left: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                        EMA Medium
+                        <input type="color" id="emaMediumColor" value="#F5A623" style="width: 24px; height: 18px; border: 1px solid var(--border); padding: 0; background: transparent; cursor: pointer; border-radius: 4px; vertical-align: middle;">
+                    </span>
+
+                    <label class="toggle-switch" style="margin-left: 8px;">
+                        <input type="checkbox" id="emaLongToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="chart-toolbar-label" style="margin-left: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                        EMA Long
+                        <input type="color" id="emaLongColor" value="#E8304A" style="width: 24px; height: 18px; border: 1px solid var(--border); padding: 0; background: transparent; cursor: pointer; border-radius: 4px; vertical-align: middle;">
+                    </span>
+
+                    <div style="width: 100%; border-bottom: 1px dashed var(--border); margin: 10px 0;"></div>
+                    
+                    <div style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; background:var(--bg3); padding:8px 12px; border-radius:4px; margin-bottom:10px; border:1px solid var(--border);" onclick="const c=document.getElementById('json-marker-tools'); if(c.style.display==='none'){c.style.display='grid';this.querySelector('.chevron').textContent='▼';}else{c.style.display='none';this.querySelector('.chevron').textContent='▶';}">
+                        <span style="font-size:0.85rem; font-weight:bold; color:var(--text);">🛠️ JSON Marker Tools</span>
+                        <span class="chevron" style="font-size:0.8rem; color:var(--text3);">▶</span>
+                    </div>
+                    <div id="json-marker-tools" style="display: none; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; padding-bottom: 10px;">
+                        <!-- Column 1 -->
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <span style="color:var(--warn); font-weight:700; font-size:0.8rem;">JSON Flat Check</span>
+                            <select id="jsonFlatSelect" style="background:#000; font-size:0.75rem; color:#fff; border:1px solid var(--border); padding:6px 10px; border-radius:4px; width: 100%; outline: none;" onchange="if(window.activeJsonMarkerMode === 'flat' || window.activeJsonMarkerMode === 'all') showJsonFlatMarkers()">
+                                <option value="ema_short_flat">EMA Short Flat</option>
+                                <option value="ema_medium_flat">EMA Medium Flat</option>
+                                <option value="ema_long_flat">EMA Long Flat</option>
+                            </select>
+                            <button class="btn-primary" onclick="showJsonFlatMarkers()" style="padding:6px 12px; background: rgba(255, 145, 0, 0.15); border: 1px solid #ff9100; color: #ff9100; font-weight: bold; border-radius: 4px; cursor: pointer;">Show Flat</button>
+                            <span id="flatCountText" style="font-size:0.7rem; color:#aaa; text-align:center; min-height: 14px;"></span>
+                        </div>
+
+                        <!-- Column 2 -->
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <span style="color:var(--warn); font-weight:700; font-size:0.8rem;">JSON Gap Check</span>
+                            <select id="jsonGapSelect" style="background:#000; font-size:0.75rem; color:#fff; border:1px solid var(--border); padding:6px 10px; border-radius:4px; width: 100%; outline: none;" onchange="if(window.activeJsonMarkerMode === 'gap' || window.activeJsonMarkerMode === 'all') showJsonGapMarkers()">
+                                <option value="is_short_medium_gap_occur">Short-Medium Gap</option>
+                                <option value="is_medium_long_gap_occur">Medium-Long Gap</option>
+                            </select>
+                            <button class="btn-primary" onclick="showJsonGapMarkers()" style="padding:6px 12px; background: rgba(0, 229, 255, 0.15); border: 1px solid #00e5ff; color: #00e5ff; font-weight: bold; border-radius: 4px; cursor: pointer;">Show Gap</button>
+                            <span id="gapCountText" style="font-size:0.7rem; color:#aaa; text-align:center; min-height: 14px;"></span>
+                        </div>
+
+                        <!-- Column 3 -->
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <span style="color:var(--warn); font-weight:700; font-size:0.8rem;">Alt Pattern</span>
+                            <div style="flex: 1;"></div>
+                            <button class="btn-primary" onclick="showAlternatingPatternMarkers()" style="padding:6px 12px; background: rgba(255, 60, 110, 0.15); border: 1px solid #ff3c6e; color: #ff3c6e; font-weight: bold; border-radius: 4px; cursor: pointer;">Show Alt Pattern</button>
+                            <span id="altCountText" style="font-size:0.7rem; color:#aaa; text-align:center; min-height: 14px;"></span>
+                        </div>
+
+                        <!-- Column 4 -->
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <span style="color:var(--warn); font-weight:700; font-size:0.8rem;">Show All</span>
+                            <div style="flex: 1;"></div>
+                            <button class="btn-primary" onclick="showAllJsonMarkers()" style="padding:6px 12px; background: rgba(255, 255, 255, 0.15); border: 1px solid #ffffff; color: #ffffff; font-weight: bold; border-radius: 4px; cursor: pointer;">Show All</button>
+                            <span id="totalCountText" style="font-size:0.7rem; color:#aaa; text-align:center; min-height: 14px;"></span>
+                        </div>
+                    </div>
+
+                    <!-- ═══ Manual Trade Section ═══ -->
+                    <div id="manual-trade-section" style="width:100%; margin-top:16px; padding:16px; background:var(--bg3); border-radius:var(--radius); border:1px solid var(--border); display:flex; flex-wrap:wrap; align-items:center; gap:12px; transition:all 0.3s;">
+                        <div style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:var(--text); width:100%;">
+                            <span>🖐️ Manual Trade</span>
+                            <span id="manualModeActiveBadge" style="display:none; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:700; background:linear-gradient(135deg,#F5A623,#e8930e); color:#fff; letter-spacing:0.5px;">ACTIVE MODE</span>
+                            <span id="manualModeStandbyNote" style="font-size:11px; color:var(--text3); font-weight:400;">(อยู่นอก Manual Mode — ใช้ Strategy อัตโนมัติ)</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <label style="font-size:12px; color:var(--text2); white-space:nowrap;">Asset:</label>
+                            <select id="manualTradeAsset" style="padding:6px 10px; border-radius:8px; border:1px solid var(--border); background:var(--bg2); color:var(--text); font-family:var(--font); font-size:12px; cursor:pointer; min-width:120px;">
+                                <option value="">— เลือก Asset —</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <label style="font-size:12px; color:var(--text2); white-space:nowrap;">Amount ($):</label>
+                            <input type="number" id="manualTradeAmount" value="1" min="0.35" step="0.01" style="width:80px; padding:6px 8px; border-radius:8px; border:1px solid var(--border); background:var(--bg2); color:var(--text); font-family:var(--font); font-size:13px; text-align:center; font-weight:bold;">
+                        </div>
+                        <div style="display:flex; gap:8px; margin-left:auto;">
+                            <button id="manualCallBtn" style="padding:10px 28px; border-radius:10px; border:none; background:linear-gradient(135deg, #06D6A0, #00b894); color:#fff; font-family:var(--font); font-size:14px; font-weight:800; cursor:pointer; transition:all .2s; box-shadow:0 4px 12px rgba(6,214,160,0.3); text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                                CALL
+                            </button>
+                            <button id="manualPutBtn" style="padding:10px 28px; border-radius:10px; border:none; background:linear-gradient(135deg, #E8304A, #c0392b); color:#fff; font-family:var(--font); font-size:14px; font-weight:800; cursor:pointer; transition:all .2s; box-shadow:0 4px 12px rgba(232,48,74,0.3); text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                PUT
+                            </button>
+                        </div>
+                        
+                        <!-- Manual Track Orders Table -->
+                        <div style="width: 100%; margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 13px; font-weight: bold; color: var(--text);">Active Orders Tracking</span>
+                                <span id="manual-track-orders-count" style="font-size: 12px; color: var(--text3);">0 active orders</span>
+                            </div>
+                            <div class="table-scroll" style="max-height: 250px; overflow-y: auto;">
+                                <table class="data-table" id="manualTrackOrdersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ลำดับ</th>
+                                            <th>Contract ID</th>
+                                            <th>Symbol</th>
+                                            <th>ประเภท</th>
+                                            <th>ราคาซื้อ</th>
+                                            <th>Entry Spot</th>
+                                            <th>Payout</th>
+                                            <th>กำไร/ขาดทุน</th>
+                                            <th>เวลาซื้อ</th>
+                                            <th>เวลาหมดอายุ</th>
+                                            <th>เวลาที่เหลือ</th>
+                                            <th>Min Profit</th>
+                                            <th>Max Profit</th>
+                                            <th>Target Profit</th>
+                                            <th>การจัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="empty-row"><td colspan="15">ไม่มีออเดอร์ที่กำลังทำงานอยู่</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; background:var(--bg2); padding:8px 16px; border-radius:8px 8px 0 0; border:1px solid var(--border); border-bottom:none; margin-top:16px;">
+                    <span class="chart-toolbar-label" style="font-size:13px; font-weight:bold; color:var(--text); margin-right:8px;">Asset</span>
+                    <div id="chartAssetSelect" style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <span style="color:var(--text3); font-size:12px; padding-top:4px;">— รอข้อมูล —</span>
+                    </div>
+                </div>
+                <div id="chart" style="height:420px; border:1px solid var(--border); border-radius:0 0 8px 8px; overflow:hidden;"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Table -->
+        <div class="tab-content" id="table-tab">
+            <div class="table-wrapper">
+                <div class="table-header-bar">
+                    <span>Raw Candle Data</span>
+                    <span id="table-count" style="font-size:12px;color:var(--text3);">0 records</span>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>เวลา</th>
+                                <th>Open</th>
+                                <th>High</th>
+                                <th>Low</th>
+                                <th>Close</th>
+                                <th>สีเทียน</th>
+                                <th>ATR Spike?</th>
+                                <th>EMA Short</th>
+                                <th>EMA Med</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row">
+                                <td colspan="6">ยังไม่มีข้อมูล — กรุณาเลือก Asset และกด "โหลดข้อมูล"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: JSON Setting -->
+        <div class="tab-content" id="jsonsetting-tab">
+            <div class="json-wrapper">
+                <div class="json-toolbar">
+                    <div>
+                        <div class="json-toolbar-title">⚙ JSON Setting</div>
+                        <div class="json-toolbar-sub">ค่าทั้งหมดจะถูกส่งไปยัง Backend —
+                            อัปเดตอัตโนมัติทุกครั้งที่เปลี่ยนค่า</div>
+                    </div>
+                    <button class="copy-btn" id="copyJsonBtn">📋 คัดลอก JSON</button>
+                </div>
+                <textarea id="jsonSettingTextarea" readonly spellcheck="false"></textarea>
+            </div>
+        </div>
+
+        <!-- Tab: History -->
+        <div class="tab-content" id="history-tab">
+            <div class="table-wrapper">
+                <div class="table-header-bar">
+                    <span>Recent Trade History <span id="historyStrategyTitle" style="color:#ff3333; font-size:1.3em; font-weight:800; margin-left:10px;"></span> <button onclick="document.getElementById('conditionCodeModal').style.display='flex'" style="margin-left:15px; padding:4px 10px; font-size:12px; font-weight:bold; background:var(--surface2); color:var(--text); border:1px solid var(--border); border-radius:6px; cursor:pointer; vertical-align:middle; transition: background 0.2s;">ℹ️ View Condition Code Description</button></span>
+                    <button class="fetch-btn" id="loadHistoryBtn" style="padding:4px 8px; font-size:11px;">โหลดประวัติวันนี้</button>
+                </div>
+                <div id="history-asset-filters" style="display:flex; gap:8px; margin: 10px 14px; flex-wrap: wrap;"></div>
+                <div class="table-scroll">
+                    <table class="data-table" id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>เวลาเทรด</th>
+                                <th>เวลาขาย</th>
+                                <th>รอบที่</th>
+                                <th>Subtrade</th>
+                                <th>Asset</th>
+                                <th>Color</th>
+                                <th>Action</th>
+                                <th>Strategy</th>
+                                <th>Noise Code</th>
+                                <th>DiffSpot</th>
+                                <th>Money Trade</th>
+                                <th>Profit</th>
+                                <th>Balance</th>
+                                <th>Schedule Balance</th>
+                                <th>Balance(THB)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="15">คลิกปุ่มเพื่อโหลดประวัติการเทรด</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Track Orders -->
+        <div class="tab-content" id="trackorders-tab">
+            <div class="table-wrapper">
+                <div class="table-header-bar">
+                    <span>Active Orders Tracking</span>
+                    <span id="track-orders-count" style="font-size:12px;color:var(--text3);">0 active orders</span>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table" id="trackOrdersTable">
+                        <thead>
+                            <tr>
+                                <th>ลำดับ</th>
+                                <th>Contract ID</th>
+                                <th>Symbol</th>
+                                <th>ประเภท</th>
+                                <th>ราคาซื้อ</th>
+                                <th>Entry Spot</th>
+                                <th>Payout</th>
+                                <th>กำไร/ขาดทุน</th>
+                                <th>เวลาซื้อ</th>
+                                <th>เวลาหมดอายุ</th>
+                                <th>เวลาที่เหลือ</th>
+                                <th>Min Profit</th>
+                                <th>Max Profit</th>
+                                <th>Target Profit</th>
+                                <th>การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="15">ไม่มีออเดอร์ที่กำลังทำงานอยู่</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Schedule Summary -->
+        <div class="tab-content" id="schedulesummary-tab">
+            <div class="table-wrapper">
+                <div class="table-header-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span>📊 สรุปผลกำไร/ขาดทุน แยกตามรอบ Schedule</span>
+                        <span id="schedule-summary-count" style="font-size:12px;color:var(--text3);">0 รอบ</span>
+                    </div>
+                    <div style="font-size:14px; font-weight:bold; display:flex; gap:12px; align-items:center;">
+                        <span style="color:var(--text3); font-size:12px;">รวมกำไร/ขาดทุน ทุกรอบ (Grand Total):</span>
+                        <span id="schedule-grand-usd" style="color:var(--text);">--</span>
+                        <span id="schedule-grand-thb" style="color:var(--text);">--</span>
+                    </div>
+                </div>
+                <div class="table-scroll">
+                    <table class="data-table" id="scheduleSummaryTable">
+                        <thead>
+                            <tr>
+                                <th>รอบที่ (Schedule No)</th>
+                                <th>เวลาเริ่ม - สิ้นสุด</th>
+                                <th>จำนวนไม้ทั้งหมด</th>
+                                <th>Win (ไม้)</th>
+                                <th>Loss (ไม้)</th>
+                                <th>กำไรสุทธิ ($)</th>
+                                <th>กำไรสุทธิ (฿)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="7">ไม่มีข้อมูลรอบการเทรด</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Bot Log -->
+        <div class="tab-content" id="botlog-tab">
+            <div class="bot-log-wrapper">
+                <div class="bot-log-header">
+                    <span>🤖 Bot Activity Log — แสดงสถานะการทำงานของบอทแบบ Real-time</span>
+                    <button class="clear-log-btn" id="clearLogBtn">🗑 ล้าง Log</button>
+                </div>
+                <div class="bot-log-body" id="botLogBody">
+                    <div class="log-line log-system">⏳ รอข้อมูลจากบอท... กด Go Trade หรือรอ Schedule เพื่อเริ่ม</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Trade Control (Whipsaw Zone) -->
+        <div class="tab-content" id="tradecontrol-tab">
+            <div class="table-wrapper">
+                <div class="table-header-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span>🎯 Trade Control — Whipsaw Zone Monitor</span>
+                        <span id="trade-control-status" style="font-size:12px; padding:2px 10px; border-radius:12px; background:var(--bg3); color:var(--text3);">ยังไม่มีข้อมูล</span>
+                    </div>
+                </div>
+                <div id="tradeControlContainer" style="padding:12px; display:flex; flex-direction:column; gap:16px;">
+                    <div style="color:var(--text3); text-align:center; padding:20px; font-size:13px;">
+                        📡 รอข้อมูลจากบอท... เมื่อเริ่มเทรด Trade Control จะแสดงที่นี่
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Tab: Analysis Data -->
+        <div class="tab-content" id="analysisdata-tab">
+            <div class="section-card">
+                <div class="section-card-title">🔍 เครื่องมือสร้างข้อมูล Analysis Data</div>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+                    <!-- Left: Form Controls -->
+                    <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 16px;">
+                        <div class="date-input-group">
+                            <div class="date-range-label">วันเวลาเริ่มต้น (Start)</div>
+                            <input type="datetime-local" id="startDateAnalysis" value="2026-05-13T00:00">
+                        </div>
+                        <div class="date-input-group">
+                            <div class="date-range-label">วันเวลาสิ้นสุด (End)</div>
+                            <input type="datetime-local" id="stopDateAnalysis" value="2026-05-13T23:59">
+                        </div>
+                        <button type="button" class="fetch-btn" id="btnCreateAnalysis" style="width: 100%; justify-content: center; height: 40px; font-size: 14px;">
+                            🚀 สร้างข้อมูล Analysis Data
+                        </button>
+                        <button type="button" class="fetch-btn" id="btnPostFullAnalysisData" style="width: 100%; justify-content: center; height: 40px; font-size: 14px; margin-top: 8px; background: var(--primary);">
+                            📤 ส่งข้อมูล Analysis Data (AJAX POST)
+                        </button>
+                        <div style="font-size: 12px; color: var(--text3); line-height: 1.5; background: var(--bg3); padding: 12px; border-radius: var(--radius); border: 1px dashed var(--border);">
+                            💡 ส่วนนี้ใช้สำหรับดึงข้อมูล OHLCV จากช่วงเวลาที่กำหนด เพื่อนำมาเข้า Engine การคำนวณ Indicator (EMA, ATR, etc.) และบันทึกลงฐานข้อมูลเพื่อใช้ในการทดสอบ (Backtest) หรือการวิเคราะห์เชิงลึก
+                        </div>
+                    </div>
+
+                    <!-- Right: Asset Listbox -->
+                    <div style="width: 300px; display: flex; flex-direction: column; gap: 8px;">
+                        <div class="date-range-label">เลือกสินทรัพย์ (Asset List)</div>
+                        <select id="analysisAssetList" size="10" style="height: 200px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 4px;">
+                            <option value="vol10">Volatility 10 Index</option>
+                            <option value="vol10_1s">Volatility 10 (1s) Index</option>
+                            <option value="vol15_1s">Volatility 15 (1s) Index</option>
+                            <option value="vol25">Volatility 25 Index</option>
+                            <option value="vol25_1s">Volatility 25 (1s) Index</option>
+                            <option value="vol30_1s">Volatility 30 (1s) Index</option>
+                            <option value="vol50">Volatility 50 Index</option>
+                            <option value="vol50_1s">Volatility 50 (1s) Index</option>
+                            <option value="vol75">Volatility 75 Index</option>
+                            <option value="vol75_1s">Volatility 75 (1s) Index</option>
+                            <option value="vol90_1s">Volatility 90 (1s) Index</option>
+                            <option value="vol100">Volatility 100 Index</option>
+                            <option value="vol100_1s">Volatility 100 (1s) Index</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px;">
+                    <div id="analysisCaption" style="font-size: 12px; font-weight: 600; color: var(--text); background: var(--bg3); padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 20px;">
+                        <div style="display: flex; align-items: center; gap: 6px;"><span style="color: var(--text3);">Asset:</span> <span id="analysisAssetDisplay" style="color: var(--accent);">—</span></div>
+                        <div style="display: flex; align-items: center; gap: 6px;"><span style="color: var(--text3);">Data Count:</span> <span id="analysisCountDisplay" style="color: var(--green);">0</span></div>
+                        <div style="display: flex; align-items: center; gap: 6px;"><span style="color: var(--text3);">Start:</span> <span id="analysisStartDisplay">—</span></div>
+                        <div style="display: flex; align-items: center; gap: 6px;"><span style="color: var(--text3);">Stop:</span> <span id="analysisStopDisplay">—</span></div>
+                    </div>
+                    <textarea id="analysisOutput" readonly 
+                        style="width: 100%; height: 300px; background: #0f172a; color: #94a3b8; border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; font-family: 'Consolas', 'Monaco', monospace; font-size: 12px; resize: vertical; line-height: 1.6;" 
+                        placeholder="คลิก 'สร้างข้อมูล Analysis Data' เพื่อเริ่มกระบวนการวิเคราะห์..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Strategy Comparison -->
+        <div class="tab-content" id="strategycomparison-tab">
+            <div class="table-wrapper">
+                <div class="table-header-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span>⚖️ Strategy Comparison Data</span>
+                        <span id="strategy-comparison-count" style="font-size:12px;color:var(--text3);">0 records</span>
+                    </div>
+                    <button class="fetch-btn" id="loadStrategyComparisonBtn" style="padding:4px 8px; font-size:11px;">โหลดข้อมูลของวันนี้</button>
+                </div>
+                <div id="strategy-asset-filters" style="display:flex; gap:8px; margin: 10px 0; flex-wrap: wrap;"></div>
+                <div class="table-scroll">
+                    <table class="data-table" id="strategyComparisonTable">
+                        <thead>
+                            <tr>
+                                <th>Run No.</th>
+                                <th>เวลา (Time)</th>
+                                <th>Asset</th>
+                                <th>Next Color</th>
+                                <th>V1 (Suggest / LossCon / Win)</th>
+                                <th>V2 (Suggest / LossCon / Win)</th>
+                                <th>V3A (Suggest / LossCon / Win)</th>
+                                <th>V3B (Suggest / LossCon / Win)</th>
+                                <th>V3C (Suggest / LossCon / Win)</th>
+                                <th>FTA (Suggest / LossCon / Win)</th>
+                                <th>FTB (Suggest / LossCon / Win)</th>
+                                <th style="width: 40px; text-align: center;">🔍</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="10">คลิกปุ่มเพื่อโหลดข้อมูลเปรียบเทียบกลยุทธ์</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ─── SETTINGS MODAL ──────────────────────────────────── -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="modal-title-icon">⚙</div>ตั้งค่าการแสดงผล
+                </div>
+                <button class="modal-close" id="closeModalBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-grid">
+
+                    <!-- Assets -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">📈</div><span class="settings-section-title">Continuous Indices
+                                (Deriv.com)</span>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="checkbox-grid">
+                                <div class="checkbox-item"><input type="checkbox" id="vol10" name="asset"
+                                        value="vol10"><label for="vol10">Vol 10</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol10_1s" name="asset"
+                                        value="vol10_1s"><label for="vol10_1s">Vol 10 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol15_1s" name="asset"
+                                        value="vol15_1s"><label for="vol15_1s">Vol 15 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol25" name="asset"
+                                        value="vol25"><label for="vol25">Vol 25</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol25_1s" name="asset"
+                                        value="vol25_1s"><label for="vol25_1s">Vol 25 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol30_1s" name="asset"
+                                        value="vol30_1s"><label for="vol30_1s">Vol 30 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol50" name="asset"
+                                        value="vol50"><label for="vol50">Vol 50</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol50_1s" name="asset"
+                                        value="vol50_1s"><label for="vol50_1s">Vol 50 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol75" name="asset"
+                                        value="vol75"><label for="vol75">Vol 75</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol75_1s" name="asset"
+                                        value="vol75_1s"><label for="vol75_1s">Vol 75 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol90_1s" name="asset"
+                                        value="vol90_1s"><label for="vol90_1s">Vol 90 (1s)</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol100" name="asset"
+                                        value="vol100"><label for="vol100">Vol 100</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="vol100_1s" name="asset"
+                                        value="vol100_1s"><label for="vol100_1s">Vol 100 (1s)</label></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Granularity -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">⏱</div><span class="settings-section-title">Granularity</span>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="gran-group">
+                                <button class="gran-setting-btn" data-value="2">Tick (2s)</button>
+                                <button class="gran-setting-btn" data-value="55">55 วินาที</button>
+                                <button class="gran-setting-btn active" data-value="60">1 นาที</button>
+                                <button class="gran-setting-btn" data-value="180">3 นาที</button>
+                                <button class="gran-setting-btn" data-value="300">5 นาที</button>
+                                <button class="gran-setting-btn" data-value="900">15 นาที</button>
+                                <button class="gran-setting-btn" data-value="1800">30 นาที</button>
+                            </div>
+                            <div style="margin-top: 15px; display: flex; align-items: center; gap: 8px;">
+                                <label for="customGranularitySeconds" style="font-size: 13px; color: var(--text);">ระบุเวลาเอง (วินาที, 0 = ปิด):</label>
+                                <input type="number" id="customGranularitySeconds" value="0" min="0" style="width: 80px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); color: var(--text); font-family: var(--font); font-size: 14px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Indicators -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">📊</div><span class="settings-section-title">Technical
+                                Indicators</span>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="form-grid-2">
+                                <div class="form-group"><label>ATR Period</label><input type="number" id="atrPeriod"
+                                        value="14" min="1"></div>
+                                <div class="form-group"><label>ATR Multiplier</label><input type="number" id="atrMulti"
+                                        value="2" step="0.1" min="0"></div>
+                                <div class="form-group"><label>CI Period</label><input type="number" id="ciPeriod"
+                                        value="20" min="1"></div>
+                                <div class="form-group"><label>ADX Period</label><input type="number" id="adxPeriod"
+                                        value="14" min="1"></div>
+                                <div class="form-group"><label>Bollinger Bands</label><input type="number" id="bbPeriod"
+                                        value="20" min="1"></div>
+                                <div class="form-group"><label>SMC Period</label><input type="number" id="smcPeriod"
+                                        value="50" min="1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spike Settings -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">💥</div><span class="settings-section-title">Spike Configuration</span>
+                            <label class="toggle-switch" style="margin-left: auto;"><input type="checkbox" id="spikeShowToggle" checked><span class="toggle-slider"></span></label>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="form-grid-2">
+                                <div class="form-group"><label>Green Spike Color</label><input type="color" id="spikeGreenColor" value="#00FF00" class="color-picker"></div>
+                                <div class="form-group"><label>Red Spike Color</label><input type="color" id="spikeRedColor" value="#FF00FF" class="color-picker"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EMA -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">📉</div><span class="settings-section-title">EMA / MA
+                                Configuration</span>
+                        </div>
+                        <div class="settings-section-body">
+
+                            <div class="ema-item">
+                                <div class="ema-header">
+                                    <div class="ema-name">EMA Short</div>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div class="form-group"><label>Period</label><input type="number"
+                                            id="emaShortPeriod" value="9" min="1"></div>
+                                    <div class="form-group"><label>Type</label>
+                                        <select id="emaShortType">
+                                            <option value="ema" selected>EMA</option>
+                                            <option value="hma">HMA</option>
+                                            <option value="wma">WMA</option>
+                                            <option value="ehma">EHMA</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ema-item">
+                                <div class="ema-header">
+                                    <div class="ema-name">EMA Medium</div>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div class="form-group"><label>Period</label><input type="number"
+                                            id="emaMediumPeriod" value="21" min="1"></div>
+                                    <div class="form-group"><label>Type</label>
+                                        <select id="emaMediumType">
+                                            <option value="ema" selected>EMA</option>
+                                            <option value="hma">HMA</option>
+                                            <option value="wma">WMA</option>
+                                            <option value="ehma">EHMA</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ema-item">
+                                <div class="ema-header">
+                                    <div class="ema-name">EMA Long</div>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div class="form-group"><label>Period</label><input type="number" id="emaLongPeriod"
+                                            value="50" min="1"></div>
+                                    <div class="form-group"><label>Type</label>
+                                        <select id="emaLongType">
+                                            <option value="ema" selected>EMA</option>
+                                            <option value="hma">HMA</option>
+                                            <option value="wma">WMA</option>
+                                            <option value="ehma">EHMA</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Chart Display Settings -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">📐</div><span class="settings-section-title">Chart Display</span>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="form-grid-2">
+                                <div class="form-group"><label>ระยะห่างแท่งเทียนสุดท้ายกับขอบขวา (แท่ง)</label><input type="number" id="chartRightOffset" value="5" min="0" max="200" step="1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBtn">ยกเลิก</button>
+                <button class="btn btn-secondary" id="loadDefaultBtn" style="background-color: var(--orange); color: white; border-color: var(--orange);">Load default</button>
+                <button class="btn btn-primary" id="saveBtn">บันทึกการตั้งค่า</button>
+            </div>
+        </div>
+    </div>
+
+	 <!-- ─── SETTINGS THERESHOLD MODAL ──────────────────────────────────── -->
+    <div class="modal" id="settingsTheresholdModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="modal-title-icon">⚙</div>ตั้งค่า Thershold
+                </div>
+                <button class="modal-close" id="closeModalTheresholdBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-grid">
+
+                    <!-- Assets -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">📈</div><span class="settings-section-title">Continuous Indices
+                                (Deriv.com)</span>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="checkbox-grid">
+                                <div class="checkbox-item"><input type="radio" id="th_vol10" name="asset_threshold"
+                                        value="vol10"><label for="th_vol10">Vol 10</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol10_1s" name="asset_threshold"
+                                        value="vol10_1s"><label for="th_vol10_1s">Vol 10 (1s)</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol15_1s" name="asset_threshold"
+                                        value="vol15_1s"><label for="th_vol15_1s">Vol 15 (1s)</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol25" name="asset_threshold"
+                                        value="vol25"><label for="th_vol25">Vol 25</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol25_1s" name="asset_threshold"
+                                        value="vol25_1s"><label for="th_vol25_1s">Vol 25 (1s)</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol30_1s" name="asset_threshold"
+                                        value="vol30_1s"><label for="th_vol30_1s">Vol 30 (1s)</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol50" name="asset_threshold"
+                                        value="vol50"><label for="th_vol50">Vol 50</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol50_1s" name="asset_threshold"
+                                        value="vol50_1s"><label for="th_vol50_1s">Vol 50 (1s)</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol75" name="asset_threshold"
+                                        value="vol75"><label for="th_vol75">Vol 75</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol75_1s" name="asset_threshold"
+                                        value="vol75_1s"><label for="th_vol75_1s">Vol 75 (1s)</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol90_1s" name="asset_threshold"
+                                        value="vol90_1s"><label for="th_vol90_1s">Vol 90 (1s)</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol100" name="asset_threshold"
+                                        value="vol100"><label for="th_vol100">Vol 100</label></div>
+                                <div class="checkbox-item"><input type="radio" id="th_vol100_1s" name="asset_threshold"
+                                        value="vol100_1s"><label for="th_vol100_1s">Vol 100 (1s)</label></div>
+                            </div>
+                        </div>
+                    </div>
+
+                     
+
+                    <!-- Technical Indicators -->
+                    <div class="settings-section">
+                        <div class="settings-section-head">
+                            <div class="section-icon">📊</div><span class="settings-section-title">Thereshold Value</span>
+                        </div>
+                        <div class="settings-section-body">
+                            <div class="form-grid-2">
+                                <div class="form-group"><label>Flat Thereshold</label><input type="number" id="flatTheresholdValue"
+                                        value="14" step="0.0001" min="0"></div>
+
+                                <div class="form-group"><label>MACD Gap</label><input type="number" id="MACDGapValue"
+                                        value="2" step="0.0001" min="0"></div>
+
+                                <div class="form-group"><label>Alt Candle ATR Multiplier</label><input type="number" id="th_altCandleAtrMultiplier"
+                                        value="0.5" step="0.0001" min="0"></div>
+                                 
+                            </div>
+
+                            <div class="fieldset fieldset-info">
+                                <span class="legend">ตรวจเชค 🎯 Noise หรือไม่ </span>
+                                <div class="check-group inline">
+                                    <label class="radio-label">
+                                        <input type="radio" name="th_isCheckNoise" value="no">
+                                        <span class="box"></span>
+                                        🚫 No ตรวจเชค
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="th_isCheckNoise" value="yes">
+                                        <span class="box"></span>
+                                        ✅ ตรวจเชค
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="fieldset fieldset-info">
+                                <span class="legend">🎯 ประเภท การตรวจเชค Noise</span>
+                                <div class="check-group inline">
+                                    <label class="check-label">
+                                        <input type="checkbox" id="th_checkAlternate" name="th_noiseTypeCheck" value="Alternate">
+                                        <span class="box"></span>
+                                        Alternate
+                                    </label>
+                                    <label class="check-label">
+                                        <input type="checkbox" id="th_checkFlat" name="th_noiseTypeCheck" value="Flat">
+                                        <span class="box"></span>
+                                        Flat
+                                    </label>
+                                    <label class="check-label">
+                                        <input type="checkbox" id="th_checkGap" name="th_noiseTypeCheck" value="Gap">
+                                        <span class="box"></span>
+                                        Gap
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="fieldset fieldset-warning">
+                                <span class="legend">🛡️ Noise Filters ใหม่ (ลด Loss Streak)</span>
+                                <div style="display: flex; flex-direction: column; gap: 14px;">
+                                    <!-- ADX Filter -->
+                                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 10px; background: var(--bg2); border-radius: var(--radius); border: 1px solid var(--border);">
+                                        <label class="check-label" style="min-width: 160px;">
+                                            <input type="checkbox" id="th_checkAdx">
+                                            <span class="box"></span>
+                                            <span style="font-weight: 600;">📊 ADX Filter</span>
+                                        </label>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 11px; color: var(--text3);">ADX &lt;</span>
+                                            <input type="number" id="th_adxThreshold" value="25" step="0.5" min="0" max="100" style="width: 70px; text-align: center; font-weight: bold;">
+                                            <span style="font-size: 11px; color: var(--text3);">= ไม่มี Trend → Block</span>
+                                        </div>
+                                    </div>
+                                    <!-- Choppy Filter -->
+                                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 10px; background: var(--bg2); border-radius: var(--radius); border: 1px solid var(--border);">
+                                        <label class="check-label" style="min-width: 160px;">
+                                            <input type="checkbox" id="th_checkChoppy">
+                                            <span class="box"></span>
+                                            <span style="font-weight: 600;">📈 Choppy Filter</span>
+                                        </label>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 11px; color: var(--text3);">Choppy &gt;</span>
+                                            <input type="number" id="th_choppyThreshold" value="50" step="0.5" min="0" max="100" style="width: 70px; text-align: center; font-weight: bold;">
+                                            <span style="font-size: 11px; color: var(--text3);">= Sideway → Block</span>
+                                        </div>
+                                    </div>
+                                    <!-- Range Detector Filter -->
+                                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 10px; background: var(--bg2); border-radius: var(--radius); border: 1px solid var(--border);">
+                                        <label class="check-label" style="min-width: 160px;">
+                                            <input type="checkbox" id="th_checkRange">
+                                            <span class="box"></span>
+                                            <span style="font-weight: 600;">📦 Range Filter</span>
+                                        </label>
+                                        <span style="font-size: 11px; color: var(--text3);">ราคาอยู่ใน Range Box → Block</span>
+                                    </div>
+                                    <!-- BB Squeeze Filter -->
+                                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 10px; background: var(--bg2); border-radius: var(--radius); border: 1px solid var(--border);">
+                                        <label class="check-label" style="min-width: 160px;">
+                                            <input type="checkbox" id="th_checkBbSqueeze">
+                                            <span class="box"></span>
+                                            <span style="font-weight: 600;">🔒 BB Squeeze Filter</span>
+                                        </label>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="font-size: 11px; color: var(--text3);">BB Bandwidth &lt;</span>
+                                            <input type="number" id="th_bbBandwidthThreshold" value="0.5" step="0.01" min="0" style="width: 70px; text-align: center; font-weight: bold;">
+                                            <span style="font-size: 11px; color: var(--text3);">= Low Volatility → Block</span>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 10px; color: var(--text3); padding: 4px 0;">💡 Filter เหล่านี้ช่วยลด Loss Streak โดยกรองตลาดที่ไม่เหมาะกับ Trend Following (เช่น sideway, ไม่มี trend, volatility ต่ำ)</div>
+                                </div>
+                            </div>
+
+                            <div class="fieldset">
+                                <span class="legend">Flat Condition (radio)</span>
+                                <div class="flat-condition-container">
+                                    <div class="radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="th_flatCondition" value="case1" Desc="ตรวจสอบ emaShort ว่า Flat เส้นเดียว">
+                                            <span class="box"></span>
+                                            1.emaShort Only
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="th_flatCondition" value="case2" Desc="ตรวจสอบ emaMedium ว่า Flat เส้นเดียว">
+                                            <span class="box"></span>
+                                            2.emaMedium Only
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="th_flatCondition" value="case3" Desc="ตรวจสอบ emaLong ว่า Flat เส้นเดียว">
+                                            <span class="box"></span>
+                                            3.emaLong Only
+                                        </label>
+                                    </div>
+                                    <span style="padding:0 8px; color:var(--text3); align-self: center;">———&gt;</span>
+                                    <div class="radio-group" style="border-left:1px solid var(--border2); padding-left:10px">
+                                        <label class="radio-label">
+                                            <input type="radio" name="th_flatCondition" value="case4" Desc="ตรวจสอบ emaShort,emaMedium ว่า Flat ทั้ง 2 เส้น">
+                                            <span class="box"></span>
+                                            4.emaShort และ emaMedium <span style="color:var(--red); font-weight:bold">(Flat ทั้ง 2 เส้น)</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="th_flatCondition" value="case5" Desc="ตรวจสอบ emaShort,emaMedium ว่า มีเส้นใด Flat เพียงเส้นเดียวก็ Ok แล้ว">
+                                            <span class="box"></span>
+                                            5.emaShort หรือ emaMedium <span style="color:var(--accent); font-weight:bold">(Flat เส้นใดเส้นหนึ่ง)</span>
+                                        </label>
+                                    </div>
+                                    <span style="padding:0 8px; color:var(--text3); align-self: center;">———&gt;</span>
+                                    <div class="radio-group" style="border-left:1px solid var(--border2); padding-left:10px">
+                                        <label class="radio-label">
+                                            <input type="radio" name="th_flatCondition" value="case6" Desc="ตรวจสอบ emaShort,emaMedium,emaLong ว่า Flat ทั้ง  3 เส้น">
+                                            <span class="box"></span>
+                                            6.emaShort และ emaMedium และ emaLong <span style="color:var(--red); font-weight:bold">(Flat ทั้ง 3 เส้น)</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="th_flatCondition" value="case7" Desc="ตรวจสอบ emaShort,emaMedium,Long ว่า มีเส้นใด Flat เพียงเส้นเดียวก็ Ok แล้ว">
+                                            <span class="box"></span>
+                                            7.emaShort หรือ emaMedium หรือ emaLong <span style="color:var(--accent); font-weight:bold">(Flat เส้นใดเส้นหนึ่ง)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     
+                     
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelTheresholdBtn">ยกเลิก</button>
+                <button class="btn btn-primary" id="saveTheresholdBtn">บันทึกการตั้งค่า Thereshold</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── DIGITAL CLOCK ───────────────────────────────────── -->
+    <div class="digital-clock" id="digitalClock">00:00:00</div>
+
+    <!-- ─── JAVASCRIPT ──────────────────────────────────────── -->
+    <script>
+        document.write('<script src="pkderiv.js?ver=' + Date.now() + '"><\/script>');
+    </script>
+    <!-- Diagnostic Modal -->
+    <div id="diagnosticModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.6);">
+        <div style="background-color:var(--surface); margin:10% auto; padding:20px; border:1px solid var(--border); border-radius:12px; width:80%; max-width:600px; color:var(--text); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <h3 style="margin-top:0; color:var(--accent); border-bottom:1px solid var(--border); padding-bottom:10px;">🔍 Post-Trade Diagnostic</h3>
+            <div id="diagnosticContent" style="margin-top:15px; font-size:14px; line-height:1.6;"></div>
+            <div style="text-align:right; margin-top:20px;">
+                <button onclick="document.getElementById('diagnosticModal').style.display='none'" class="fetch-btn" style="background:var(--red);">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Condition Code Modal -->
+    <div id="conditionCodeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; width:90%; max-width:800px; max-height:80vh; overflow-y:auto; box-shadow:0 8px 32px rgba(0,0,0,0.5); color:var(--text);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:16px;">
+                <h2 style="margin:0; color:var(--text); font-size:1.2rem;">📖 รหัสเงื่อนไข (Condition Codes)</h2>
+                <button onclick="document.getElementById('conditionCodeModal').style.display='none'" style="background:none; border:none; color:var(--text2); font-size:32px; font-weight:bold; cursor:pointer; line-height:1;">&times;</button>
+            </div>
+            <div style="line-height:1.6; font-size:0.95rem;">
+                <p>อธิบายรหัสเงื่อนไขการตัดสินใจ (Condition Codes) ของแต่ละกลยุทธ์ที่ใช้ในระบบเทรด ซึ่งรหัสเหล่านี้จะถูกบันทึกลงในฟิลด์ <code style="background:var(--surface2); padding:2px 4px; border-radius:4px; color:#ffb86c;">codeStrategy</code> ของไฟล์ <code>trades.json</code> เมื่อจบไม้แต่ละไม้</p>
+                
+                <h3 style="color:#ffb86c; margin-top:20px; border-bottom:1px dashed var(--border); padding-bottom:5px;">กลยุทธ์ V1 (ดั้งเดิม)</h3>
+                <ul style="padding-left:20px; color:var(--text2);">
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">V1-A</code></strong> : เข้าเงื่อนไข Default (lossCon < 2) → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">V1-B</code></strong> : เข้าเงื่อนไข lossCon >= 2 และแท่งเทียนปัจจุบันสีเขียว → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#ff5555;">V1-C</code></strong> : เข้าเงื่อนไข lossCon >= 2 และแท่งเทียนปัจจุบันสีแดง → แนะนำ Red</li>
+                </ul>
+
+                <h3 style="color:#ffb86c; margin-top:20px; border-bottom:1px dashed var(--border); padding-bottom:5px;">กลยุทธ์ V2 (Early React)</h3>
+                <ul style="padding-left:20px; color:var(--text2);">
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">V2-A</code></strong> : เข้าเงื่อนไข Default (lossCon < 1) → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">V2-B</code></strong> : เข้าเงื่อนไข lossCon >= 1 และแท่งเทียนปัจจุบันสีเขียว → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#ff5555;">V2-C</code></strong> : เข้าเงื่อนไข lossCon >= 1 และแท่งเทียนปัจจุบันสีแดง → แนะนำ Red</li>
+                </ul>
+
+                <h3 style="color:#ffb86c; margin-top:20px; border-bottom:1px dashed var(--border); padding-bottom:5px;">กลยุทธ์ V3A (EMA Consensus)</h3>
+                <ul style="padding-left:20px; color:var(--text2);">
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">V3A-A</code></strong> : เข้าเงื่อนไข Default (lossCon < 2) → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">V3A-B</code></strong> : เข้าเงื่อนไข lossCon >= 2 และเสียงส่วนใหญ่ของ 3 EMA ชี้ขึ้น (Majority Up) → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#ff5555;">V3A-C</code></strong> : เข้าเงื่อนไข lossCon >= 2 และเสียงส่วนใหญ่ของ 3 EMA ชี้ลง (Majority Down) → แนะนำ Red</li>
+                </ul>
+
+                <h3 style="color:#ffb86c; margin-top:20px; border-bottom:1px dashed var(--border); padding-bottom:5px;">กลยุทธ์ V3B (EMA Short + CutType)</h3>
+                <ul style="padding-left:20px; color:var(--text2);">
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">V3B-A</code></strong> : เข้าเงื่อนไข Default (lossCon < 2) → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">V3B-B</code></strong> : เข้าเงื่อนไข lossCon >= 2 และเส้น EMA Short ชี้ขึ้น → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#ff5555;">V3B-C</code></strong> : เข้าเงื่อนไข lossCon >= 2 และเส้น EMA Short ชี้ลง → แนะนำ Red</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">V3B-D</code></strong> : เข้าเงื่อนไข lossCon >= 2 เกิดการตัดขึ้น (CutUp Override) → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#ff5555;">V3B-E</code></strong> : เข้าเงื่อนไข lossCon >= 2 เกิดการตัดลง (CutDown Override) → แนะนำ Red</li>
+                </ul>
+
+                <h3 style="color:#ffb86c; margin-top:20px; border-bottom:1px dashed var(--border); padding-bottom:5px;">กลยุทธ์ FTA (2 EMA Direction)</h3>
+                <ul style="padding-left:20px; color:var(--text2);">
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">FTA-A</code></strong> : EMA Short และ Medium ชี้ขึ้นเหมือนกัน → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#ff5555;">FTA-B</code></strong> : EMA Short และ Medium ชี้ลงเหมือนกัน → แนะนำ Red</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#f1fa8c;">FTA-C</code></strong> : ทิศทาง EMA Short ไม่ตรงกับ Medium → แนะนำ Idle (ข้ามไม้)</li>
+                </ul>
+
+                <h3 style="color:#ffb86c; margin-top:20px; border-bottom:1px dashed var(--border); padding-bottom:5px;">กลยุทธ์ FTB (3 EMA Direction)</h3>
+                <ul style="padding-left:20px; color:var(--text2);">
+                    <li style="margin-bottom:6px;"><strong><code style="color:#50fa7b;">FTB-A</code></strong> : EMA Short, Medium, Long ชี้ขึ้นเหมือนกันหมด → แนะนำ Green</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#ff5555;">FTB-B</code></strong> : EMA Short, Medium, Long ชี้ลงเหมือนกันหมด → แนะนำ Red</li>
+                    <li style="margin-bottom:6px;"><strong><code style="color:#f1fa8c;">FTB-C</code></strong> : ทิศทาง EMA ทั้ง 3 เส้นไม่สอดคล้องกัน → แนะนำ Idle (ข้ามไม้)</li>
+                </ul>
+            </div>
+            <div style="margin-top:24px; text-align:right; border-top:1px solid var(--border); padding-top:16px;">
+                <button onclick="document.getElementById('conditionCodeModal').style.display='none'" style="padding:10px 28px; font-size:16px; font-weight:bold; background:var(--surface2); color:var(--text); border:1px solid var(--border); border-radius:8px; cursor:pointer; transition: background 0.2s;">ปิดหน้าต่าง (Close)</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

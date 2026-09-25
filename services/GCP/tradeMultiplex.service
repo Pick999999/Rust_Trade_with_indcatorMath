@@ -1,0 +1,21 @@
+sudo tee /etc/systemd/system/tradeMultiplex.service > /dev/null << 'EOF'
+[Unit]
+Description=Trade Multiplex Server
+After=network.target
+
+[Service]
+Type=simple
+
+User=nutv99
+Group=nutv99
+
+WorkingDirectory=/home/nutv99/indicatorMultiplex
+
+ExecStart=/home/nutv99/indicatorMultiplex/target/release/turbo-indicators
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF

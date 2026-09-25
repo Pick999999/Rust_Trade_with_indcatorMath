@@ -1,0 +1,28 @@
+[
+  {
+    "serverCode": 1,
+    "tradeRoundNo": 1,
+    "usestrategyCode": "ForecastSequence",
+    "startTimeTrade": "2026-09-02 03:08:01",
+    "stopTimeTrade": "2026-09-02 04:39:56",
+    "durationTrade": "1h 31m 55s",
+    "assetTrade": [
+      {
+        "assetCode": "1HZ10V",
+        "MaxWinCon": 6,
+        "MaxLossCon": 4
+      },
+      {
+        "assetCode": "1HZ50V",
+        "MaxWinCon": 3,
+        "MaxLossCon": 5
+      },
+      {
+        "assetCode": "1HZ75V",
+        "MaxWinCon": 8,
+        "MaxLossCon": 4
+      }
+    ],
+    "MaxLossCon": 5
+  }
+]

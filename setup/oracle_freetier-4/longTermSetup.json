@@ -1,0 +1,35 @@
+{
+  "assets": [
+    "vol10",
+    "vol50",
+    "vol75",
+    "vol100"
+  ],
+  "granularity": 60,
+  "duration": 180,
+  "exit_strategy": "durationExpiry",
+  "conditions": [
+    "condShortMedium",
+    "condLongCross"
+  ],
+  "amount": 1.0,
+  "target_profit": 10.0,
+  "auto_trade": true,
+  "max_orders": 2,
+  "martingale": {
+    "type": "martingale",
+    "list": [
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      17.0,
+      32.0,
+      70.0,
+      145.0,
+      300.0,
+      600.0
+    ]
+  },
+  "maxLossCon": 0
+}

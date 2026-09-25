@@ -1,0 +1,24 @@
+{
+  "updated_by": "system_init",
+  "timestamp": 1788396000,
+  "settings": {
+    "symbol": "R_100",
+    "granularity": 60,
+    "parameters": {
+      "fast_period": 12,
+      "slow_period": 26,
+      "signal_period": 9,
+      "choppy_combined": {
+        "mode": "or",
+        "group_size": 15,
+        "chop_period": 14,
+        "chop_threshold": 61.8,
+        "kama_er_threshold": 0.35,
+        "body_ratio_threshold": 0.30,
+        "min_switches": 3
+      }
+    },
+    "trade_enabled": true,
+    "max_stake": 50.0
+  }
+}

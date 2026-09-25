@@ -1,0 +1,27 @@
+[
+  {
+    "GrandBalance": 9132.47,
+    "MoneyTrade": 1.0,
+    "ThisProfit": 0.92,
+    "WinStatus": "Win",
+    "actualDuration": 57,
+    "codeStrategy": "V3A-A",
+    "emaMediumDirection": "Down",
+    "emaShortDirection": "Down",
+    "gaveUp": false,
+    "isAnomaly": false,
+    "lossCon": 0,
+    "maxLossCon": 8,
+    "scheduleTradeNo": 17,
+    "sellTime": 1781220838,
+    "sellTimeDisplay": "12/06/2026 06:33:58",
+    "subTradeno": 1,
+    "targetColor": "green",
+    "thisAction": "Call",
+    "thisColor": "red",
+    "timeCandle": 1781220780,
+    "timeCandleDisplay": "12/06/2026 06:33:00",
+    "tradeNo": 1,
+    "tradeStrategy": "V3A"
+  }
+]

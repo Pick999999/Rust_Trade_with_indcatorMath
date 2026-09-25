@@ -1,0 +1,67 @@
+{
+  "indicators": {
+    "atrPeriod": 7,
+    "atrMulti": 1.3,
+    "ciPeriod": 20,
+    "adxPeriod": 14,
+    "bbPeriod": 20,
+    "smcPeriod": 14,
+    "rsiPeriod": 14,
+    "stochPeriod": 14
+  },
+  "ema": {
+    "shortPeriod": 3,
+    "shortType": "ema",
+    "mediumPeriod": 5,
+    "mediumType": "ema",
+    "longPeriod": 10,
+    "longType": "ema"
+  },
+  "assets": [
+    "vol10",
+    "vol50",
+    "vol75",
+    "vol100"
+  ],
+  "stakeAmount": 1,
+  "targetProfitPercent": 10,
+  "duration": 180,
+  "maxLossCon": 0,
+  "martingale": {
+    "type": "martingale",
+    "list": [
+      1,
+      2,
+      4,
+      8,
+      17,
+      32,
+      70,
+      145,
+      300,
+      600
+    ]
+  },
+  "exitStrategy": "durationExpiry",
+  "conditions": {
+    "condShortMedium": true,
+    "condLongCross": true,
+    "condShortLong": false,
+    "useAdxFilter": false,
+    "adxMin": 25,
+    "useChoppyFilter": false,
+    "choppyMax": 38,
+    "useConvergenceFilter": false
+  },
+  "checkDuplicateAsset": true,
+  "maxOrders": 2,
+  "autoTrade": true,
+  "saveTrackOrders": true,
+  "useSchedule": false,
+  "startTime": "2026-08-08T00:05",
+  "stopTime": "2026-08-08T01:05",
+  "playEmaCutSound": false,
+  "playCloseOrderSound": true,
+  "chartAsset": "vol10",
+  "savedAt": "2026-08-08T00:03:28.195Z"
+}

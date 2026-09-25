@@ -1,0 +1,30 @@
+[package]
+name = "turbo-indicators"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Core dependencies
+rayon = "1.8"           # For coarse-grained parallelism
+parking_lot = "0.12"    # Fast synchronization primitives
+axum = { version = "0.7", features = ["ws"] }
+tokio = { version = "1.0", features = ["full", "sync"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tower-http = { version = "0.5", features = ["fs", "cors"] }
+dotenvy = "0.15"
+tokio-tungstenite = { version = "0.21", features = ["native-tls"] }
+futures-util = "0.3"
+chrono = "0.4.38"
+reqwest = { version = "0.12", features = ["json", "default-tls"] }
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[features]
+default = ["simd"]
+simd = []              # Enable SIMD optimizations

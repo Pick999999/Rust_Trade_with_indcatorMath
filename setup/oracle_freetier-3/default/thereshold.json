@@ -1,0 +1,64 @@
+{
+  "noiseConfig": {
+    "adxThreshold": 25,
+    "bbBandwidthThreshold": 0.5,
+    "checkAdx": "yes",
+    "checkBbSqueeze": "yes",
+    "checkChoppy": "yes",
+    "checkRange": "yes",
+    "choppyThreshold": 50,
+    "flatCondition": "case4",
+    "flatConditionDesc": "ตรวจสอบ emaShort,emaMedium ว่า Flat ทั้ง 2 เส้น",
+    "isCheckNoise": "no",
+    "noiseTypeCheck": [
+      "Alternate",
+      "Flat",
+      "Gap"
+    ]
+  },
+  "thresholds": [
+    {
+      "MACDGapValue": 0.1561,
+      "altCandleAtrMultiplier": 0.5,
+      "asset": "vol10",
+      "assetCode": "R_10",
+      "flatTheresholdValue": 0.07
+    },
+    {
+      "MACDGapValue": 0.1561,
+      "altCandleAtrMultiplier": 0.5,
+      "altCandleSpikeMultiplier": 1.5,
+      "asset": "vol25",
+      "assetCode": "R_25",
+      "flatTheresholdValue": 0.07,
+      "priceInterval": "2,500-3,000"
+    },
+    {
+      "MACDGapValue": 0.007635,
+      "altCandleAtrMultiplier": 0.5,
+      "altCandleSpikeMultiplier": 1.5,
+      "asset": "vol50",
+      "assetCode": "R_50",
+      "flatTheresholdValue": 0.0059,
+      "priceInterval": "50-100"
+    },
+    {
+      "MACDGapValue": 2.6104,
+      "altCandleAtrMultiplier": 0.5,
+      "altCandleSpikeMultiplier": 1.5,
+      "asset": "vol75",
+      "assetCode": "R_75",
+      "flatTheresholdValue": 5.71,
+      "priceInterval": "26,000-29,000"
+    },
+    {
+      "MACDGapValue": 0.1,
+      "altCandleAtrMultiplier": 0.5,
+      "altCandleSpikeMultiplier": 1.5,
+      "asset": "vol100",
+      "assetCode": "R_100",
+      "flatTheresholdValue": 0.071,
+      "priceInterval": "300-400"
+    }
+  ]
+}

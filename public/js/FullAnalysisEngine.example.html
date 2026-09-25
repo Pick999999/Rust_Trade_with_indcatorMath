@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FullAnalysisEngine - ตัวอย่างการใช้งาน</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 { color: #4ecca3; }
+        h2 { color: #ffa07a; border-bottom: 2px solid #4ecca3; padding-bottom: 5px; }
+        .section {
+            background: #16213e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #4ecca3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #4ecca3;
+        }
+        th {
+            background: #0f3460;
+            color: #4ecca3;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background: #1a1a2e;
+        }
+        .green { color: #06D6A0; font-weight: bold; }
+        .red { color: #E8304A; font-weight: bold; }
+        .orange { color: #F5A623; font-weight: bold; }
+        button {
+            background: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        button:hover {
+            background: #3db88c;
+        }
+        pre {
+            background: #0f0f1e;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #4ecca3;
+        }
+        code {
+            color: #ffa07a;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #4ecca3;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+    </style>
+</head>
+<body>
+    <h1>📊 FullAnalysisEngine - ตัวอย่างการใช้งาน</h1>
+    
+    <div class="section">
+        <h2>📖 คำอธิบาย</h2>
+        <p>ตัวอย่างนี้แสดงวิธีการใช้ <strong>FullAnalysisEngine.js</strong> เพื่อวิเคราะห์ข้อมูลแท่งเทียน (Candlestick) และคำนวณ Technical Indicators แบบ Real-time</p>
+        <p><strong>ข้อมูลที่ใช้:</strong> สร้างข้อมูลแท่งเทียนจำลอง 100 แท่ง พร้อมทั้งคำนวณ EMA, MACD, RSI, ADX, ATR, BB และอื่นๆ</p>
+    </div>
+
+    <div class="section">
+        <h2>⚙️ การตั้งค่า (Configuration)</h2>
+        <button onclick="runAnalysisDefault()">🚀 วิเคราะห์ด้วยค่า Default</button>
+        <button onclick="runAnalysisCustom()">🎯 วิเคราะห์ด้วยค่า Custom</button>
+        <button onclick="clearResults()">🗑️ ล้างผลลัพธ์</button>
+    </div>
+
+    <div class="section">
+        <h2>📈 สถิติการวิเคราะห์</h2>
+        <div class="stats" id="statsContainer">
+            <div class="stat-box">
+                <div class="stat-label">จำนวนแท่งเทียน</div>
+                <div class="stat-value" id="stat-candles">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">EMA CrossUp</div>
+                <div class="stat-value green" id="stat-crossup">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">EMA CrossDown</div>
+                <div class="stat-value red" id="stat-crossdown">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">All CrossUp</div>
+                <div class="stat-value green" id="stat-allcrossup">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">All CrossDown</div>
+                <div class="stat-value red" id="stat-allcrossdown">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">เวลาประมวลผล</div>
+                <div class="stat-value" id="stat-time">-</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="resultsSection" style="display:none;">
+        <h2>📋 ผลการวิเคราะห์ (แสดง 10 แท่งล่าสุด)</h2>
+        <div style="overflow-x: auto;">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>เวลา</th>
+                        <th>Open</th>
+                        <th>High</th>
+                        <th>Low</th>
+                        <th>Close</th>
+                        <th>สี</th>
+                        <th>EMA Short</th>
+                        <th>EMA Med</th>
+                        <th>EMA Long</th>
+                        <th>Cross</th>
+                        <th>RSI</th>
+                        <th>ADX</th>
+                        <th>ATR</th>
+                        <th>BB Pos</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>💻 ตัวอย่างโค้ด</h2>
+        <pre><code>// 1. สร้าง Instance
+const engine = new FullAnalysisEngine();
+
+// 2. เตรียมข้อมูลแท่งเทียน
+const candles = [
+  { epoch: 1704067200, open: 100.5, high: 101.2, low: 100.1, close: 100.8 },
+  { epoch: 1704067260, open: 100.8, high: 101.5, low: 100.6, close: 101.3 },
+  // ... เพิ่มแท่งเทียนต่อไป
+];
+
+// 3. กำหนดค่า Config (Optional)
+const config = {
+  ema: {
+    short: { period: 9, type: 'ema' },
+    medium: { period: 21, type: 'ema' },
+    long: { period: 50, type: 'ema' }
+  },
+  indicators: {
+    adxPeriod: 14,
+    atrPeriod: 7,
+    atrMulti: 1.3,
+    bbPeriod: 20,
+    ciPeriod: 14,
+    smcPeriod: 50
+  }
+};
+
+// 4. เรียกใช้งานวิเคราะห์
+const results = engine.performAnalysis(candles, config, 'R_10');
+
+// 5. ใช้ผลลัพธ์
+results.forEach(candle => {
+  console.log(\`Close: \${candle.close}\`);
+  console.log(\`EMA Cross: \${candle.ema_cut_all_type}\`);
+  console.log(\`RSI: \${candle.rsi_value.toFixed(2)}\`);
+});</code></pre>
+    </div>
+
+    <script src="./FullAnalysisEngine.js"></script>
+    <script>
+        // สร้างข้อมูลแท่งเทียนจำลอง
+        function generateMockCandles(count = 100) {
+            const candles = [];
+            let basePrice = 100;
+            let timestamp = Math.floor(Date.now() / 1000) - (count * 60);
+            
+            for (let i = 0; i < count; i++) {
+                // สร้างการเคลื่อนไหวราคาแบบสุ่ม
+                const trend = Math.sin(i / 10) * 0.5; // เทรนด์ขึ้นลง
+                const noise = (Math.random() - 0.5) * 0.3; // สัญญาณรบกวน
+                
+                basePrice += trend + noise;
+                
+                const open = basePrice;
+                const volatility = 0.5 + Math.random() * 0.5;
+                const high = open + Math.random() * volatility;
+                const low = open - Math.random() * volatility;
+                const close = low + Math.random() * (high - low);
+                
+                candles.push({
+                    epoch: timestamp,
+                    open: parseFloat(open.toFixed(3)),
+                    high: parseFloat(high.toFixed(3)),
+                    low: parseFloat(low.toFixed(3)),
+                    close: parseFloat(close.toFixed(3))
+                });
+                
+                timestamp += 60; // เพิ่ม 1 นาที
+            }
+            
+            return candles;
+        }
+
+        // วิเคราะห์ด้วยค่า Default
+        function runAnalysisDefault() {
+            const startTime = performance.now();
+            
+            const engine = new FullAnalysisEngine();
+            const candles = generateMockCandles(100);
+            const results = engine.performAnalysis(candles, null, 'R_10');
+            
+            const endTime = performance.now();
+            const duration = (endTime - startTime).toFixed(2);
+            
+            displayResults(results, duration);
+            calculateStats(results, duration);
+        }
+
+        // วิเคราะห์ด้วยค่า Custom
+        function runAnalysisCustom() {
+            const startTime = performance.now();
+            
+            const engine = new FullAnalysisEngine();
+            
+            // กำหนดค่า Custom
+            const config = {
+                ema: {
+                    short: { period: 12, type: 'ema' },
+                    medium: { period: 26, type: 'ema' },
+                    long: { period: 50, type: 'hma' }  // ใช้ HMA
+                },
+                indicators: {
+                    adxPeriod: 14,
+                    atrPeriod: 10,
+                    atrMulti: 1.5,
+                    bbPeriod: 20,
+                    ciPeriod: 14,
+                    smcPeriod: 50
+                }
+            };
+            
+            const candles = generateMockCandles(100);
+            const results = engine.performAnalysis(candles, config, 'R_10');
+            
+            const endTime = performance.now();
+            const duration = (endTime - startTime).toFixed(2);
+            
+            displayResults(results, duration);
+            calculateStats(results, duration);
+        }
+
+        // แสดงผลลัพธ์ในตาราง
+        function displayResults(results, duration) {
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = '';
+            
+            // แสดงเฉพาะ 10 แท่งล่าสุด
+            const last10 = results.slice(-10);
+            
+            last10.forEach(candle => {
+                const row = document.createElement('tr');
+                
+                const colorClass = candle.color === 'green' ? 'green' : 
+                                  candle.color === 'red' ? 'red' : '';
+                
+                const crossClass = candle.ema_cut_all_type === 'AllCrossUp' ? 'green' :
+                                  candle.ema_cut_all_type === 'AllCrossDown' ? 'red' : '';
+                
+                row.innerHTML = `
+                    <td>${candle.index + 1}</td>
+                    <td>${candle.candletime_display}</td>
+                    <td>${candle.open.toFixed(3)}</td>
+                    <td>${candle.high.toFixed(3)}</td>
+                    <td>${candle.low.toFixed(3)}</td>
+                    <td class="${colorClass}">${candle.close.toFixed(3)}</td>
+                    <td class="${colorClass}">${candle.color}</td>
+                    <td>${candle.ema_short_value.toFixed(3)}</td>
+                    <td>${candle.ema_medium_value.toFixed(3)}</td>
+                    <td>${candle.ema_long_value.toFixed(3)}</td>
+                    <td class="${crossClass}">${candle.ema_cut_all_type}</td>
+                    <td>${candle.rsi_value.toFixed(2)}</td>
+                    <td>${candle.adx_value.toFixed(2)}</td>
+                    <td>${candle.atr_value.toFixed(4)}</td>
+                    <td>${candle.bb_position}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('resultsSection').style.display = 'block';
+        }
+
+        // คำนวณสถิติ
+        function calculateStats(results, duration) {
+            const totalCandles = results.length;
+            let crossUpCount = 0;
+            let crossDownCount = 0;
+            let allCrossUpCount = 0;
+            let allCrossDownCount = 0;
+            
+            results.forEach(candle => {
+                if (candle.ema_cut_position === 'CrossUp') crossUpCount++;
+                if (candle.ema_cut_position === 'CrossDown') crossDownCount++;
+                if (candle.ema_cut_all_type === 'AllCrossUp') allCrossUpCount++;
+                if (candle.ema_cut_all_type === 'AllCrossDown') allCrossDownCount++;
+            });
+            
+            document.getElementById('stat-candles').textContent = totalCandles;
+            document.getElementById('stat-crossup').textContent = crossUpCount;
+            document.getElementById('stat-crossdown').textContent = crossDownCount;
+            document.getElementById('stat-allcrossup').textContent = allCrossUpCount;
+            document.getElementById('stat-allcrossdown').textContent = allCrossDownCount;
+            document.getElementById('stat-time').textContent = duration + ' ms';
+        }
+
+        // ล้างผลลัพธ์
+        function clearResults() {
+            document.getElementById('resultsBody').innerHTML = '';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('stat-candles').textContent = '-';
+            document.getElementById('stat-crossup').textContent = '-';
+            document.getElementById('stat-crossdown').textContent = '-';
+            document.getElementById('stat-allcrossup').textContent = '-';
+            document.getElementById('stat-allcrossdown').textContent = '-';
+            document.getElementById('stat-time').textContent = '-';
+        }
+
+        // แสดงข้อความต้อนรับ
+        console.log('%c📊 FullAnalysisEngine loaded successfully!', 'color: #4ecca3; font-size: 16px; font-weight: bold;');
+        console.log('%cกดปุ่ม "วิเคราะห์" เพื่อดูตัวอย่างการทำงาน', 'color: #ffa07a; font-size: 14px;');
+    </script>
+</body>
+</html>

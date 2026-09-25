@@ -1,0 +1,63 @@
+{
+  "assets": [
+    "vol10",
+    "vol25_1s",
+    "vol75"
+  ],
+  "dateRange": {
+    "startDate": "2026-04-23T16:54",
+    "stopDate": "2026-04-23T17:54",
+    "useSchedule": true
+  },
+  "ema": {
+    "long": {
+      "color": "#e8304a",
+      "enabled": true,
+      "period": 20,
+      "type": "ema"
+    },
+    "medium": {
+      "color": "#f5a623",
+      "enabled": true,
+      "period": 5,
+      "type": "hma"
+    },
+    "short": {
+      "color": "#06d6a0",
+      "enabled": true,
+      "period": 3,
+      "type": "hma"
+    }
+  },
+  "granularity": 60,
+  "granularitySettings": 2,
+  "indicators": {
+    "adxPeriod": 14,
+    "atrMulti": 1.4,
+    "atrPeriod": 7,
+    "bbPeriod": 20,
+    "ciPeriod": 20,
+    "smcPeriod": 50
+  },
+  "meta": {
+    "generatedAt": "2026-04-23T09:55:53.372Z",
+    "theme": "dark"
+  },
+  "trade": {
+    "conditionStopTrade": "stopDate",
+    "martingale": {
+      "list": [
+        1,
+        2,
+        4,
+        8,
+        17,
+        32
+      ],
+      "type": "martingale"
+    },
+    "notifyTelegram": true,
+    "targetLot": 1,
+    "targetMoney": 1
+  }
+}
