@@ -18,6 +18,10 @@ target/
 .env_*
 *.env*
 
+# Allow template file
+!.env.example
+!**/.env.example
+
 # Temporary files & binary builds
 tmp/build/
 
